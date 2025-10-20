@@ -18,5 +18,6 @@ export const profileApi = {
    * Fetch current user's profile
    * @returns Promise with user profile data
    */
-  getProfile: () => apiClient.get<UserProfile>(`${BASE_PATH}/profile`),
-};
+
+getProfile: (userId: string) => 
+    apiClient.post<UserProfile>(`${BASE_PATH}/public-profile`, { userId }),};

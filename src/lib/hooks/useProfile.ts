@@ -21,13 +21,15 @@ export function useProfile() {
   const setProfile = useProfileStore((state) => state.setProfile);
   const setLoading = useProfileStore((state) => state.setLoading);
   const setError = useProfileStore((state) => state.setError);
+const userId = "68e909b4019fb5fa1c2cb292";
 
   return useQuery({
     queryKey: profileKeys.detail(),
     queryFn: async () => {
       try {
         setLoading(true);
-        const response = await profileApi.getProfile();
+        
+        const response = await profileApi.getProfile(userId);
         
         // Sync with Zustand store
         setProfile(response.data);

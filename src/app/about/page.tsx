@@ -1,3 +1,4 @@
+'use client';
 import {
   Avatar,
   Button,
@@ -16,8 +17,10 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
+import { useProfileStore } from '@/lib/store/useProfileStore';
+import { useProfile } from '@/lib/hooks/useProfile';
 
-export async function generateMetadata() {
+  async function generateMetadata() {
   return Meta.generate({
     title: about.title,
     description: about.description,
@@ -28,6 +31,14 @@ export async function generateMetadata() {
 }
 
 export default function About() {
+  const { data, isLoading, error } = useProfile();
+  const profile = useProfileStore((state) => state.profile);
+  const isComplete = useProfileStore((state) => state.isProfileComplete());
+console.log('Profile from store:', profile);
+  console.log('Data from hook:', data);
+  console.log('Is loading:', isLoading);
+  console.log('Error:', error);
+  
   const structure = [
     {
       title: about.intro.title,
