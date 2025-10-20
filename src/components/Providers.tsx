@@ -19,10 +19,12 @@ import {
 } from "@once-ui-system/core";
 import { style, dataStyle } from "../resources";
 import { iconLibrary } from "../resources/icons";
-
+import { QueryProvider } from "@/app/providers/QueryProvider";
+ 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <LayoutProvider>
+      <QueryProvider>
       <ThemeProvider
         brand={style.brand as Schemes}
         accent={style.accent as Schemes}
@@ -52,6 +54,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           </ToastProvider>
         </DataThemeProvider>
       </ThemeProvider>
+      </QueryProvider>
     </LayoutProvider>
   );
 }
