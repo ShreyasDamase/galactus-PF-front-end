@@ -9,6 +9,7 @@ interface TableOfContentsProps {
     title: string;
     display: boolean;
     items: string[];
+    id: string;
   }[];
   about: {
     tableOfContent: {
@@ -56,7 +57,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ structure, about }) =
               className={styles.hover}
               gap="8"
               vertical="center"
-              onClick={() => scrollTo(section.title, 80)}
+              onClick={() => scrollTo(section.id, 80)}
             >
               <Flex height="1" minWidth="16" background="neutral-strong"></Flex>
               <Text>{section.title}</Text>

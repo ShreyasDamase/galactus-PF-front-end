@@ -17,6 +17,7 @@ const nextConfig = {
         pathname: "**",
       },
     ],
+      domains: ['images.clerk.dev'],
   },
   sassOptions: {
     compiler: "modern",

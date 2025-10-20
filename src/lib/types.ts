@@ -1,5 +1,8 @@
 // src/lib/api/types.ts
 
+// ====================
+// USER PROFILE
+// ====================
 export interface UserProfile {
   id: string;
   clerkId: string;
@@ -27,6 +30,9 @@ export interface UserProfile {
   hasImage: boolean;
 }
 
+// ====================
+// RESUME
+// ====================
 export interface Resume {
   name: string;
   storedName: string;
@@ -37,6 +43,9 @@ export interface Resume {
   uploadedAt: string;
 }
 
+// ====================
+// EXPERIENCE
+// ====================
 export interface Experience {
   _id?: string;
   company: string;
@@ -47,8 +56,12 @@ export interface Experience {
   description?: string;
   technologies?: string[];
   isCurrentJob: boolean;
+  companyLogo?: string;
 }
 
+// ====================
+// EDUCATION
+// ====================
 export interface Education {
   _id?: string;
   institution: string;
@@ -60,6 +73,9 @@ export interface Education {
   description?: string;
 }
 
+// ====================
+// PROJECTS
+// ====================
 export interface Project {
   _id?: string;
   title: string;
@@ -73,13 +89,19 @@ export interface Project {
   featured: boolean;
 }
 
+// ====================
+// PREFERENCES
+// ====================
 export interface UserPreferences {
   theme: 'light' | 'dark' | 'system';
   emailNotifications: boolean;
   profileVisibility: 'public' | 'private';
-  showEmail: boolean;
+  showEmail: boolean; // determines if email is shown on public profile
 }
 
+// ====================
+// UPDATE PAYLOAD
+// ====================
 export interface UpdateProfilePayload {
   firstName?: string;
   lastName?: string;
@@ -92,6 +114,9 @@ export interface UpdateProfilePayload {
   preferences?: Partial<UserPreferences>;
 }
 
+// ====================
+// ANALYTICS
+// ====================
 export interface UserAnalytics {
   profileViews: number;
   projectClicks: number;
