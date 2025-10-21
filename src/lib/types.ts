@@ -3,6 +3,8 @@
 // ====================
 // USER PROFILE
 // ====================
+type SocialLink = { name: string; icon: string; link: string };
+
 export interface UserProfile {
   id: string;
   clerkId: string;
@@ -10,12 +12,10 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   fullName: string;
+  role: string;
   bio: string;
   profileImage: string;
-  github: string;
-  linkedin: string;
-  leetcode: string;
-  portfolio: string;
+  social: SocialLink[];
   resumeUrl: string;
   resume: Resume | null;
   skills: string[];

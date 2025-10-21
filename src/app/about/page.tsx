@@ -20,15 +20,7 @@ import React from "react";
 import { useProfileStore } from '@/lib/store/useProfileStore';
 import { useProfile } from '@/lib/hooks/useProfile';
 
-  async function generateMetadata() {
-  return Meta.generate({
-    title: about.title,
-    description: about.description,
-    baseURL: baseURL,
-    image: `/api/og/generate?title=${encodeURIComponent(about.title)}`,
-    path: about.path,
-  });
-}
+ 
 
 export default function About() {
   const { data, isLoading, error } = useProfile();
@@ -166,7 +158,7 @@ id: 'intro',
               variant="display-default-xs"
               onBackground="neutral-weak"
             >
-              {person.role}
+              {profile?.role}
             </Text>
             {social.length > 0 && (
               <Row
@@ -179,7 +171,7 @@ id: 'intro',
                 fitWidth
                 data-border="rounded"
               >
-                {social.map(
+                {profile?.social.map(
                   (item) =>
                     item.link && (
                       <React.Fragment key={item.name}>
@@ -218,9 +210,7 @@ id: 'intro',
 
           {about.work.display && (
             <>
-              <Heading as="h2" id={"work"} variant="display-strong-s" marginBottom="m">
-                {about.work.title}
-              </Heading>
+             
               <Column fillWidth gap="l" marginBottom="40">
               {about.work.display && profile?.experience && profile.experience.length > 0 && (
   <>
@@ -313,81 +303,164 @@ id: 'intro',
               </Column>
             </>
           )}
+{profile?.education && profile.education.length > 0 && (
+  <>
+    <Heading as="h2" id={"studies"} variant="display-strong-s" marginBottom="m">
+      {about.studies.title}
+    </Heading>
+    <Column fillWidth gap="l" marginBottom="40">
+      {profile.education.map((institution, index) => {
+        const formatYear = (year: string | number | null | undefined) => {
+          return year || 'Present';
+        };
 
-          {about.studies.display && (
-            <>
-              <Heading as="h2" id={"studies"} variant="display-strong-s" marginBottom="m">
-                {about.studies.title}
-              </Heading>
-              <Column fillWidth gap="l" marginBottom="40">
-                {about.studies.institutions.map((institution, index) => (
-                  <Column key={`${institution.name}-${index}`} fillWidth gap="4">
-                    <Text id={institution.name} variant="heading-strong-l">
-                      {institution.name}
-                    </Text>
-                    <Text variant="heading-default-xs" onBackground="neutral-weak">
-                      {institution.description}
-                    </Text>
-                  </Column>
-                ))}
+        return (
+          <Column key={`${institution.institution}-${institution.degree}-${index}`} fillWidth>
+            <Row fillWidth horizontal="between" vertical="start" marginBottom="4" gap="12" wrap>
+              <Column gap="4" flex={1}>
+                <Text id={institution.institution} variant="heading-strong-l">
+                  {institution.institution}
+                </Text>
+                <Text variant="body-default-s" onBackground="brand-weak">
+                  {institution.degree}{institution.fieldOfStudy && ` in ${institution.fieldOfStudy}`}
+                </Text>
               </Column>
-            </>
-          )}
+              <Column gap="4" horizontal="end" style={{ minWidth: 'fit-content' }}>
+                <Text variant="heading-default-xs" onBackground="neutral-weak" style={{ whiteSpace: 'nowrap' }}>
+                  {formatYear(institution.startYear)} - {formatYear(institution.endYear)}
+                </Text>
+                {institution.gpa && (
+                  <Text variant="body-default-xs" onBackground="neutral-weak">
+                    GPA: {institution.gpa}
+                  </Text>
+                )}
+              </Column>
+            </Row>
 
-          {about.technical.display && (
-            <>
-              <Heading
-                as="h2"
-                id={"technical"}
-                variant="display-strong-s"
-                marginBottom="40"
+            {institution.description && (
+              <Text variant="body-default-m" onBackground="neutral-weak" marginTop="8">
+                {institution.description}
+              </Text>
+            )}
+          </Column>
+        );
+      })}
+    </Column>
+  </>
+)}
+ {profile?.skills && profile.skills.length > 0 && (
+  <>
+    <Heading
+      as="h2"
+      id={"technical"}
+      variant="display-strong-s"
+      marginBottom="m"
+    >
+      {about.technical.title}
+    </Heading>
+    <Column fillWidth gap="l" marginBottom="40">
+      <Row wrap gap="8">
+        {profile.skills.map((skill, index) => (
+          <Tag key={`skill-${index}`} size="l">
+            {skill}
+          </Tag>
+        ))}
+      </Row>
+    </Column>
+  </>
+)}
+{profile?.projects && profile.projects.length > 0 && (
+  <>
+    <Heading
+      as="h2"
+      id={"projects"}
+      variant="display-strong-s"
+      marginBottom="m"
+    >
+      Projects
+    </Heading>
+    <Column fillWidth gap="xl" marginBottom="40">
+      {profile.projects.map((project, index) => {
+        const formatDate = (dateString: string | null | undefined) => {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+        };
+
+        return (
+          <Column key={`${project.title}-${index}`} fillWidth gap="m">
+            {project.imageUrl && (
+              <Row
+                fillWidth
+                border="neutral-medium"
+                radius="l"
+                style={{ overflow: 'hidden', aspectRatio: '16/9' }}
               >
-                {about.technical.title}
-              </Heading>
-              <Column fillWidth gap="l">
-                {about.technical.skills.map((skill, index) => (
-                  <Column key={`${skill}-${index}`} fillWidth gap="4">
-                    <Text id={skill.title} variant="heading-strong-l">
-                      {skill.title}
-                    </Text>
-                    <Text variant="body-default-m" onBackground="neutral-weak">
-                      {skill.description}
-                    </Text>
-                    {skill.tags && skill.tags.length > 0 && (
-                      <Row wrap gap="8" paddingTop="8">
-                        {skill.tags.map((tag, tagIndex) => (
-                          <Tag key={`${skill.title}-${tagIndex}`} size="l" prefixIcon={tag.icon}>
-                            {tag.name}
-                          </Tag>
-                        ))}
-                      </Row>
-                    )}
-                    {skill.images && skill.images.length > 0 && (
-                      <Row fillWidth paddingTop="m" gap="12" wrap>
-                        {skill.images.map((image, index) => (
-                          <Row
-                            key={index}
-                            border="neutral-medium"
-                            radius="m"
-                            minWidth={image.width}
-                            height={image.height}
-                          >
-                            <Media
-                              enlarge
-                              radius="m"
-                              sizes={image.width.toString()}
-                              alt={image.alt}
-                              src={image.src}
-                            />
-                          </Row>
-                        ))}
-                      </Row>
-                    )}
-                  </Column>
-                ))}
-              </Column>
-            </>
-          )}
+                <img
+                  src={project.imageUrl}
+                  alt={project.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </Row>
+            )}
+            
+            <Column fillWidth gap="12" paddingTop="12">
+              <Row fillWidth horizontal="between" vertical="start" gap="12" wrap>
+                <Heading as="h3" variant="heading-strong-l" flex={1}>
+                  {project.title}
+                </Heading>
+                {(project.startDate || project.endDate) && (
+                  <Text variant="body-default-xs" onBackground="neutral-weak" style={{ whiteSpace: 'nowrap' }}>
+                    {formatDate(project.startDate)} {project.endDate && `- ${formatDate(project.endDate)}`}
+                  </Text>
+                )}
+              </Row>
+
+              {project.description && (
+                <Text variant="body-default-m" onBackground="neutral-weak">
+                  {project.description}
+                </Text>
+              )}
+
+              {project.technologies && project.technologies.length > 0 && (
+                <Row wrap gap="8" paddingTop="8">
+                  {project.technologies.map((tech: string, techIndex: number) => (
+                    <Tag key={`${project.title}-tech-${techIndex}`} size="l">
+                      {tech}
+                    </Tag>
+                  ))}
+                </Row>
+              )}
+
+              {(project.githubUrl || project.liveUrl) && (
+                <Row gap="12" wrap paddingTop="8">
+                  {project.githubUrl && (
+                    <Button
+                      href={project.githubUrl}
+                      prefixIcon="github"
+                      label="View Code"
+                      size="s"
+                      variant="secondary"
+                    />
+                  )}
+                  {project.liveUrl && (
+                    <Button
+                      href={project.liveUrl}
+                      suffixIcon="arrowUpRight"
+                      label="View Live"
+                      size="s"
+                      variant="secondary"
+                    />
+                  )}
+                </Row>
+              )}
+            </Column>
+          </Column>
+        );
+      })}
+    </Column>
+  </>
+)}
         </Column>
       </Row>
     </Column>
