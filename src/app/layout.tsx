@@ -1,7 +1,7 @@
 import "@once-ui-system/core/css/styles.css";
 import "@once-ui-system/core/css/tokens.css";
 import "@/resources/custom.css";
-
+import './globals.css';
 import classNames from "classnames";
 
 import {
@@ -32,6 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+        <Providers>
     <Flex
       suppressHydrationWarning
       as="html"
@@ -103,7 +104,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <Providers>
+  
         <Column
           as="body"
           background="page"
@@ -164,7 +165,7 @@ export default async function RootLayout({
           </Flex>
           <Footer />
         </Column>
-      </Providers>
     </Flex>
+      </Providers>
   );
 }

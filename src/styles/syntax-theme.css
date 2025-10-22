@@ -1,0 +1,601 @@
+/* ============================================================================ */
+/* Enhanced Code Block Syntax Highlighting Theme - VS Code Inspired */
+/* ============================================================================ */
+
+/* Base syntax highlighting styles */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1rem;
+  margin: 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 0;
+  
+  /* Light theme (VS Code Light+) */
+  color: #24292e;
+  background: #ffffff;
+}
+
+/* Dark theme (VS Code Dark+) */
+.dark .hljs {
+  color: #d4d4d4;
+  background: #1e1e1e;
+}
+
+/* ============================================================================ */
+/* Light Theme Colors (VS Code Light+) */
+/* ============================================================================ */
+
+/* Comments and quotes */
+.hljs-comment,
+.hljs-quote {
+  color: #008000;
+  font-style: italic;
+}
+
+/* Keywords, selectors, and substitutions */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #4f4fff;
+  font-weight: 600;
+}
+
+/* Numbers, literals, variables */
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #03af70;
+}
+
+/* Strings and doctags */
+.hljs-string,
+.hljs-doctag {
+  color: #a31515;
+}
+
+/* Titles, sections, IDs */
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #c68d19;
+  font-weight: 600;
+}
+
+/* Types and class titles */
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #267f99;
+  font-weight: 600;
+}
+
+/* Tags, names, attributes */
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #00fffb;
+  font-weight: normal;
+}
+
+/* Regular expressions and links */
+.hljs-regexp,
+.hljs-link {
+  color: #d70c50;
+}
+
+/* Symbols and bullets */
+.hljs-symbol,
+.hljs-bullet {
+  color: #0451a5;
+}
+
+/* Built-ins */
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #267f99;
+}
+
+/* Meta information */
+.hljs-meta {
+  color: #808080;
+  font-weight: 600;
+}
+
+/* Functions */
+.hljs-function {
+  color: #795e26;
+}
+
+/* Diff colors */
+.hljs-deletion {
+  background: #ffecec;
+  color: #b31d28;
+}
+
+.hljs-addition {
+  background: #f0fff4;
+  color: #22863a;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* ============================================================================ */
+/* Dark Theme Colors (VS Code Dark+) */
+/* ============================================================================ */
+
+/* Comments and quotes */
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+/* Keywords, selectors, and substitutions */
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-subst {
+  color: #569cd6;
+  font-weight: 600;
+}
+
+/* Numbers, literals, variables */
+.dark .hljs-number,
+.dark .hljs-literal,
+.dark .hljs-variable,
+.dark .hljs-template-variable {
+  color: #b5cea8;
+}
+
+/* Strings and doctags */
+.dark .hljs-string,
+.dark .hljs-doctag {
+  color: #ce9178;
+}
+
+/* Titles, sections, IDs */
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-selector-id {
+  color: #dcdcaa;
+  font-weight: 600;
+}
+
+/* Types and class titles */
+.dark .hljs-type,
+.dark .hljs-class .hljs-title {
+  color: #4ec9b0;
+  font-weight: 600;
+}
+
+/* Tags, names, attributes */
+.dark .hljs-tag,
+.dark .hljs-name,
+.dark .hljs-attribute {
+  color: #92c5f8;
+}
+
+/* Regular expressions and links */
+.dark .hljs-regexp,
+.dark .hljs-link {
+  color: #d16969;
+}
+
+/* Symbols and bullets */
+.dark .hljs-symbol,
+.dark .hljs-bullet {
+  color: #569cd6;
+}
+
+/* Built-ins */
+.dark .hljs-built_in,
+.dark .hljs-builtin-name {
+  color: #4ec9b0;
+}
+
+/* Meta information */
+.dark .hljs-meta {
+  color: #808080;
+}
+
+/* Functions */
+.dark .hljs-function {
+  color: #dcdcaa;
+}
+
+/* Diff colors */
+.dark .hljs-deletion {
+  background: #490202;
+  color: #f85149;
+}
+
+.dark .hljs-addition {
+  background: #0f5132;
+  color: #7ee787;
+}
+
+/* ============================================================================ */
+/* Enhanced Code Block Container Styles */
+/* ============================================================================ */
+
+.enhanced-code-block-wrapper {
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .enhanced-code-block-wrapper {
+  background: #1e1e1e;
+  border: 1px solid #3e3e42;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.enhanced-code-block-wrapper:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.dark .enhanced-code-block-wrapper:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================ */
+/* Code Line Effects */
+/* ============================================================================ */
+
+.code-line {
+  transition: background-color 0.15s ease;
+  padding: 0.125rem 0;
+  line-height: 1.5;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.code-line:hover {
+  background-color: rgba(0, 122, 204, 0.1);
+}
+
+.dark .code-line:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================================================ */
+/* Language-Specific Enhancements (VS Code Style) */
+/* ============================================================================ */
+
+/* JavaScript/TypeScript */
+.language-javascript .hljs-function,
+.language-typescript .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-javascript .hljs-function,
+.dark .language-typescript .hljs-function {
+  color: #dcdcaa;
+}
+
+/* Python */
+.language-python .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-python .hljs-function {
+  color: #dcdcaa;
+}
+
+/* Go */
+.language-go .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-go .hljs-function {
+  color: #dcdcaa;
+}
+
+/* Rust */
+.language-rust .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-rust .hljs-function {
+  color: #dcdcaa;
+}
+
+/* Java */
+.language-java .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-java .hljs-function {
+  color: #dcdcaa;
+}
+
+/* C/C++ */
+.language-c .hljs-function,
+.language-cpp .hljs-function {
+  color: #795e26;
+}
+
+.dark .language-c .hljs-function,
+.dark .language-cpp .hljs-function {
+  color: #dcdcaa;
+}
+
+/* ============================================================================ */
+/* Code Block Header and Footer */
+/* ============================================================================ */
+
+.code-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #6e7681;
+}
+
+.dark .code-header {
+  background: #2d2d30;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+}
+
+/* ============================================================================ */
+/* Buttons and Interactive Elements */
+/* ============================================================================ */
+
+.copy-btn,
+.expand-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.copy-btn:hover,
+.expand-btn:hover {
+  background: rgba(0, 122, 204, 0.1);
+  color: #0078d4;
+}
+
+.dark .copy-btn:hover,
+.dark .expand-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Copy button success animation */
+@keyframes copySuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.copy-success {
+  animation: copySuccess 0.3s ease;
+  background: rgba(22, 163, 74, 0.1) !important;
+  color: #16a34a !important;
+}
+
+/* ============================================================================ */
+/* Scrollbar Styling */
+/* ============================================================================ */
+
+.enhanced-code-block-wrapper pre::-webkit-scrollbar,
+.code-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.enhanced-code-block-wrapper pre::-webkit-scrollbar-track,
+.code-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb,
+.code-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb:hover,
+.code-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark .enhanced-code-block-wrapper pre::-webkit-scrollbar-track,
+.dark .code-container::-webkit-scrollbar-track {
+  background: #2d2d30;
+}
+
+.dark .enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb,
+.dark .code-container::-webkit-scrollbar-thumb {
+  background: #424242;
+}
+
+.dark .enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb:hover,
+.dark .code-container::-webkit-scrollbar-thumb:hover {
+  background: #4e4e4e;
+}
+
+/* ============================================================================ */
+/* Language Dropdown Animations */
+/* ============================================================================ */
+
+.enhanced-code-block-wrapper .absolute.w-80 {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================ */
+/* Responsive Design */
+/* ============================================================================ */
+
+@media (max-width: 768px) {
+  .enhanced-code-block-wrapper {
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+  
+  .enhanced-code-block-wrapper .flex.items-center.justify-between {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  
+  .enhanced-code-block-wrapper .text-xs {
+    display: none;
+  }
+  
+  .hljs {
+    font-size: 13px;
+    padding: 0.75rem;
+  }
+}
+
+/* ============================================================================ */
+/* Accessibility and Focus States */
+/* ============================================================================ */
+
+.enhanced-code-block-wrapper button:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.enhanced-code-block-wrapper input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #0078d4;
+}
+
+.dark .enhanced-code-block-wrapper button:focus {
+  outline-color: #007acc;
+}
+
+.dark .enhanced-code-block-wrapper input:focus {
+  box-shadow: 0 0 0 2px #007acc;
+}
+
+/* ============================================================================ */
+/* Print Styles */
+/* ============================================================================ */
+
+@media print {
+  .enhanced-code-block-wrapper {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #000;
+    background: #ffffff !important;
+  }
+  
+  .enhanced-code-block-wrapper button {
+    display: none;
+  }
+  
+  .hljs {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .hljs * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* ============================================================================ */
+/* High Contrast Support */
+/* ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .hljs-comment,
+  .hljs-quote {
+    color: #6a737d;
+  }
+  
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-subst {
+    color: #000080;
+    font-weight: bold;
+  }
+  
+  .hljs-string,
+  .hljs-doctag {
+    color: #800000;
+  }
+  
+  .dark .hljs-comment,
+  .dark .hljs-quote {
+    color: #b0b0b0;
+  }
+  
+  .dark .hljs-keyword,
+  .dark .hljs-selector-tag,
+  .dark .hljs-subst {
+    color: #87ceeb;
+    font-weight: bold;
+  }
+  
+  .dark .hljs-string,
+  .dark .hljs-doctag {
+    color: #ffa0a0;
+  }
+}
+
+/* ============================================================================ */
+/* Reduced Motion Support */
+/* ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-code-block-wrapper,
+  .code-line,
+  .copy-btn,
+  .expand-btn {
+    transition: none;
+  }
+  
+  .copy-success {
+    animation: none;
+  }
+  
+  @keyframes slideDown {
+    from, to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { postsApi } from '../api/posts.api';
+import { usePostsStore } from '../store/usePostsStore';
  
 
 /**

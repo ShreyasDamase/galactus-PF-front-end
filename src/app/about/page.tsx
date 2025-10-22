@@ -171,7 +171,7 @@ id: 'intro',
                 fitWidth
                 data-border="rounded"
               >
-                {profile?.social.map(
+                {profile?.social &&profile?.social.map(
                   (item) =>
                     item.link && (
                       <React.Fragment key={item.name}>

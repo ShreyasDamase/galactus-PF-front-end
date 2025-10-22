@@ -1,0 +1,280 @@
+/* ============================================================================ */
+/* Additional BlogPreview Consistency Styles */
+/* ============================================================================ */
+
+/* Ensure preview content matches editor exactly */
+.tiptap-preview-content {
+  /* Inherit all the TipTap editor styles */
+  @apply text-gray-900;
+}
+
+.dark .tiptap-preview-content {
+  @apply text-gray-100;
+}
+
+/* Make sure all TipTap editor styles apply to preview content */
+.tiptap-preview-content h1 {
+  @apply text-3xl font-bold mb-6 text-gray-900;
+}
+
+.tiptap-preview-content h2 {
+  @apply text-2xl font-semibold mb-4 text-gray-800;
+}
+
+.tiptap-preview-content h3 {
+  @apply text-xl font-semibold mb-3 text-gray-800;
+}
+
+.tiptap-preview-content h4 {
+  @apply text-lg font-medium mb-3 text-gray-700;
+}
+
+.tiptap-preview-content h5 {
+  @apply text-base font-medium mb-2 text-gray-700;
+}
+
+.tiptap-preview-content h6 {
+  @apply text-sm font-medium mb-2 text-gray-600;
+}
+
+.tiptap-preview-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+.tiptap-preview-content ul, 
+.tiptap-preview-content ol {
+  @apply mb-4 pl-6;
+}
+
+.tiptap-preview-content li {
+  @apply mb-1;
+}
+
+.tiptap-preview-content ul li {
+  @apply list-disc;
+}
+
+.tiptap-preview-content ol li {
+  @apply list-decimal;
+}
+
+.tiptap-preview-content ul[data-type="taskList"] {
+  @apply list-none pl-0;
+}
+
+.tiptap-preview-content li[data-type="taskItem"] {
+  @apply flex items-start gap-2 mb-2;
+}
+
+.tiptap-preview-content li[data-type="taskItem"] > label {
+  @apply flex-shrink-0 mt-1;
+}
+
+.tiptap-preview-content li[data-type="taskItem"] > div {
+  @apply flex-grow;
+}
+
+.tiptap-preview-content blockquote {
+  @apply border-l-4 border-gray-300 pl-6 py-2 my-4 italic text-gray-700 bg-gray-50;
+}
+
+.tiptap-preview-content code {
+  @apply bg-gray-100 px-2 py-1 rounded text-sm text-red-600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.tiptap-preview-content pre {
+  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.tiptap-preview-content pre code {
+  @apply bg-transparent px-0 py-0 text-inherit;
+}
+
+.tiptap-preview-content table {
+  @apply border-collapse border border-gray-300 w-full my-4;
+}
+
+.tiptap-preview-content th,
+.tiptap-preview-content td {
+  @apply border border-gray-300 px-3 py-2 text-left min-w-24;
+}
+
+.tiptap-preview-content th {
+  @apply bg-gray-100 font-semibold;
+}
+
+.tiptap-preview-content img {
+  @apply max-w-full h-auto rounded-lg shadow-md my-4;
+}
+
+.tiptap-preview-content a {
+  @apply text-blue-600 hover:text-blue-800 underline transition-colors;
+}
+
+.tiptap-preview-content hr {
+  @apply border-0 border-t-2 border-gray-200 my-6;
+}
+
+.tiptap-preview-content mark {
+  @apply px-1 py-0.5 rounded-sm;
+  background-color: #fef08a;
+}
+
+.tiptap-preview-content .math-renderer {
+  @apply my-2;
+}
+
+.tiptap-preview-content .math-renderer.math-display {
+  @apply text-center;
+}
+
+.tiptap-preview-content details {
+  @apply border border-gray-200 rounded-lg p-4 my-4;
+}
+
+.tiptap-preview-content summary {
+  @apply font-semibold cursor-pointer hover:text-blue-600 mb-2 last:mb-0;
+}
+
+.tiptap-preview-content details[open] summary {
+  @apply mb-4;
+}
+
+.tiptap-preview-content sub {
+  @apply text-xs align-sub;
+}
+
+.tiptap-preview-content sup {
+  @apply text-xs align-super;
+}
+
+.tiptap-preview-content .has-text-align-left {
+  @apply text-left;
+}
+
+.tiptap-preview-content .has-text-align-center {
+  @apply text-center;
+}
+
+.tiptap-preview-content .has-text-align-right {
+  @apply text-right;
+}
+
+.tiptap-preview-content .has-text-align-justify {
+  @apply text-justify;
+}
+
+/* Video styles */
+.tiptap-preview-content .youtube-video-wrapper,
+.tiptap-preview-content .vimeo-video-wrapper {
+  @apply relative w-full my-4;
+  aspect-ratio: 16 / 9;
+}
+
+.tiptap-preview-content .youtube-video-wrapper iframe,
+.tiptap-preview-content .vimeo-video-wrapper iframe {
+  @apply absolute top-0 left-0 w-full h-full rounded-lg shadow-lg;
+}
+
+.tiptap-preview-content video {
+  @apply w-full max-w-full h-auto rounded-lg shadow-md my-4;
+}
+
+/* Enhanced code blocks in preview */
+.tiptap-preview-content .enhanced-code-block-wrapper {
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+/* Dark mode styles for preview */
+.dark .tiptap-preview-content h1,
+.dark .tiptap-preview-content h2,
+.dark .tiptap-preview-content h3 {
+  @apply text-gray-100;
+}
+
+.dark .tiptap-preview-content h4,
+.dark .tiptap-preview-content h5,
+.dark .tiptap-preview-content h6 {
+  @apply text-gray-200;
+}
+
+.dark .tiptap-preview-content p {
+  @apply text-gray-300;
+}
+
+.dark .tiptap-preview-content blockquote {
+  @apply border-gray-600 bg-gray-700 text-gray-300;
+}
+
+.dark .tiptap-preview-content code {
+  @apply bg-gray-700 text-blue-400;
+}
+
+.dark .tiptap-preview-content pre {
+  @apply bg-gray-700 text-gray-100;
+}
+
+.dark .tiptap-preview-content th {
+  @apply bg-gray-700 text-gray-100;
+}
+
+.dark .tiptap-preview-content th,
+.dark .tiptap-preview-content td {
+  @apply border-gray-600;
+}
+
+.dark .tiptap-preview-content table {
+  @apply border-gray-600;
+}
+
+.dark .tiptap-preview-content details {
+  @apply border-gray-600 bg-gray-800;
+}
+
+.dark .tiptap-preview-content hr {
+  @apply border-gray-600;
+}
+
+.dark .tiptap-preview-content .youtube-video-wrapper,
+.dark .tiptap-preview-content .vimeo-video-wrapper {
+  @apply shadow-xl;
+}
+
+.dark .tiptap-preview-content video {
+  @apply shadow-xl border border-gray-600;
+}
+
+.dark .tiptap-preview-content .enhanced-code-block-wrapper {
+  background: #0f1419;
+  border: 1px solid #30363d;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments for preview */
+@media (max-width: 768px) {
+  .tiptap-preview-content .youtube-video-wrapper,
+  .tiptap-preview-content .vimeo-video-wrapper {
+    @apply mx-0;
+  }
+  
+  .tiptap-preview-content video {
+    @apply w-full;
+  }
+  
+  .tiptap-preview-content table {
+    @apply text-sm;
+  }
+  
+  .tiptap-preview-content th,
+  .tiptap-preview-content td {
+    @apply px-2 py-1 min-w-20;
+  }
+}

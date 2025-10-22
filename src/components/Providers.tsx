@@ -23,8 +23,8 @@ import { QueryProvider } from "@/app/providers/QueryProvider";
  
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <LayoutProvider>
       <QueryProvider>
+    <LayoutProvider>
       <ThemeProvider
         brand={style.brand as Schemes}
         accent={style.accent as Schemes}
@@ -54,7 +54,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           </ToastProvider>
         </DataThemeProvider>
       </ThemeProvider>
-      </QueryProvider>
     </LayoutProvider>
+      </QueryProvider>
   );
 }
