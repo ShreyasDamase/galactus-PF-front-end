@@ -6,10 +6,14 @@ import styles from "./about.module.scss";
 
 interface TableOfContentsProps {
   structure: {
-    title: string;
+    title: string |undefined;
     display: boolean;
-    items: string[];
+    items: string[] |  never[]; 
+ 
     id: string;
+
+
+
   }[];
   about: {
     tableOfContent: {

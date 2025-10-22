@@ -123,3 +123,46 @@ export interface UserAnalytics {
   resumeDownloads: number;
   lastUpdated: string;
 }
+
+
+// ============================================
+// Blog store types
+// ============================================
+
+export interface BlogAuthor {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
+}
+
+export interface BlogPost {
+  _id: string;
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  description: string;
+  coverImage: string;
+  tags: string[];
+  category: string;
+  readingTime: number;
+  publishedAt: string;
+  views: number;
+  likes: number;
+  author: BlogAuthor;
+  wordCount?: number;
+}
+
+export interface PaginationMeta {
+  current: number;
+  total: number;
+  count: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface PostsListResponse {
+  posts: BlogPost[];
+  pagination: PaginationMeta;
+}
