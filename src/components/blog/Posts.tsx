@@ -9,20 +9,23 @@ interface PostsProps {
 }
 
 export function Posts({
-  posts,
+  posts = [],
   columns = "1",
   thumbnail = false,
   direction,
 }: PostsProps) {
+  if (!posts?.length) return null; // clean early exit
+
   return (
-    <>
-      {posts.length > 0 && (
-        <Grid columns={columns} s={{ columns: 1 }} fillWidth marginBottom="40" gap="16">
-          {posts.map((post) => (
-            <Post key={post._id} post={post} thumbnail={thumbnail} direction={direction} />
-          ))}
-        </Grid>
-      )}
-    </>
+    <Grid columns={columns} s={{ columns: 1 }} fillWidth marginBottom="40" gap="16">
+      {posts.map((post) => (
+        <Post
+          key={post._id}
+          post={post}
+          thumbnail={thumbnail}
+          direction={direction}
+        />
+      ))}
+    </Grid>
   );
 }
