@@ -29,6 +29,7 @@
 .tiptap-preview-content strong em {
   color: inherit !important;
 }
+
 /* Ensure preview content matches editor exactly */
 .tiptap-preview-content {
   /* Inherit all the TipTap editor styles */
@@ -110,9 +111,9 @@
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
+/* Keep your preferred code block styling */
 .tiptap-preview-content pre {
-  @apply  bg-stone-100 text-sky-700 p-4 rounded-lg overflow-x-auto my-4;
-
+  @apply bg-stone-100 text-sky-700 p-4 rounded-lg overflow-x-auto my-4;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
@@ -219,7 +220,6 @@
   transition: all 0.3s ease;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  
 }
 
 /* Dark mode styles for preview */
@@ -285,7 +285,6 @@
   background: #0f1419;
   border: 1px solid #30363d;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
- 
 }
 
 /* Responsive adjustments for preview */
@@ -307,7 +306,4 @@
   .tiptap-preview-content td {
     @apply px-2 py-1 min-w-20;
   }
-
-
-  
 }

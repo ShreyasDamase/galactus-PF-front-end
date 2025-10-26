@@ -431,12 +431,12 @@
 
 .dark .enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb,
 .dark .code-container::-webkit-scrollbar-thumb {
-  background: #424242;
+  background: #d2d1d1;
 }
 
 .dark .enhanced-code-block-wrapper pre::-webkit-scrollbar-thumb:hover,
 .dark .code-container::-webkit-scrollbar-thumb:hover {
-  background: #4e4e4e;
+  background: #d8c597;
 }
 
 /* ============================================================================ */

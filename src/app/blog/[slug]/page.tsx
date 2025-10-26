@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import hljs from "highlight.js";
 import { useTheme } from '@once-ui-system/core';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Import styles
 import "@/styles/blog-preview.css";
@@ -535,57 +536,292 @@ useEffect(() => {
       </div>
 
       {/* Floating Action Buttons */}
-      {showFloatingActions && (
-        <div className="fixed left-4 md:left-6 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block">
-          <div className="flex flex-col gap-3 p-3 rounded-2xl shadow-xl backdrop-blur-md bg-white border border-gray-200 hover:shadow-2xl transition-all duration-300">
-            <button
-              onClick={handleLike}
-              className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 ${
-                isLiked 
-                  ? "text-red-500 bg-red-500/10 shadow-sm" 
-                  : "text-gray-500 hover:text-red-500 hover:bg-red-500/5"
-              }`}
-              title="Like this post"
-              aria-label={isLiked ? "Unlike post" : "Like post"}
-            >
-              <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
-            </button>
+ 
+ 
+{showFloatingActions && (
+  <AnimatePresence>
+    <motion.div 
+      className="fixed left-4 md:left-6 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block"
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      <motion.div 
+        className="flex flex-col gap-3 p-3 rounded-[20px] relative overflow-hidden"
+        style={{
+          background: theme.resolvedTheme === 'dark' 
+            ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.4), rgba(20, 20, 20, 0.3))'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
+          backdropFilter: 'blur(40px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+          border: theme.resolvedTheme === 'dark'
+            ? '1.5px solid rgba(255, 255, 255, 0.1)'
+            : '1.5px solid rgba(255, 255, 255, 0.18)',
+          boxShadow: theme.resolvedTheme === 'dark'
+            ? `0 8px 32px 0 rgba(0, 0, 0, 0.4),
+               inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
+               inset 0 -1px 1px 0 rgba(255, 255, 255, 0.05)`
+            : `0 8px 32px 0 rgba(0, 0, 0, 0.08),
+               inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+               inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1)`,
+        }}
+        whileHover={{
+          background: theme.resolvedTheme === 'dark'
+            ? 'linear-gradient(135deg, rgba(40, 40, 40, 0.5), rgba(30, 30, 30, 0.4))'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))',
+          border: theme.resolvedTheme === 'dark'
+            ? '1.5px solid rgba(255, 255, 255, 0.15)'
+            : '1.5px solid rgba(255, 255, 255, 0.25)',
+          boxShadow: theme.resolvedTheme === 'dark'
+            ? `0 12px 48px 0 rgba(0, 0, 0, 0.5),
+               inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+               inset 0 -1px 1px 0 rgba(255, 255, 255, 0.08)`
+            : `0 12px 48px 0 rgba(0, 0, 0, 0.12),
+               inset 0 1px 1px 0 rgba(255, 255, 255, 1),
+               inset 0 -1px 1px 0 rgba(255, 255, 255, 0.2)`,
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Glossy overlay */}
+        <div 
+          className="absolute inset-0 rounded-[20px] pointer-events-none"
+          style={{
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 100%)'
+              : 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.02) 100%)',
+          }}
+        />
 
-            <div className="w-full h-px bg-gray-200" />
+        {/* Like Button */}
+        <motion.button
+          onClick={handleLike}
+          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+            isLiked 
+              ? "text-red-500" 
+              : theme.resolvedTheme === 'dark' ? "text-red-600" : "text-red-600"
+          }`}
+          style={{
+            background: isLiked 
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1))'
+                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(166, 10, 10, 0.05), rgba(255, 255, 255, 0.02))'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))'),
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: isLiked 
+              ? '1px solid rgba(239, 68, 68, 0.25)' 
+              : (theme.resolvedTheme === 'dark'
+                  ? '1px solid rgba(242, 2, 2, 0.08)'
+                  : '1px solid rgba(255, 255, 255, 0.15)'),
+            boxShadow: isLiked
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(239, 68, 68, 0.2)'
+                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(239, 68, 68, 0.15)')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
+                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)'),
+          }}
+          whileHover={{
+            scale: 1.08,
+            background: isLiked 
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15))'
+                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.12))')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))'
+                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06))'),
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(239, 68, 68, 0.3)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(239, 68, 68, 0.2)',
+            color: 'rgb(239, 68, 68)',
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          title="Like this post"
+          aria-label={isLiked ? "Unlike post" : "Like post"}
+        >
+          <div 
+            className="absolute inset-0 rounded-[14px] pointer-events-none"
+            style={{
+              background: theme.resolvedTheme === 'dark'
+                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
+                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
+            }}
+          />
+          <Heart className={`w-5 h-5 relative z-10 ${isLiked ? "fill-current" : ""}`} />
+        </motion.button>
 
-            <button
-              onClick={scrollToComments}
-              className="p-2.5 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 text-gray-500 hover:text-blue-500 hover:bg-blue-500/5"
-              title="Go to comments"
-              aria-label="Scroll to comments"
-            >
-              <MessageCircle className="w-5 h-5" />
-            </button>
+        {/* Divider */}
+        <div 
+          className="w-full h-px relative"
+          style={{
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent)'
+              : 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent)',
+          }}
+        />
 
-            <button
-              onClick={handleBookmark}
-              className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 ${
-                isBookmarked 
-                  ? "text-yellow-500 bg-yellow-500/10 shadow-sm" 
-                  : "text-gray-500 hover:text-yellow-500 hover:bg-yellow-500/5"
-              }`}
-              title={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
-              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
-            >
-              <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
-            </button>
+        {/* Comment Button */}
+        <motion.button
+          onClick={scrollToComments}
+          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+            theme.resolvedTheme === 'dark' ? "text-gray-300" : "text-gray-700"
+          }`}
+          style={{
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: theme.resolvedTheme === 'dark'
+              ? '1px solid rgba(255, 255, 255, 0.08)'
+              : '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)',
+          }}
+          whileHover={{
+            scale: 1.08,
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08))'
+              : 'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.06))',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(59, 130, 246, 0.3)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(59, 130, 246, 0.2)',
+            color: 'rgb(59, 130, 246)',
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          title="Go to comments"
+          aria-label="Scroll to comments"
+        >
+          <div 
+            className="absolute inset-0 rounded-[14px] pointer-events-none"
+            style={{
+              background: theme.resolvedTheme === 'dark'
+                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
+                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
+            }}
+          />
+          <MessageCircle className="w-5 h-5 relative z-10" />
+        </motion.button>
 
-            <button
-              onClick={handleShare}
-              className="p-2.5 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 text-gray-500 hover:text-green-500 hover:bg-green-500/5"
-              title="Share this post"
-              aria-label="Share post"
-            >
-              <Share2 className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      )}
+        {/* Bookmark Button */}
+        <motion.button
+          onClick={handleBookmark}
+          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+            isBookmarked 
+              ? "text-yellow-500" 
+              : theme.resolvedTheme === 'dark' ? "text-amber-600" : "text-amber-600"
+          }`}
+          style={{
+            background: isBookmarked 
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.1))'
+                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))'),
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: isBookmarked 
+              ? '1px solid rgba(234, 179, 8, 0.25)' 
+              : (theme.resolvedTheme === 'dark'
+                  ? '1px solid rgba(255, 255, 255, 0.08)'
+                  : '1px solid rgba(255, 255, 255, 0.15)'),
+            boxShadow: isBookmarked
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(234, 179, 8, 0.2)'
+                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(234, 179, 8, 0.15)')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
+                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)'),
+          }}
+          whileHover={{
+            scale: 1.08,
+            background: isBookmarked 
+              ? (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(234, 179, 8, 0.15))'
+                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.12))')
+              : (theme.resolvedTheme === 'dark'
+                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))'
+                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(234, 179, 8, 0.06))'),
+            border: '1px solid rgba(234, 179, 8, 0.3)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(234, 179, 8, 0.3)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(234, 179, 8, 0.2)',
+            color: 'rgb(234, 179, 8)',
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          title={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
+          aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
+        >
+          <div 
+            className="absolute inset-0 rounded-[14px] pointer-events-none"
+            style={{
+              background: theme.resolvedTheme === 'dark'
+                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
+                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
+            }}
+          />
+          <Bookmark className={`w-5 h-5 relative z-10 ${isBookmarked ? "fill-current" : ""}`} />
+        </motion.button>
+
+        {/* Share Button */}
+        <motion.button
+          onClick={handleShare}
+          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+            theme.resolvedTheme === 'dark' ? "text-gray-300" : "text-gray-700"
+          }`}
+          style={{
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
+              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            border: theme.resolvedTheme === 'dark'
+              ? '1px solid rgba(255, 255, 255, 0.08)'
+              : '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)',
+          }}
+          whileHover={{
+            scale: 1.08,
+            background: theme.resolvedTheme === 'dark'
+              ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08))'
+              : 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06))',
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+            boxShadow: theme.resolvedTheme === 'dark'
+              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(34, 197, 94, 0.3)'
+              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(34, 197, 94, 0.2)',
+            color: 'rgb(34, 197, 94)',
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          title="Share this post"
+          aria-label="Share post"
+        >
+          <div 
+            className="absolute inset-0 rounded-[14px] pointer-events-none"
+            style={{
+              background: theme.resolvedTheme === 'dark'
+                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
+                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
+            }}
+          />
+          <Share2 className="w-5 h-5 relative z-10" />
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
+)}
 
       {/* Scroll to Top Button */}
       {showFloatingActions && (
