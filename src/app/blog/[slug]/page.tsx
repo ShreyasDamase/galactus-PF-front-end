@@ -33,6 +33,7 @@ export default function BlogPost() {
   const [showFloatingActions, setShowFloatingActions] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const [renderedContent, setRenderedContent] = useState<string>("");
+  const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
 
   // Initialize like count from post data
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function BlogPost() {
     if (!post?.content) return;
 
     console.log("🚀 Enhancing code blocks for:", slug);
+    console.log("📦 Current expandedBlocks:", Array.from(expandedBlocks));
 
     // Configure highlight.js
     hljs.configure({
@@ -218,10 +220,10 @@ export default function BlogPost() {
       const rightSide = document.createElement("div");
       rightSide.style.cssText = "display: flex; align-items: center; gap: 0.5rem;";
 
-      // Copy button - ADD CLASS FOR EVENT LISTENER
+      // Copy button
       const copyBtn = document.createElement("button");
-      copyBtn.className = "copy-code-btn"; // ✅ THIS IS THE KEY
-      copyBtn.setAttribute("data-block-index", index.toString()); // ✅ Store index instead
+      copyBtn.className = "copy-code-btn";
+      copyBtn.setAttribute("data-block-index", index.toString());
       copyBtn.style.cssText = `
         display: flex;
         align-items: center;
@@ -249,7 +251,7 @@ export default function BlogPost() {
       // Expand button for long code
       if (shouldScroll) {
         const expandBtn = document.createElement("button");
-        expandBtn.className = "expand-code-btn"; // ✅ ADD CLASS
+        expandBtn.className = "expand-code-btn";
         expandBtn.style.cssText = `
           display: flex;
           align-items: center;
@@ -266,7 +268,11 @@ export default function BlogPost() {
         `;
         
         expandBtn.setAttribute("data-index", index.toString());
-        expandBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>Expand</span>';
+        
+        // ✅ Set initial button text based on expanded state
+        const isExpanded = expandedBlocks.has(index);
+        const buttonText = isExpanded ? 'Collapse' : 'Expand';
+        expandBtn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>${buttonText}</span>`;
         
         rightSide.appendChild(expandBtn);
       }
@@ -274,11 +280,18 @@ export default function BlogPost() {
       header.appendChild(leftSide);
       header.appendChild(rightSide);
 
-      // Code container
+      // Code container - Apply expanded state from React state
       const codeContainer = document.createElement("div");
       codeContainer.className = "code-container";
+      
+      // ✅ Check if this block is expanded in state
+      const isExpanded = expandedBlocks.has(index);
+      console.log(`📦 Block ${index} isExpanded:`, isExpanded);
+      
       codeContainer.style.cssText = shouldScroll 
-        ? "max-height: 500px; overflow-y: auto; position: relative;"
+        ? (isExpanded 
+            ? "max-height: none; overflow-y: visible; position: relative;"
+            : "max-height: 500px; overflow-y: auto; position: relative;")
         : "position: relative;";
 
       const styledBlock = block.cloneNode(true) as HTMLElement;
@@ -295,9 +308,9 @@ export default function BlogPost() {
 
     // Save enhanced HTML to state
     setRenderedContent(temp.innerHTML);
-  }, [post?.content, slug]);
+  }, [post?.content, slug, expandedBlocks]); // ✅ Re-run when expandedBlocks changes
 
-  // ✅ NEW: Attach event listeners after content renders - USING EVENT DELEGATION
+  // ✅ Attach event listeners using EVENT DELEGATION
   useEffect(() => {
     const container = contentRef.current;
     
@@ -310,9 +323,6 @@ export default function BlogPost() {
     }
 
     console.log("🔗 Attaching event listeners using EVENT DELEGATION");
-    
-    // === EVENT DELEGATION APPROACH ===
-    // Instead of attaching listeners to each button, attach ONE listener to the container
     
     const handleContainerClick = async (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -339,9 +349,7 @@ export default function BlogPost() {
           await navigator.clipboard.writeText(codeText);
           console.log("✅ Successfully copied to clipboard!");
           
-          // Simple visual feedback without manipulating SVG
           const originalBg = copyBtn.style.background;
-          const originalText = copyBtn.textContent;
           
           copyBtn.style.background = "#d1fae5";
           copyBtn.style.color = "#10b981";
@@ -366,22 +374,26 @@ export default function BlogPost() {
         e.stopPropagation();
         console.log("🖱️ EXPAND BUTTON CLICKED via delegation!");
         
-        const codeContainer = expandBtn.closest('.code-block-enhanced')?.querySelector('.code-container') as HTMLElement;
-        if (!codeContainer) {
-          console.error("❌ Code container not found");
+        const blockIndexStr = expandBtn.getAttribute('data-index');
+        if (!blockIndexStr) {
+          console.error("❌ Block index not found");
           return;
         }
-
-        const isExpanded = codeContainer.style.maxHeight === "none";
-        console.log("📏 Is expanded:", isExpanded);
         
-        codeContainer.style.maxHeight = isExpanded ? "500px" : "none";
-        codeContainer.style.overflowY = isExpanded ? "auto" : "visible";
+        const blockIndex = parseInt(blockIndexStr, 10);
+        console.log("📏 Toggling block index:", blockIndex);
         
-        const span = expandBtn.querySelector('span');
-        if (span) {
-          span.textContent = isExpanded ? 'Expand' : 'Collapse';
-        }
+        setExpandedBlocks(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(blockIndex)) {
+            newSet.delete(blockIndex);
+            console.log("📏 Collapsing block:", blockIndex);
+          } else {
+            newSet.add(blockIndex);
+            console.log("📏 Expanding block:", blockIndex);
+          }
+          return newSet;
+        });
       }
     };
     
@@ -408,12 +420,10 @@ export default function BlogPost() {
     
     console.log("✅ Event delegation listeners attached to container");
     
-    // Count buttons for logging
     const copyButtons = container.querySelectorAll('.copy-code-btn');
     const expandButtons = container.querySelectorAll('.expand-code-btn');
     console.log(`✅ Monitoring ${copyButtons.length} copy buttons and ${expandButtons.length} expand buttons via delegation`);
 
-    // Cleanup function
     return () => {
       container.removeEventListener("click", handleContainerClick as EventListener);
       container.removeEventListener("mouseover", handleContainerMouseOver as EventListener);
@@ -422,7 +432,7 @@ export default function BlogPost() {
     };
   }, [renderedContent]);
 
-  // Rest of your handlers...
+  // Rest of your handlers
   const handleLike = useCallback(() => {
     setIsLiked(!isLiked);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
