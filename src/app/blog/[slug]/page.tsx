@@ -159,13 +159,19 @@ wrapper.style.cssText = `
       const header = document.createElement("div");
       header.className = "code-block-header";
       header.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        background: #EEEEEE;
-        border-bottom: 1px solid #e5e7eb;
-      `;
+      display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: ${theme.resolvedTheme === 'dark' ? '#232323ff' : '#f3f4f6'};
+  border-bottom: 1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'};
+   ${theme.resolvedTheme === 'light' ? `
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  ` : ''}
+  overflow: hidden; 
+  
+        `;
 
       // Left side
       const leftSide = document.createElement("div");
@@ -725,11 +731,13 @@ useEffect(() => {
         </header>
 
         {/* Post Content with TipTap styling */}
-        <article
-          ref={contentRef}
-          className="tiptap-preview-content prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: renderedContent }}
-        />
+  <article
+  ref={contentRef}
+  className="tiptap-preview-content prose prose-lg   max-w-none "
+  dangerouslySetInnerHTML={{ __html: renderedContent }}
+/>
+
+
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
