@@ -20,6 +20,7 @@ import "@/styles/blog-preview.css";
 import "@/styles/syntax-theme.css";
 import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
+import CommentsSheet from "@/components/blog/CommentsSheet";
 
 export default function BlogPost() {
   const params = useParams();
@@ -36,6 +37,16 @@ export default function BlogPost() {
   const [readingProgress, setReadingProgress] = useState(0);
   const [renderedContent, setRenderedContent] = useState<string>("");
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
+const openComments = useCallback(() => {
+  setIsCommentsOpen(true);
+}, []);
+
+const closeComments = useCallback(() => {
+  setIsCommentsOpen(false);
+}, []);
+
 const theme = useTheme();
 console.log("current theme",theme.resolvedTheme); 
   // Initialize like count from post data
@@ -667,7 +678,7 @@ useEffect(() => {
 
         {/* Comment Button */}
         <motion.button
-          onClick={scrollToComments}
+          onClick={openComments}
           className={`p-2.5 rounded-[14px] relative overflow-hidden ${
             theme.resolvedTheme === 'dark' ? "text-gray-300" : "text-gray-700"
           }`}
@@ -994,6 +1005,11 @@ useEffect(() => {
           </Column>
         )}
       </Column>
-    </>
+      <CommentsSheet
+  show={isCommentsOpen}
+  onClose={closeComments}
+ />
+
+     </>
   );
 }
