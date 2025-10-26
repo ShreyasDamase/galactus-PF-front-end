@@ -733,7 +733,7 @@ useEffect(() => {
         {/* Post Content with TipTap styling */}
   <article
   ref={contentRef}
-  className="tiptap-preview-content prose prose-lg   max-w-none "
+  className="tiptap-preview-content prose prose-lg   max-w-none"
   dangerouslySetInnerHTML={{ __html: renderedContent }}
 />
 

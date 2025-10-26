@@ -2,6 +2,33 @@
 /* Additional BlogPreview Consistency Styles */
 /* ============================================================================ */
 
+/* Force strong tags to be darker in light mode and white in dark mode */
+.tiptap-preview-content strong {
+  color: #111827 !important; /* gray-900 for light mode */
+  font-weight: 700;
+}
+
+.dark .tiptap-preview-content strong {
+  color: #ffffff !important; /* white for dark mode */
+  font-weight: 700;
+}
+
+/* Also handle bold text that might use <b> tags */
+.tiptap-preview-content b {
+  color: #111827 !important;
+  font-weight: 700;
+}
+
+.dark .tiptap-preview-content b {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+/* Override any prose styles for emphasis */
+.tiptap-preview-content em strong,
+.tiptap-preview-content strong em {
+  color: inherit !important;
+}
 /* Ensure preview content matches editor exactly */
 .tiptap-preview-content {
   /* Inherit all the TipTap editor styles */
