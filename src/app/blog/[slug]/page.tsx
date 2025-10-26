@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useParams } from "next/navigation";
 import { usePostDetail } from "@/lib/hooks/usePosts";
@@ -62,7 +62,7 @@ export default function BlogPost() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ✅ THE WORKING SOLUTION: Enhance in memory, then set to state
+  // ✅ Enhance code blocks in memory
   useEffect(() => {
     if (!post?.content) return;
 
@@ -218,8 +218,10 @@ export default function BlogPost() {
       const rightSide = document.createElement("div");
       rightSide.style.cssText = "display: flex; align-items: center; gap: 0.5rem;";
 
-      // Copy button
+      // Copy button - ADD CLASS FOR EVENT LISTENER
       const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-code-btn"; // ✅ THIS IS THE KEY
+      copyBtn.setAttribute("data-block-index", index.toString()); // ✅ Store index instead
       copyBtn.style.cssText = `
         display: flex;
         align-items: center;
@@ -242,38 +244,12 @@ export default function BlogPost() {
         <span>Copy</span>
       `;
 
-      copyBtn.onmouseover = () => copyBtn.style.background = "#f3f4f6";
-      copyBtn.onmouseout = () => copyBtn.style.background = "transparent";
-      
-      copyBtn.onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(codeText);
-          copyBtn.innerHTML = `
-            <svg width="16" height="16" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            <span style="color: #10b981">Copied!</span>
-          `;
-          copyBtn.style.background = "#d1fae5";
-          setTimeout(() => {
-            copyBtn.innerHTML = `
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-              </svg>
-              <span>Copy</span>
-            `;
-            copyBtn.style.background = "transparent";
-          }, 2000);
-        } catch (err) {
-          console.error("Copy failed:", err);
-        }
-      };
-
       rightSide.appendChild(copyBtn);
 
       // Expand button for long code
       if (shouldScroll) {
         const expandBtn = document.createElement("button");
+        expandBtn.className = "expand-code-btn"; // ✅ ADD CLASS
         expandBtn.style.cssText = `
           display: flex;
           align-items: center;
@@ -291,22 +267,6 @@ export default function BlogPost() {
         
         expandBtn.setAttribute("data-index", index.toString());
         expandBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>Expand</span>';
-        
-        expandBtn.onmouseover = () => expandBtn.style.background = "#f3f4f6";
-        expandBtn.onmouseout = () => expandBtn.style.background = "transparent";
-        
-        // Note: Expand functionality will work after render
-        expandBtn.onclick = function() {
-          const container = this.closest('.code-block-enhanced')?.querySelector('.code-container') as HTMLElement;
-          if (container) {
-            const isExpanded = container.style.maxHeight === "none";
-            container.style.maxHeight = isExpanded ? "500px" : "none";
-            container.style.overflowY = isExpanded ? "auto" : "visible";
-            this.innerHTML = isExpanded 
-              ? '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>Expand</span>'
-              : '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg><span>Collapse</span>';
-          }
-        };
         
         rightSide.appendChild(expandBtn);
       }
@@ -336,6 +296,131 @@ export default function BlogPost() {
     // Save enhanced HTML to state
     setRenderedContent(temp.innerHTML);
   }, [post?.content, slug]);
+
+  // ✅ NEW: Attach event listeners after content renders - USING EVENT DELEGATION
+  useEffect(() => {
+    const container = contentRef.current;
+    
+    console.log("🔗 useEffect triggered - renderedContent length:", renderedContent.length);
+    console.log("🔗 contentRef.current exists:", !!container);
+    
+    if (!container || !renderedContent) {
+      console.warn("⚠️ Skipping event attachment - container or content missing");
+      return;
+    }
+
+    console.log("🔗 Attaching event listeners using EVENT DELEGATION");
+    
+    // === EVENT DELEGATION APPROACH ===
+    // Instead of attaching listeners to each button, attach ONE listener to the container
+    
+    const handleContainerClick = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      
+      // Check if click is on copy button or its children
+      const copyBtn = target.closest('.copy-code-btn') as HTMLButtonElement;
+      if (copyBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🖱️ COPY BUTTON CLICKED via delegation!");
+        
+        const codeBlock = copyBtn.closest('.code-block-enhanced');
+        const codeElement = codeBlock?.querySelector('code');
+        const codeText = codeElement?.textContent || "";
+        
+        console.log("📝 Code text length:", codeText.length);
+        
+        if (!codeText) {
+          console.error("❌ No code found to copy");
+          return;
+        }
+        
+        try {
+          await navigator.clipboard.writeText(codeText);
+          console.log("✅ Successfully copied to clipboard!");
+          
+          // Simple visual feedback without manipulating SVG
+          const originalBg = copyBtn.style.background;
+          const originalText = copyBtn.textContent;
+          
+          copyBtn.style.background = "#d1fae5";
+          copyBtn.style.color = "#10b981";
+          const span = copyBtn.querySelector('span');
+          if (span) span.textContent = 'Copied!';
+          
+          setTimeout(() => {
+            copyBtn.style.background = originalBg;
+            copyBtn.style.color = "";
+            if (span) span.textContent = 'Copy';
+          }, 2000);
+        } catch (err) {
+          console.error("❌ Copy failed:", err);
+        }
+        return;
+      }
+      
+      // Check if click is on expand button or its children
+      const expandBtn = target.closest('.expand-code-btn') as HTMLButtonElement;
+      if (expandBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🖱️ EXPAND BUTTON CLICKED via delegation!");
+        
+        const codeContainer = expandBtn.closest('.code-block-enhanced')?.querySelector('.code-container') as HTMLElement;
+        if (!codeContainer) {
+          console.error("❌ Code container not found");
+          return;
+        }
+
+        const isExpanded = codeContainer.style.maxHeight === "none";
+        console.log("📏 Is expanded:", isExpanded);
+        
+        codeContainer.style.maxHeight = isExpanded ? "500px" : "none";
+        codeContainer.style.overflowY = isExpanded ? "auto" : "visible";
+        
+        const span = expandBtn.querySelector('span');
+        if (span) {
+          span.textContent = isExpanded ? 'Expand' : 'Collapse';
+        }
+      }
+    };
+    
+    const handleContainerMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes('Copied!')) {
+        btn.style.background = "#f3f4f6";
+      }
+    };
+    
+    const handleContainerMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes('Copied!')) {
+        btn.style.background = "transparent";
+      }
+    };
+
+    // Attach single listeners to container
+    container.addEventListener("click", handleContainerClick as EventListener);
+    container.addEventListener("mouseover", handleContainerMouseOver as EventListener);
+    container.addEventListener("mouseout", handleContainerMouseOut as EventListener);
+    
+    console.log("✅ Event delegation listeners attached to container");
+    
+    // Count buttons for logging
+    const copyButtons = container.querySelectorAll('.copy-code-btn');
+    const expandButtons = container.querySelectorAll('.expand-code-btn');
+    console.log(`✅ Monitoring ${copyButtons.length} copy buttons and ${expandButtons.length} expand buttons via delegation`);
+
+    // Cleanup function
+    return () => {
+      container.removeEventListener("click", handleContainerClick as EventListener);
+      container.removeEventListener("mouseover", handleContainerMouseOver as EventListener);
+      container.removeEventListener("mouseout", handleContainerMouseOut as EventListener);
+      console.log("🧹 Cleaning up event delegation listeners");
+    };
+  }, [renderedContent]);
 
   // Rest of your handlers...
   const handleLike = useCallback(() => {
@@ -498,7 +583,7 @@ export default function BlogPost() {
         </button>
       )}
 
-      <Column maxWidth="m" paddingTop="24" paddingBottom="40"  >
+      <Column maxWidth="m" paddingTop="24" paddingBottom="40">
         {/* Back Link */}
         <SmartLink 
           href="/blog" 
@@ -577,7 +662,7 @@ export default function BlogPost() {
           <Row 
             gap="24" 
             paddingY="16" 
-            horizontal="space-between" 
+            horizontal="stretch" 
             vertical="center"
             style={{ 
               borderTop: '1px solid #e5e7eb', 
@@ -630,11 +715,11 @@ export default function BlogPost() {
         </header>
 
         {/* Post Content with TipTap styling */}
-      <article
-        ref={contentRef}
-        className="tiptap-preview-content prose prose-lg max-w-none"
-        dangerouslySetInnerHTML={{ __html: renderedContent }}
-      />
+        <article
+          ref={contentRef}
+          className="tiptap-preview-content prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: renderedContent }}
+        />
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
