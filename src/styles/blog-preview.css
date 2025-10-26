@@ -84,7 +84,7 @@
 }
 
 .tiptap-preview-content pre {
-  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+  @apply  bg-stone-100 text-sky-700 p-4 rounded-lg overflow-x-auto my-4;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 

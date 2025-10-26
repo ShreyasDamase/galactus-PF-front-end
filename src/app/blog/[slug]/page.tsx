@@ -12,6 +12,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import hljs from "highlight.js";
+import { useTheme } from '@once-ui-system/core';
 
 // Import styles
 import "@/styles/blog-preview.css";
@@ -34,7 +35,8 @@ export default function BlogPost() {
   const [readingProgress, setReadingProgress] = useState(0);
   const [renderedContent, setRenderedContent] = useState<string>("");
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
-
+const theme = useTheme();
+console.log("current theme",theme.resolvedTheme); 
   // Initialize like count from post data
   useEffect(() => {
     if (post?.likes) {
@@ -147,16 +149,11 @@ export default function BlogPost() {
 
       // Create wrapper
       const wrapper = document.createElement("div");
-      wrapper.className = "code-block-enhanced";
-      wrapper.style.cssText = `
-        position: relative;
-        margin: 1.5rem 0;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #e5e7eb;
-        background: white;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      `;
+   wrapper.className = `code-block-enhanced ${theme.resolvedTheme}`; 
+wrapper.style.cssText = `
+  background: ${theme.resolvedTheme === 'dark' ? '#1f2937' : 'white'};
+`;
+
 
       // Header
       const header = document.createElement("div");
@@ -166,7 +163,7 @@ export default function BlogPost() {
         justify-content: space-between;
         align-items: center;
         padding: 0.75rem 1rem;
-        background: #f9fafb;
+        background: #EEEEEE;
         border-bottom: 1px solid #e5e7eb;
       `;
 
@@ -324,7 +321,7 @@ export default function BlogPost() {
 
     console.log("🔗 Attaching event listeners using EVENT DELEGATION");
     
-    const handleContainerClick = async (e: MouseEvent) => {
+    const handleContainerClick = async (e: Event) => {
       const target = e.target as HTMLElement;
       
       // Check if click is on copy button or its children
@@ -464,6 +461,9 @@ export default function BlogPost() {
       }
     }
   }, [post]);
+useEffect(() => {
+  document.documentElement.classList.toggle('dark', theme.resolvedTheme === 'dark');
+}, [theme.resolvedTheme]);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
