@@ -1008,6 +1008,7 @@ useEffect(() => {
       <CommentsSheet
   show={isCommentsOpen}
   onClose={closeComments}
+  blogId={post.id}
  />
 
      </>

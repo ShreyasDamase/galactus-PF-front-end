@@ -4,6 +4,8 @@
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTheme, Button, Text, Icon, IconButton, Column, Row, Input } from '@once-ui-system/core';
+import { useComments, useCreateComment, useLikeComment, useUnlikeComment } from '@/lib/hooks/useComments';
+import { Comment } from '@/lib/types/comment.types';
 
 interface CommentsSheetProps {
   show: boolean;
@@ -11,142 +13,33 @@ interface CommentsSheetProps {
   blogId: string;
 }
 
-interface Reply {
-  _id: string;
-  guestName: string;
-  guestEmail: string;
-  content: string;
-  createdAt: string;
-  isEdited: boolean;
-  editedAt?: string;
-  likes: number;
-  isApproved: boolean;
-}
-
-interface Comment {
-  _id: string;
-  blogId: string;
-  parentId: string | null;
-  guestName: string;
-  guestEmail: string;
-  content: string;
-  ipAddress: string;
-  userAgent: string;
-  isApproved: boolean;
-  isEdited: boolean;
-  editedAt?: string;
-  likes: number;
-  isFlagged: boolean;
-  createdAt: string;
-  updatedAt: string;
-  replies?: Reply[];
-}
-
-// Dummy data
-const DUMMY_COMMENTS: Comment[] = [
-  {
-    _id: "507f1f77bcf86cd799439011",
-    blogId: "507f1f77bcf86cd799439099",
-    parentId: null,
-    guestName: "Alice Johnson",
-    guestEmail: "alice@example.com",
-    content: "This is an excellent article! Really helped me understand the concepts better. Thank you for sharing your insights.",
-    ipAddress: "192.168.1.1",
-    userAgent: "Mozilla/5.0...",
-    isApproved: true,
-    isEdited: false,
-    likes: 12,
-    isFlagged: false,
-    createdAt: "2024-10-20T10:30:00Z",
-    updatedAt: "2024-10-20T10:30:00Z",
-    replies: [
-      {
-        _id: "507f1f77bcf86cd799439012",
-        guestName: "Bob Smith",
-        guestEmail: "bob@example.com",
-        content: "I agree! This was super helpful.",
-        createdAt: "2024-10-20T11:15:00Z",
-        isEdited: false,
-        likes: 3,
-        isApproved: true
-      }
-    ]
-  },
-  {
-    _id: "507f1f77bcf86cd799439013",
-    blogId: "507f1f77bcf86cd799439099",
-    parentId: null,
-    guestName: "Charlie Brown",
-    guestEmail: "charlie@example.com",
-    content: "Could you elaborate more on the second point? I'm having trouble understanding that part.",
-    ipAddress: "192.168.1.2",
-    userAgent: "Mozilla/5.0...",
-    isApproved: true,
-    isEdited: true,
-    editedAt: "2024-10-21T09:00:00Z",
-    likes: 5,
-    isFlagged: false,
-    createdAt: "2024-10-21T08:45:00Z",
-    updatedAt: "2024-10-21T09:00:00Z",
-    replies: []
-  },
-  {
-    _id: "507f1f77bcf86cd799439014",
-    blogId: "507f1f77bcf86cd799439099",
-    parentId: null,
-    guestName: "Diana Prince",
-    guestEmail: "diana@example.com",
-    content: "Great read! I've bookmarked this for future reference. Keep up the excellent work! 🎉",
-    ipAddress: "192.168.1.3",
-    userAgent: "Mozilla/5.0...",
-    isApproved: true,
-    isEdited: false,
-    likes: 8,
-    isFlagged: false,
-    createdAt: "2024-10-22T14:20:00Z",
-    updatedAt: "2024-10-22T14:20:00Z",
-    replies: [
-      {
-        _id: "507f1f77bcf86cd799439015",
-        guestName: "Eve Adams",
-        guestEmail: "eve@example.com",
-        content: "Same here! This is going in my reading list.",
-        createdAt: "2024-10-22T15:30:00Z",
-        isEdited: false,
-        likes: 2,
-        isApproved: true
-      },
-      {
-        _id: "507f1f77bcf86cd799439016",
-        guestName: "Frank Miller",
-        guestEmail: "frank@example.com",
-        content: "Absolutely! One of the best articles I've read this month.",
-        createdAt: "2024-10-22T16:00:00Z",
-        isEdited: false,
-        likes: 1,
-        isApproved: true
-      }
-    ]
-  }
-];
-
 export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetProps) {
   const theme = useTheme();
   const [isMobile, setIsMobile] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [commentContent, setCommentContent] = useState("");
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [showNameEmailFields, setShowNameEmailFields] = useState(false);
+  const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
 
   const isDark = theme.resolvedTheme === 'dark';
+
+  // Fetch comments
+  const { data: commentsData, isLoading, error } = useComments(blogId);
+  const comments = commentsData?.comments || [];
+  const totalComments = commentsData?.total || 0;
+
+  // Mutations
+  const createCommentMutation = useCreateComment(blogId);
+  const likeCommentMutation = useLikeComment(blogId);
+  const unlikeCommentMutation = useUnlikeComment(blogId);
 
   // Load guest info from localStorage
   useEffect(() => {
     const savedName = localStorage.getItem("guestName");
     const savedEmail = localStorage.getItem("guestEmail");
+    const savedLikedComments = localStorage.getItem("likedComments");
     
     if (savedName && savedEmail) {
       setGuestName(savedName);
@@ -155,18 +48,11 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
     } else {
       setShowNameEmailFields(true);
     }
-  }, []);
 
-  // Load dummy comments
-  useEffect(() => {
-    if (show) {
-      setLoading(true);
-      setTimeout(() => {
-        setComments(DUMMY_COMMENTS);
-        setLoading(false);
-      }, 500);
+    if (savedLikedComments) {
+      setLikedComments(new Set(JSON.parse(savedLikedComments)));
     }
-  }, [show, blogId]);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -175,32 +61,67 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleSubmitComment = (e: React.FormEvent) => {
+  const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!commentContent.trim()) return;
+    if (!commentContent.trim()) {
+      alert("Please enter a comment");
+      return;
+    }
     
     if (showNameEmailFields && (!guestName.trim() || !guestEmail.trim())) {
       alert("Please provide your name and email");
       return;
     }
 
-    localStorage.setItem("guestName", guestName);
-    localStorage.setItem("guestEmail", guestEmail);
+    if (commentContent.length > 2000) {
+      alert("Comment cannot exceed 2000 characters");
+      return;
+    }
 
-    console.log("Submitting comment:", {
-      blogId,
-      parentId: replyingTo,
-      guestName,
-      guestEmail,
-      content: commentContent
-    });
+    try {
+      await createCommentMutation.mutateAsync({
+        guestName: guestName.trim(),
+        guestEmail: guestEmail.trim(),
+        content: commentContent.trim(),
+        parentId: replyingTo
+      });
 
-    setCommentContent("");
-    setReplyingTo(null);
-    setShowNameEmailFields(false);
+      // Save guest info
+      localStorage.setItem("guestName", guestName);
+      localStorage.setItem("guestEmail", guestEmail);
+
+      // Reset form
+      setCommentContent("");
+      setReplyingTo(null);
+      setShowNameEmailFields(false);
+      
+      alert("Comment submitted! It will appear after moderation.");
+    } catch (error: any) {
+      alert(error?.message || "Failed to submit comment. Please try again.");
+    }
+  };
+
+  const handleLikeComment = async (commentId: string) => {
+    const isLiked = likedComments.has(commentId);
     
-    alert("Comment submitted! (Demo mode - not saved)");
+    try {
+      if (isLiked) {
+        await unlikeCommentMutation.mutateAsync(commentId);
+        const newLiked = new Set(likedComments);
+        newLiked.delete(commentId);
+        setLikedComments(newLiked);
+        localStorage.setItem("likedComments", JSON.stringify([...newLiked]));
+      } else {
+        await likeCommentMutation.mutateAsync(commentId);
+        const newLiked = new Set(likedComments);
+        newLiked.add(commentId);
+        setLikedComments(newLiked);
+        localStorage.setItem("likedComments", JSON.stringify([...newLiked]));
+      }
+    } catch (error) {
+      console.error("Failed to like/unlike comment:", error);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -233,6 +154,231 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
     },
     exit: isMobile ? { y: "100%" } : { x: "100%" }
   };
+
+  const renderComment = (comment: Comment) => (
+    <Column key={comment._id} fillWidth gap="m">
+      {/* Main Comment */}
+      <Column
+        fillWidth
+        padding="m"
+        background="neutral-alpha-weak"
+        radius="l"
+        gap="m"
+      >
+        <Row fillWidth gap="12" vertical="start">
+          {/* Avatar */}
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: `linear-gradient(135deg, ${
+                isDark 
+                  ? 'rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8)' 
+                  : 'rgba(59, 130, 246, 1), rgba(147, 51, 234, 1)'
+              })`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '16px',
+              flexShrink: 0
+            }}
+          >
+            {comment.guestName.charAt(0).toUpperCase()}
+          </div>
+
+          {/* Content */}
+          <Column fillWidth gap="8">
+            <Row gap="8" wrap vertical="center">
+              <Text variant="body-strong-m">{comment.guestName}</Text>
+              <Text variant="body-default-xs" onBackground="neutral-weak">
+                {formatDate(comment.createdAt)}
+              </Text>
+              {comment.isEdited && (
+                <Text 
+                  variant="body-default-xs" 
+                  onBackground="neutral-weak"
+                  style={{ fontStyle: 'italic' }}
+                >
+                  (edited)
+                </Text>
+              )}
+            </Row>
+            <Text variant="body-default-m" style={{ whiteSpace: 'pre-wrap' }}>
+              {comment.content}
+            </Text>
+            <Row gap="16">
+              <Button
+                variant="tertiary"
+                size="s"
+                prefixIcon="thumbUp"
+                label={comment.likes.toString()}
+                onClick={() => handleLikeComment(comment._id)}
+                style={{
+                  color: likedComments.has(comment._id) ? '#3b82f6' : undefined
+                }}
+              />
+              <Button
+                variant="tertiary"
+                size="s"
+                prefixIcon="reply"
+                label="Reply"
+                onClick={() => setReplyingTo(comment._id)}
+              />
+            </Row>
+          </Column>
+        </Row>
+      </Column>
+
+      {/* Replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <Column fillWidth paddingLeft="xl" gap="m">
+          {comment.replies.map((reply) => (
+            <Column
+              key={reply._id}
+              fillWidth
+              padding="s"
+              background="surface"
+              border="neutral-alpha-weak"
+              radius="m"
+              gap="8"
+            >
+              <Row fillWidth gap="8" vertical="start">
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${
+                      isDark 
+                        ? 'rgba(16, 185, 129, 0.8), rgba(6, 182, 212, 0.8)' 
+                        : 'rgba(16, 185, 129, 1), rgba(6, 182, 212, 1)'
+                    })`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    flexShrink: 0
+                  }}
+                >
+                  {reply.guestName.charAt(0).toUpperCase()}
+                </div>
+                <Column fillWidth gap="4">
+                  <Row gap="8" vertical="center">
+                    <Text variant="body-strong-s">{reply.guestName}</Text>
+                    <Text variant="body-default-xs" onBackground="neutral-weak">
+                      {formatDate(reply.createdAt)}
+                    </Text>
+                  </Row>
+                  <Text variant="body-default-s">{reply.content}</Text>
+                  <Button
+                    variant="tertiary"
+                    size="s"
+                    prefixIcon="thumbUp"
+                    label={reply.likes.toString()}
+                    onClick={() => handleLikeComment(reply._id)}
+                    style={{
+                      color: likedComments.has(reply._id) ? '#3b82f6' : undefined
+                    }}
+                  />
+                </Column>
+              </Row>
+            </Column>
+          ))}
+        </Column>
+      )}
+
+      {/* Reply Form */}
+      {replyingTo === comment._id && (
+        <Column
+          fillWidth
+          paddingLeft="xl"
+          padding="m"
+          background="brand-alpha-weak"
+          border="brand-alpha-medium"
+          radius="m"
+          gap="m"
+        >
+          <Row gap="8" vertical="center">
+            <Icon name="reply" onBackground="brand-weak" size="s" />
+            <Text variant="body-default-s" onBackground="brand-weak">
+              Replying to {comment.guestName}
+            </Text>
+          </Row>
+          <form onSubmit={handleSubmitComment}>
+            <Column fillWidth gap="m">
+              {showNameEmailFields && (
+                <Row fillWidth gap="8" s={{ direction: "column" }}>
+                  <Input
+                    id="reply-name"
+                    type="text"
+                    placeholder="Your name"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    required
+                  />
+                  <Input
+                    id="reply-email"
+                    type="email"
+                    placeholder="Your email"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    required
+                  />
+                </Row>
+              )}
+              <textarea
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder="Write your reply..."
+                maxLength={2000}
+                style={{
+                  width: '100%',
+                  minHeight: '80px',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                  backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'white',
+                  color: isDark ? 'white' : 'black',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  outline: 'none'
+                }}
+              />
+              <Row gap="8" horizontal="between">
+                <Text variant="body-default-xs" onBackground="neutral-weak">
+                  {commentContent.length}/2000
+                </Text>
+                <Row gap="8">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="s"
+                    label={createCommentMutation.isPending ? "Submitting..." : "Submit Reply"}
+                    disabled={createCommentMutation.isPending}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="s"
+                    label="Cancel"
+                    onClick={() => {
+                      setReplyingTo(null);
+                      setCommentContent("");
+                    }}
+                  />
+                </Row>
+              </Row>
+            </Column>
+          </form>
+        </Column>
+      )}
+    </Column>
+  );
 
   return (
     <AnimatePresence>
@@ -313,7 +459,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                   <Column gap="4">
                     <Text variant="heading-strong-m">Comments</Text>
                     <Text variant="body-default-xs" onBackground="neutral-weak">
-                      {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+                      {totalComments} {totalComments === 1 ? 'comment' : 'comments'}
                     </Text>
                   </Column>
                 </Row>
@@ -339,7 +485,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                   scrollBehavior: 'smooth'
                 }}
               >
-                {loading ? (
+                {isLoading ? (
                   <Column fillWidth horizontal="center" paddingY="xl">
                     <div 
                       style={{
@@ -352,6 +498,18 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                         animation: 'spin 0.8s linear infinite'
                       }}
                     />
+                  </Column>
+                ) : error ? (
+                  <Column fillWidth horizontal="center" vertical="center" paddingY="xl" gap="m">
+                    <Icon name="alertCircle" onBackground="danger-weak" size="xl" />
+                    <Column gap="4" horizontal="center">
+                      <Text variant="heading-default-m" onBackground="danger-weak">
+                        Failed to load comments
+                      </Text>
+                      <Text variant="body-default-s" onBackground="neutral-weak">
+                        Please try again later
+                      </Text>
+                    </Column>
                   </Column>
                 ) : comments.length === 0 ? (
                   <Column fillWidth horizontal="center" vertical="center" paddingY="xl" gap="m">
@@ -366,195 +524,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                     </Column>
                   </Column>
                 ) : (
-                  comments.map((comment) => (
-                    <Column key={comment._id} fillWidth gap="m">
-                      {/* Main Comment */}
-                      <Column
-                        fillWidth
-                        padding="m"
-                        background="neutral-alpha-weak"
-                        radius="l"
-                        gap="m"
-                      >
-                        <Row fillWidth gap="12" vertical="start">
-                          {/* Avatar */}
-                          <div
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              background: `linear-gradient(135deg, ${
-                                isDark 
-                                  ? 'rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8)' 
-                                  : 'rgba(59, 130, 246, 1), rgba(147, 51, 234, 1)'
-                              })`,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: 'white',
-                              fontWeight: 600,
-                              fontSize: '16px',
-                              flexShrink: 0
-                            }}
-                          >
-                            {comment.guestName.charAt(0).toUpperCase()}
-                          </div>
-
-                          {/* Content */}
-                          <Column fillWidth gap="8">
-                            <Row gap="8" wrap vertical="center">
-                              <Text variant="body-strong-m">{comment.guestName}</Text>
-                              <Text variant="body-default-xs" onBackground="neutral-weak">
-                                {formatDate(comment.createdAt)}
-                              </Text>
-                              {comment.isEdited && (
-                                <Text 
-                                  variant="body-default-xs" 
-                                  onBackground="neutral-weak"
-                                  style={{ fontStyle: 'italic' }}
-                                >
-                                  (edited)
-                                </Text>
-                              )}
-                            </Row>
-                            <Text variant="body-default-m" style={{ whiteSpace: 'pre-wrap' }}>
-                              {comment.content}
-                            </Text>
-                            <Row gap="16">
-                              <Button
-                                variant="tertiary"
-                                size="s"
-                                prefixIcon="thumbUp"
-                                label={comment.likes.toString()}
-                              />
-                              <Button
-                                variant="tertiary"
-                                size="s"
-                                prefixIcon="reply"
-                                label="Reply"
-                                onClick={() => setReplyingTo(comment._id)}
-                              />
-                            </Row>
-                          </Column>
-                        </Row>
-                      </Column>
-
-                      {/* Replies */}
-                      {comment.replies && comment.replies.length > 0 && (
-                        <Column fillWidth paddingLeft="xl" gap="m">
-                          {comment.replies.map((reply) => (
-                            <Column
-                              key={reply._id}
-                              fillWidth
-                              padding="s"
-                              background="surface"
-                              border="neutral-alpha-weak"
-                              radius="m"
-                              gap="8"
-                            >
-                              <Row fillWidth gap="8" vertical="start">
-                                <div
-                                  style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    borderRadius: '50%',
-                                    background: `linear-gradient(135deg, ${
-                                      isDark 
-                                        ? 'rgba(16, 185, 129, 0.8), rgba(6, 182, 212, 0.8)' 
-                                        : 'rgba(16, 185, 129, 1), rgba(6, 182, 212, 1)'
-                                    })`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    fontSize: '14px',
-                                    flexShrink: 0
-                                  }}
-                                >
-                                  {reply.guestName.charAt(0).toUpperCase()}
-                                </div>
-                                <Column fillWidth gap="4">
-                                  <Row gap="8" vertical="center">
-                                    <Text variant="body-strong-s">{reply.guestName}</Text>
-                                    <Text variant="body-default-xs" onBackground="neutral-weak">
-                                      {formatDate(reply.createdAt)}
-                                    </Text>
-                                  </Row>
-                                  <Text variant="body-default-s">{reply.content}</Text>
-                                  <Button
-                                    variant="tertiary"
-                                    size="s"
-                                    prefixIcon="thumbUp"
-                                    label={reply.likes.toString()}
-                                  />
-                                </Column>
-                              </Row>
-                            </Column>
-                          ))}
-                        </Column>
-                      )}
-
-                      {/* Reply Form */}
-                      {replyingTo === comment._id && (
-                        <Column
-                          fillWidth
-                          paddingLeft="xl"
-                          padding="m"
-                          background="brand-alpha-weak"
-                          border="brand-alpha-medium"
-                          radius="m"
-                          gap="m"
-                        >
-                          <Row gap="8" vertical="center">
-                            <Icon name="reply" onBackground="brand-weak" size="s" />
-                            <Text variant="body-default-s" onBackground="brand-weak">
-                              Replying to {comment.guestName}
-                            </Text>
-                          </Row>
-                          <form onSubmit={handleSubmitComment}>
-                            <Column fillWidth gap="m">
-                              <textarea
-                                value={commentContent}
-                                onChange={(e) => setCommentContent(e.target.value)}
-                                placeholder="Write your reply..."
-                                style={{
-                                  width: '100%',
-                                  minHeight: '80px',
-                                  padding: '12px',
-                                  borderRadius: '8px',
-                                  border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-                                  backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'white',
-                                  color: isDark ? 'white' : 'black',
-                                  fontSize: '14px',
-                                  resize: 'vertical',
-                                  outline: 'none'
-                                }}
-                              />
-                              <Row gap="8">
-                                <Button
-                                  type="submit"
-                                  variant="primary"
-                                  size="s"
-                                  label="Submit Reply"
-                                />
-                                <Button
-                                  type="button"
-                                  variant="secondary"
-                                  size="s"
-                                  label="Cancel"
-                                  onClick={() => {
-                                    setReplyingTo(null);
-                                    setCommentContent("");
-                                  }}
-                                />
-                              </Row>
-                            </Column>
-                          </form>
-                        </Column>
-                      )}
-                    </Column>
-                  ))
+                  comments.map((comment) => renderComment(comment))
                 )}
               </Column>
 
@@ -608,32 +578,39 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                           </Row>
                         </Column>
                       )}
-                      <Row fillWidth gap="8" vertical="end">
+                      <Column fillWidth gap="8">
                         <textarea
                           value={commentContent}
                           onChange={(e) => setCommentContent(e.target.value)}
                           placeholder="Write a comment..."
+                          maxLength={2000}
                           style={{
-                            flex: 1,
-                            minHeight: '60px',
+                            width: '100%',
+                            minHeight: '80px',
                             padding: '12px',
                             borderRadius: '12px',
                             border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
                             backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.02)',
                             color: isDark ? 'white' : 'black',
                             fontSize: '14px',
-                            resize: 'none',
+                            resize: 'vertical',
                             outline: 'none'
                           }}
                         />
-                        <IconButton
-                          type="submit"
-                          icon="send"
-                          variant="primary"
-                          size="l"
-                          tooltip="Send"
-                        />
-                      </Row>
+                        <Row fillWidth horizontal="between" vertical="center">
+                          <Text variant="body-default-xs" onBackground="neutral-weak">
+                            {commentContent.length}/2000
+                          </Text>
+                          <Button
+                            type="submit"
+                            variant="primary"
+                            size="m"
+                            prefixIcon="send"
+                            label={createCommentMutation.isPending ? "Posting..." : "Post Comment"}
+                            disabled={createCommentMutation.isPending || !commentContent.trim()}
+                          />
+                        </Row>
+                      </Column>
                     </Column>
                   </form>
                 </Column>
