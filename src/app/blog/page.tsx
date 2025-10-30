@@ -60,6 +60,7 @@ export default function Blog() {
 
   const posts = data?.posts || [];
   return (
+    <>
 <Column maxWidth="m" paddingTop="24">
       <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
         {blog.title}
@@ -86,7 +87,7 @@ export default function Blog() {
           <Posts posts={posts.slice(3)} columns="2" />
         )}
       </Column>
-    </Column>
+    </Column></>
   );
  
 }

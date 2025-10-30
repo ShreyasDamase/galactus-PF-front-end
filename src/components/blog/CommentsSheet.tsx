@@ -1,8 +1,8 @@
 // components/CommentsSheet.tsx
 "use client";
 
-import { AnimatePresence, motion, Variants } from "framer-motion";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion, Variants, useMotionValue, PanInfo } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 import { useTheme, Button, Text, Icon, IconButton, Column, Row, Input } from '@once-ui-system/core';
 import { useComments, useCreateComment, useLikeComment, useUnlikeComment } from '@/lib/hooks/useComments';
 import { Comment } from '@/lib/types/comment.types';
@@ -24,6 +24,10 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
   const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
 
   const isDark = theme.resolvedTheme === 'dark';
+
+  // Motion values for drag
+  const y = useMotionValue(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Fetch comments
   const { data: commentsData, isLoading, error } = useComments(blogId);
@@ -60,6 +64,13 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Reset y position when sheet opens
+  useEffect(() => {
+    if (show) {
+      y.set(0);
+    }
+  }, [show, y]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +150,20 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Handle drag end - close if dragged down enough
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    const threshold = 150;
+    const velocity = info.velocity.y;
+    
+    // Close if dragged down beyond threshold or fast swipe down
+    if (info.offset.y > threshold || velocity > 500) {
+      onClose();
+    } else {
+      // Snap back to original position
+      y.set(0);
+    }
+  };
+
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -206,7 +231,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                 </Text>
               )}
             </Row>
-            <Text variant="body-default-m" style={{ whiteSpace: 'pre-wrap' }}>
+            <Text variant="body-default-m" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
               {comment.content}
             </Text>
             <Row gap="16">
@@ -274,7 +299,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                       {formatDate(reply.createdAt)}
                     </Text>
                   </Row>
-                  <Text variant="body-default-s">{reply.content}</Text>
+                  <Text variant="body-default-s" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{reply.content}</Text>
                   <Button
                     variant="tertiary"
                     size="s"
@@ -346,7 +371,9 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                   color: isDark ? 'white' : 'black',
                   fontSize: '14px',
                   resize: 'vertical',
-                  outline: 'none'
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                  maxWidth: '100%'
                 }}
               />
               <Row gap="8" horizontal="between">
@@ -386,7 +413,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-[9998]"
             style={{ 
               backgroundColor: isDark ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.4)',
               backdropFilter: 'blur(4px)'
@@ -400,7 +427,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
 
           {/* Sheet */}
           <motion.div
-            className={`fixed z-50 ${
+            className={`fixed z-[9999] ${
               isMobile
                 ? "bottom-0 left-0 right-0"
                 : "top-0 right-0 bottom-0 w-[480px]"
@@ -410,9 +437,16 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
             animate="visible"
             exit="exit"
             style={{ 
+              y: isMobile ? y : 0,
               height: isMobile ? "90vh" : "100vh",
-              maxHeight: isMobile ? "90vh" : "100vh"
+              maxHeight: isMobile ? "100" : "100vh",
+              maxWidth: isMobile ? "100vw" : undefined,
+              width: isMobile ? "100%" : undefined
             }}
+            drag={isMobile ? "y" : false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.2 }}
+            onDragEnd={isMobile ? handleDragEnd : undefined}
           >
             <Column
               fillWidth
@@ -425,12 +459,23 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                 boxShadow: isMobile 
                   ? '0 -4px 20px rgba(0, 0, 0, 0.1)' 
                   : '0 0 40px rgba(0, 0, 0, 0.15)',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                maxWidth: '100%',
+                boxSizing: 'border-box'
               }}
             >
               {/* Mobile drag indicator */}
               {isMobile && (
-                <Row fillWidth horizontal="center" paddingTop="8" paddingBottom="4">
+                <Row 
+                  fillWidth 
+                  horizontal="center" 
+                  paddingTop="8" 
+                  paddingBottom="4"
+                  style={{ 
+                    cursor: 'grab',
+                    touchAction: 'none'
+                  }}
+                >
                   <div 
                     style={{
                       width: '40px',
@@ -475,6 +520,7 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
 
               {/* Comments List */}
               <Column
+                ref={contentRef}
                 fillWidth
                 flex={1}
                 overflowY="auto"
@@ -482,7 +528,10 @@ export default function CommentsSheet({ show, onClose, blogId }: CommentsSheetPr
                 paddingY="m"
                 gap="l"
                 style={{
-                  scrollBehavior: 'smooth'
+                  scrollBehavior: 'smooth',
+                  touchAction: 'pan-y',
+                  maxWidth: '100%',
+                  overflowX: 'hidden'
                 }}
               >
                 {isLoading ? (

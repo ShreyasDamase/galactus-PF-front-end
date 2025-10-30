@@ -533,6 +533,8 @@ useEffect(() => {
 
   return (
     <>
+    
+
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
         <div
@@ -945,7 +947,7 @@ useEffect(() => {
               </button>
 
               <button 
-                onClick={scrollToComments}
+          onClick={openComments}
                 className="flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 text-gray-500 hover:text-blue-500"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -1005,12 +1007,14 @@ useEffect(() => {
           </Column>
         )}
       </Column>
-      <CommentsSheet
+    <div className="absolute">
+
+ 
+  <CommentsSheet  
   show={isCommentsOpen}
   onClose={closeComments}
   blogId={post.id}
- />
-
+ />   </div>
      </>
   );
 }
