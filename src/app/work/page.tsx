@@ -2,10 +2,19 @@
 import { Column, Heading, Meta, Schema } from "@once-ui-system/core";
 import { baseURL, about, person, work } from "@/resources";
 import { Projects } from "@/components/work/Projects";
+import { useProjects } from "@/lib/hooks/useProject";
 
  
 
 export default function Work() {
+
+    const { data, isLoading, error } = useProjects({
+    page: 1,
+    limit: 10,
+    sortBy: 'publishedAt',
+    sortOrder: 'desc'
+  });
+  console.log(data)
   return (
     <Column maxWidth="m" paddingTop="24">
       <Schema
@@ -24,7 +33,7 @@ export default function Work() {
       <Heading marginBottom="l" variant="heading-strong-xl" align="center">
         {work.title}
       </Heading>
-      {/* <Projects /> */}
+       {/* <Projects />  */}
     </Column>
   );
 }

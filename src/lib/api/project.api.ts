@@ -8,7 +8,7 @@ import type {
   PaginatedProjectsResponse
 } from   "../types/project.type"
 
-const BASE_PATH = '/public/projects';
+const BASE_PATH = '/projects';
 
 export const projectsApi = {
   /**
@@ -23,7 +23,7 @@ export const projectsApi = {
     ).toString() : '';
     
     return apiClient.get<MultipleProjectsResponse>(
-      `${BASE_PATH}${queryString ? `?${queryString}` : ''}`
+      `${BASE_PATH}/projects-pub/${queryString ? `?${queryString}` : ''}`
     );
   },
 
