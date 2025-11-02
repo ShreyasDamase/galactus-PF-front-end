@@ -32,7 +32,7 @@ export const projectsApi = {
    * PUBLIC - No auth required
    */
   getProject: (slugOrId: string) =>
-    apiClient.get<SingleProjectResponse>(`${BASE_PATH}/${slugOrId}`),
+    apiClient.get<SingleProjectResponse>(`${BASE_PATH}/projects-pub/${slugOrId}`),
 
   /**
    * Get projects by category

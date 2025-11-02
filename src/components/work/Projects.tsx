@@ -1,41 +1,51 @@
- import { getPosts } from "@/utils/utils";
+// components/work/Projects.tsx
+'use client';
+
 import { Column } from "@once-ui-system/core";
 import { ProjectCard } from "@/components";
-
+import { ProjectResponse } from "@/lib/types/project.type";
+ 
 interface ProjectsProps {
+  projects: ProjectResponse[];
   range?: [number, number?];
   exclude?: string[];
 }
 
-export function Projects({ range, exclude }: ProjectsProps) {
-  let allProjects = getPosts(["src", "app", "work", "projects"]);
+export function Projects({ projects, range, exclude }: ProjectsProps) {
+  let filteredProjects = projects;
 
-  // Exclude by slug (exact match)
+  // Exclude projects by slug
   if (exclude && exclude.length > 0) {
-    allProjects = allProjects.filter((post) => !exclude.includes(post.slug));
+    filteredProjects = filteredProjects.filter(
+      (project) => !exclude.includes(project.slug)
+    );
   }
 
-  const sortedProjects = allProjects.sort((a, b) => {
-    return new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime();
-  });
-
+  // Apply range if provided
   const displayedProjects = range
-    ? sortedProjects.slice(range[0] - 1, range[1] ?? sortedProjects.length)
-    : sortedProjects;
+    ? filteredProjects.slice(range[0] - 1, range[1] ?? filteredProjects.length)
+    : filteredProjects;
 
   return (
     <Column fillWidth gap="xl" marginBottom="40" paddingX="l">
-      {displayedProjects.map((post, index) => (
+      {displayedProjects.map((project, index) => (
         <ProjectCard
+          key={project.id}
           priority={index < 2}
-          key={post.slug}
-          href={`/work/${post.slug}`}
-          images={post.metadata.images}
-          title={post.metadata.title}
-          description={post.metadata.summary}
-          content={post.content}
-          avatars={post.metadata.team?.map((member) => ({ src: member.avatar })) || []}
-          link={post.metadata.link || ""}
+          href={`/work/${project.slug}`}
+          images={project.screenshots.map(s => s.url)}
+          coverImage={project.coverImage}
+          title={project.title}
+          summary={project.summary}
+          description={project.documentDescription}
+          tags={project.tags}
+          technologyStack={project.technologyStack}
+          views={project.views}
+          likes={project.likes}
+          publishedAt={project.publishedAt}
+          avatars={project.contributors?.map((c) => ({ src: c.avatar || '' })) || []}
+          hasReleases={project.releases.length > 0}
+          releaseCount={project.releases.length}
         />
       ))}
     </Column>
