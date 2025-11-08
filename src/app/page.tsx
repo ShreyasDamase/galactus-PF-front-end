@@ -100,9 +100,9 @@ export default function Home() {
           </RevealFx>
         </Column>
       </Column>
-      <RevealFx translateY="16" delay={0.6}>
-        <Projects range={[1, 1]} />
-      </RevealFx>
+      {/* <RevealFx translateY="16" delay={0.6}> */}
+        {/* <Projects range={[1, 1]} /> */}
+      {/* </RevealFx> */}
       {routes["/blog"] && (
         <Column fillWidth gap="24" marginBottom="l">
           <Row fillWidth paddingRight="64">
@@ -115,7 +115,7 @@ export default function Home() {
               </Heading>
             </Row>
             <Row flex={3} paddingX="20">
-              <Posts range={[1, 2]} columns="2" />
+              {/* <Posts range={[1, 2]} columns="2" /> */}
             </Row>
           </Row>
           <Row fillWidth paddingLeft="64" horizontal="end">
@@ -123,7 +123,7 @@ export default function Home() {
           </Row>
         </Column>
       )}
-      <Projects range={[2]} />
+      {/* <Projects range={[2]} /> */}
       <Mailchimp />
     </Column>
   );
