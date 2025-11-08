@@ -21,8 +21,8 @@ export function useProfile() {
   const setProfile = useProfileStore((state) => state.setProfile);
   const setLoading = useProfileStore((state) => state.setLoading);
   const setError = useProfileStore((state) => state.setError);
-const userId = process.env.USER_TO_FETCH || "";
-
+const userId = process.env.NEXT_PUBLIC_USER_TO_FETCH || "";
+console.log("USER ID",userId)
   return useQuery({
     queryKey: profileKeys.detail(),
     queryFn: async () => {
