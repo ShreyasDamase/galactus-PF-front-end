@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
  
  import { projectsApi } from '../api/project.api';
-import { PublicProjectsQueryParams } from '../types/project.type';
+import { MultipleProjectsResponse, PaginatedProjectsResponse, PublicProjectsQueryParams } from '../types/project.type';
 
 /**
  * Query Keys Factory
@@ -23,11 +23,12 @@ export const projectsKeys = {
  * Hook: Fetch all public projects with filters
  */
 export function useProjects(params?: PublicProjectsQueryParams) {
-  return useQuery({
+  return useQuery ({
     queryKey: projectsKeys.list(params),
     queryFn: async () => {
-      const response = await projectsApi.getAllProjects(params);
-      return response.data;
+       const response = await projectsApi.getAllProjects(params);
+
+       return response.data;
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -35,6 +36,8 @@ export function useProjects(params?: PublicProjectsQueryParams) {
     retry: 2,
   });
 }
+
+ 
 
 /**
  * Hook: Fetch single project by slug or ID

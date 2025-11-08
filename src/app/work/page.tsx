@@ -12,7 +12,7 @@ export default function Work() {
     sortBy: 'publishedAt',
     sortOrder: 'desc'
   });
-
+console.log("first",projectData)
   return (
     <Column maxWidth="m" paddingTop="24">
       <Schema
@@ -55,7 +55,7 @@ export default function Work() {
       {/* Projects List */}
       {projectData && !isLoading && !error && (
         <>
-          <Projects projects={projectData.projects} />
+          <Projects projects={projectData?.projects} />
           
           {/* Pagination Info */}
           {projectData?.pagination && (

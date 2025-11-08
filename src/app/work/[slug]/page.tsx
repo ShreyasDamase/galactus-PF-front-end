@@ -29,9 +29,8 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   
-  const { data: response, isLoading, error } = useProject(slug);
-  const project = response;
-  
+  const { data: project, isLoading, error } = useProject(slug);
+   
   const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
@@ -1093,7 +1092,7 @@ export default function ProjectDetailPage() {
                   Hardware
                 </Heading>
               </Row>
-              <Column gap="3">
+              <Column  >
                 {project.hardwareCompatibility.map((hw, index) => (
                   <div
                     key={index}
@@ -1103,7 +1102,7 @@ export default function ProjectDetailPage() {
                         : theme.resolvedTheme === 'dark' ? 'bg-red-900/30 border border-red-700' : 'bg-red-50 border border-red-200'
                     }`}
                   >
-                    <Row gap="6" vertical="center" marginBottom="2">
+                    <Row   vertical="center" marginBottom="2">
                       <div className={`w-2 h-2 rounded-full ${hw.compatible ? 'bg-green-500' : 'bg-red-500'}`} />
                       <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
                         {hw.device}
@@ -1131,7 +1130,7 @@ export default function ProjectDetailPage() {
                   Performance
                 </Heading>
               </Row>
-              <Column gap="3">
+              <Column  >
                 {project.performanceBenchmarks.map((benchmark, index) => (
                   <div
                     key={index}
@@ -1167,7 +1166,7 @@ export default function ProjectDetailPage() {
             <Column gap="12">
               {project.faqs.sort((a, b) => a.order - b.order).map((faq, index) => (
                 <div key={index} className={`p-5 rounded-xl ${theme.resolvedTheme === 'dark' ? 'bg-blue-900/20 border border-blue-700' : 'bg-blue-50 border border-blue-200'}`}>
-                  <Heading as="h3" variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} marginBottom="6">
+                  <Heading as="h3" variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} >
                     {faq.question}
                   </Heading>
                   <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
@@ -1190,7 +1189,7 @@ export default function ProjectDetailPage() {
                   Glossary
                 </Heading>
               </Row>
-              <Column gap="3">
+              <Column  >
                 {project.glossary.map((entry, index) => (
                   <div key={index} className={`p-3 rounded-lg ${theme.resolvedTheme === 'dark' ? 'bg-indigo-900/20 border border-indigo-700' : 'bg-indigo-50 border border-indigo-200'}`}>
                     <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} marginBottom="2">

@@ -233,14 +233,6 @@ export interface ApiResponse<T> {
 }
 
 /**
- * Paginated Projects Response
- */
-export interface PaginatedProjectsResponse {
-  projects: ProjectResponse[];
-  pagination: Pagination;
-}
-
-/**
  * Pagination
  */
 export interface Pagination {
@@ -251,6 +243,14 @@ export interface Pagination {
   hasNext: boolean;
   hasPrev: boolean;
 }
+/**
+ * Paginated Projects Response
+ */
+export interface PaginatedProjectsResponse {
+  projects: ProjectResponse[];
+  pagination: Pagination;
+}
+
 
 /**
  * Single Project API Response
@@ -266,12 +266,12 @@ export type MultipleProjectsResponse = ApiResponse<PaginatedProjectsResponse>;
  * Query Parameters for getAllPubProjects
  */
 export interface PublicProjectsQueryParams {
-  page?: number;
-  limit?: number;
-  category?: string;
-  tags?: string; // Comma-separated
-  technologyStack?: string; // Comma-separated
-  search?: string;
+  page?: number;              // current page number
+  limit?: number;             // items per page
+  category?: string;          // category filter
+  tags?: string | string[];   // single comma string OR array
+  technologyStack?: string | string[]; // single comma string OR array
+  search?: string;            // search term
   sortBy?: 'publishedAt' | 'createdAt' | 'updatedAt' | 'views' | 'likes' | 'title';
   sortOrder?: 'asc' | 'desc';
 }

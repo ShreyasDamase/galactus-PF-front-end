@@ -22,7 +22,7 @@ export const projectsApi = {
         .map(([key, value]) => [key, String(value)])
     ).toString() : '';
     
-    return apiClient.get<MultipleProjectsResponse>(
+    return apiClient.get<PaginatedProjectsResponse>(
       `${BASE_PATH}/projects-pub/${queryString ? `?${queryString}` : ''}`
     );
   },
@@ -32,7 +32,7 @@ export const projectsApi = {
    * PUBLIC - No auth required
    */
   getProject: (slugOrId: string) =>
-    apiClient.get<SingleProjectResponse>(`${BASE_PATH}/projects-pub/${slugOrId}`),
+    apiClient.get<ProjectResponse>(`${BASE_PATH}/projects-pub/${slugOrId}`),
 
   /**
    * Get projects by category
