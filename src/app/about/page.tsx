@@ -406,7 +406,7 @@ id: 'intro',
             
             <Column fillWidth gap="12" paddingTop="12">
               <Row fillWidth horizontal="between" vertical="start" gap="12" wrap>
-                <Heading as="h3" variant="heading-strong-l" flex={1}>
+                <Heading as="h3" variant="heading-strong-l"  >
                   {project.title}
                 </Heading>
                 {(project.startDate || project.endDate) && (
