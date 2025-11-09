@@ -20,16 +20,18 @@ export async function generateMetadata() {
   const userName =
     process.env.NEXT_PUBLIC_USER_NAME?.toLowerCase() || "default";
 
-  // 🎯 Select favicon based on env value
-  const icon =
-    userName === "shreyas"
-      ? "/shreyas.ico"
-      : userName === "avi"
-      ? "/avi.ico"
-      : "/favicon.ico";
+  // 🎯 Define valid favicon map
+  const validIcons: Record<string, string> = {
+    shreyas: "/shreyas.ico",
+    avi: "/avi.ico",
+    default: "/favicon.ico",
+  };
 
-  // Generate meta from Once UI’s Meta generator
-  const meta = Meta.generate({
+  // ✅ Choose the correct favicon
+  const selectedIcon = validIcons[userName] || validIcons.default;
+
+  // 🧩 Step 1: Get base metadata from Once UI Meta helper
+  const baseMetadata = Meta.generate({
     title: home.title,
     description: home.description,
     baseURL: baseURL,
@@ -37,12 +39,13 @@ export async function generateMetadata() {
     image: home.image,
   });
 
+  // 🧩 Step 2: Merge favicon information manually
   return {
-    ...meta,
+    ...baseMetadata,
     icons: {
-      icon,
-      shortcut: icon,
-      apple: icon,
+      icon: selectedIcon,
+      shortcut: selectedIcon,
+      apple: selectedIcon,
     },
   };
 }
