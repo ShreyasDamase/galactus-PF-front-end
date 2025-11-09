@@ -99,13 +99,9 @@ export default function About() {
             flex={3}
             horizontal="center"
           >
-            {profile?.profileImage ||
-              (person?.avatar && (
-                <Avatar
-                  src={profile?.profileImage || person?.avatar}
-                  size="xl"
-                />
-              ))}
+            {(profile?.profileImage || person?.avatar) && (
+              <Avatar src={profile?.profileImage || person?.avatar} size="xl" />
+            )}
             <Row gap="8" vertical="center">
               <Icon onBackground="accent-weak" name="globe" />
               {person.location}
