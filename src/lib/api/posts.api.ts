@@ -8,9 +8,10 @@ export const postsApi = {
    * Fetch paginated list of posts
    */
   getList: (page: number = 1) =>
-    apiClient.post<PostsListResponse>(`${BASE_PATH}/posts-pub`, {
-      page,
-      userId: process.env.NEXT_PUBLIC_USER_TO_FETCH,
+    apiClient.get<PostsListResponse>(`${BASE_PATH}/posts-pub/?page=${page}`, {
+      headers: {
+        "x-user-id": process.env.NEXT_PUBLIC_USER_TO_FETCH,
+      },
     }),
 
   /**
