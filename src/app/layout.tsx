@@ -1,7 +1,7 @@
 import "@once-ui-system/core/css/styles.css";
 import "@once-ui-system/core/css/tokens.css";
 import "@/resources/custom.css";
-import './globals.css';
+import "./globals.css";
 import classNames from "classnames";
 
 import {
@@ -17,13 +17,34 @@ import { Footer, Header, RouteGuard, Providers } from "@/components";
 import { baseURL, effects, fonts, style, dataStyle, home } from "@/resources";
 
 export async function generateMetadata() {
-  return Meta.generate({
+  const userName =
+    process.env.NEXT_PUBLIC_USER_NAME?.toLowerCase() || "default";
+
+  // 🎯 Select favicon based on env value
+  const icon =
+    userName === "shreyas"
+      ? "/icons/shreyas.ico"
+      : userName === "avi"
+      ? "/icons/avi.ico"
+      : "/favicon.ico";
+
+  // Generate meta from Once UI’s Meta generator
+  const meta = Meta.generate({
     title: home.title,
     description: home.description,
     baseURL: baseURL,
     path: home.path,
     image: home.image,
   });
+
+  return {
+    ...meta,
+    icons: {
+      icon,
+      shortcut: icon,
+      apple: icon,
+    },
+  };
 }
 
 export default async function RootLayout({
@@ -32,24 +53,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-        <Providers>
-    <Flex
-      suppressHydrationWarning
-      as="html"
-      lang="en"
-      fillWidth
-      className={classNames(
-        fonts.heading.variable,
-        fonts.body.variable,
-        fonts.label.variable,
-        fonts.code.variable,
-      )}
-    >
-      <head>
-        <script
-          id="theme-init"
-          dangerouslySetInnerHTML={{
-            __html: `
+    <Providers>
+      <Flex
+        suppressHydrationWarning
+        as="html"
+        lang="en"
+        fillWidth
+        className={classNames(
+          fonts.heading.variable,
+          fonts.body.variable,
+          fonts.label.variable,
+          fonts.code.variable
+        )}
+      >
+        <head>
+          <script
+            id="theme-init"
+            dangerouslySetInnerHTML={{
+              __html: `
               (function() {
                 try {
                   const root = document.documentElement;
@@ -101,10 +122,10 @@ export default async function RootLayout({
                 }
               })();
             `,
-          }}
-        />
-      </head>
-  
+            }}
+          />
+        </head>
+
         <Column
           as="body"
           background="page"
@@ -165,7 +186,7 @@ export default async function RootLayout({
           </Flex>
           <Footer />
         </Column>
-    </Flex>
-      </Providers>
+      </Flex>
+    </Providers>
   );
 }
