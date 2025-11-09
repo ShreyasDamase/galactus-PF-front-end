@@ -2,18 +2,25 @@
 
 import { useParams } from "next/navigation";
 import { usePostDetail } from "@/lib/hooks/usePosts";
-import { Column, Heading, Text, Avatar, Row, SmartLink } from "@once-ui-system/core";
+import {
+  Column,
+  Heading,
+  Text,
+  Avatar,
+  Row,
+  SmartLink,
+} from "@once-ui-system/core";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { 
-  Heart, 
-  MessageCircle, 
-  Bookmark, 
-  Share2, 
+import {
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Share2,
   ChevronUp,
 } from "lucide-react";
 import hljs from "highlight.js";
-import { useTheme } from '@once-ui-system/core';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from "@once-ui-system/core";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Import styles
 import "@/styles/blog-preview.css";
@@ -26,7 +33,7 @@ export default function BlogPost() {
   const params = useParams();
   const slug = params.slug as string;
   const contentRef = useRef<HTMLDivElement>(null);
-  
+
   const { data: post, isLoading, error } = usePostDetail(slug);
 
   // State management
@@ -39,16 +46,16 @@ export default function BlogPost() {
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-const openComments = useCallback(() => {
-  setIsCommentsOpen(true);
-}, []);
+  const openComments = useCallback(() => {
+    setIsCommentsOpen(true);
+  }, []);
 
-const closeComments = useCallback(() => {
-  setIsCommentsOpen(false);
-}, []);
+  const closeComments = useCallback(() => {
+    setIsCommentsOpen(false);
+  }, []);
 
-const theme = useTheme();
-console.log("current theme",theme.resolvedTheme); 
+  const theme = useTheme();
+  console.log("current theme", theme.resolvedTheme);
   // Initialize like count from post data
   useEffect(() => {
     if (post?.likes) {
@@ -59,11 +66,12 @@ console.log("current theme",theme.resolvedTheme);
   // Reading progress and floating actions
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+          const { scrollTop, scrollHeight, clientHeight } =
+            document.documentElement;
           const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
           setReadingProgress(Math.min(100, Math.max(0, progress)));
           setShowFloatingActions(scrollTop > 300);
@@ -88,20 +96,40 @@ console.log("current theme",theme.resolvedTheme);
     hljs.configure({
       ignoreUnescapedHTML: true,
       languages: [
-        "javascript", "typescript", "python", "java", "cpp", "c",
-        "html", "css", "json", "xml", "sql", "bash", "shell",
-        "go", "rust", "php", "ruby", "swift", "kotlin", "dart",
-        "yaml", "dockerfile", "markdown", "graphql"
+        "javascript",
+        "typescript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "html",
+        "css",
+        "json",
+        "xml",
+        "sql",
+        "bash",
+        "shell",
+        "go",
+        "rust",
+        "php",
+        "ruby",
+        "swift",
+        "kotlin",
+        "dart",
+        "yaml",
+        "dockerfile",
+        "markdown",
+        "graphql",
       ],
     });
 
     // Create temporary container (NOT in real DOM)
-    const temp = document.createElement('div');
-    temp.innerHTML = post.content;
+    const temp = document.createElement("div");
+    temp.innerHTML = post?.content;
 
     // Enhance code blocks in memory
     const preBlocks = temp.querySelectorAll("pre");
-    
+
     preBlocks.forEach((block, index) => {
       const code = block.querySelector("code");
       if (!code) return;
@@ -110,18 +138,14 @@ console.log("current theme",theme.resolvedTheme);
       hljs.highlightElement(code as HTMLElement);
 
       const codeText = code.textContent || "";
-      const lines = codeText.split("\n").filter(line => line.trim() !== "");
+      const lines = codeText.split("\n").filter((line) => line.trim() !== "");
       const shouldScroll = lines.length > 70;
 
       // Language detection
       const detectLanguage = (codeElement: Element): string => {
         const classNames = codeElement.className;
-        const patterns = [
-          /language-(\w+)/i,
-          /lang-(\w+)/i,
-          /hljs\s+(\w+)/i,
-        ];
-        
+        const patterns = [/language-(\w+)/i, /lang-(\w+)/i, /hljs\s+(\w+)/i];
+
         for (const pattern of patterns) {
           const match = classNames.match(pattern);
           if (match) return match[1].toLowerCase();
@@ -130,10 +154,14 @@ console.log("current theme",theme.resolvedTheme);
       };
 
       const languageClass = detectLanguage(code);
-      const languageDisplay = languageClass.charAt(0).toUpperCase() + languageClass.slice(1);
+      const languageDisplay =
+        languageClass.charAt(0).toUpperCase() + languageClass.slice(1);
 
       // Language colors
-      const languageColors: Record<string, { bg: string; text: string; border: string }> = {
+      const languageColors: Record<
+        string,
+        { bg: string; text: string; border: string }
+      > = {
         javascript: { bg: "#fef3c7", text: "#d97706", border: "#fbbf24" },
         typescript: { bg: "#dbeafe", text: "#2563eb", border: "#60a5fa" },
         python: { bg: "#dcfce7", text: "#16a34a", border: "#4ade80" },
@@ -154,18 +182,17 @@ console.log("current theme",theme.resolvedTheme);
         kotlin: { bg: "#f3e8ff", text: "#9333ea", border: "#c084fc" },
         dart: { bg: "#dbeafe", text: "#2563eb", border: "#60a5fa" },
         yaml: { bg: "#f3f4f6", text: "#4b5563", border: "#d1d5db" },
-        plaintext: { bg: "#f9fafb", text: "#6b7280", border: "#e5e7eb" }
+        plaintext: { bg: "#f9fafb", text: "#6b7280", border: "#e5e7eb" },
       };
 
       const colors = languageColors[languageClass] || languageColors.plaintext;
 
       // Create wrapper
       const wrapper = document.createElement("div");
-   wrapper.className = `code-block-enhanced ${theme.resolvedTheme}`; 
-wrapper.style.cssText = `
-  background: ${theme.resolvedTheme === 'dark' ? '#1f2937' : 'white'};
+      wrapper.className = `code-block-enhanced ${theme.resolvedTheme}`;
+      wrapper.style.cssText = `
+  background: ${theme.resolvedTheme === "dark" ? "#1f2937" : "white"};
 `;
-
 
       // Header
       const header = document.createElement("div");
@@ -175,19 +202,26 @@ wrapper.style.cssText = `
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 1rem;
-  background: ${theme.resolvedTheme === 'dark' ? '#232323ff' : '#f3f4f6'};
-  border-bottom: 1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'};
-   ${theme.resolvedTheme === 'light' ? `
+  background: ${theme.resolvedTheme === "dark" ? "#232323ff" : "#f3f4f6"};
+  border-bottom: 1px solid ${
+    theme.resolvedTheme === "dark" ? "#374151" : "#e5e7eb"
+  };
+   ${
+     theme.resolvedTheme === "light"
+       ? `
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
-  ` : ''}
+  `
+       : ""
+   }
   overflow: hidden; 
   
         `;
 
       // Left side
       const leftSide = document.createElement("div");
-      leftSide.style.cssText = "display: flex; align-items: center; gap: 0.75rem;";
+      leftSide.style.cssText =
+        "display: flex; align-items: center; gap: 0.75rem;";
 
       // Language badge
       const langBadge = document.createElement("div");
@@ -233,7 +267,8 @@ wrapper.style.cssText = `
 
       // Right side
       const rightSide = document.createElement("div");
-      rightSide.style.cssText = "display: flex; align-items: center; gap: 0.5rem;";
+      rightSide.style.cssText =
+        "display: flex; align-items: center; gap: 0.5rem;";
 
       // Copy button
       const copyBtn = document.createElement("button");
@@ -281,14 +316,14 @@ wrapper.style.cssText = `
           cursor: pointer;
           transition: all 0.2s;
         `;
-        
+
         expandBtn.setAttribute("data-index", index.toString());
-        
+
         // ✅ Set initial button text based on expanded state
         const isExpanded = expandedBlocks.has(index);
-        const buttonText = isExpanded ? 'Collapse' : 'Expand';
+        const buttonText = isExpanded ? "Collapse" : "Expand";
         expandBtn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>${buttonText}</span>`;
-        
+
         rightSide.appendChild(expandBtn);
       }
 
@@ -298,26 +333,26 @@ wrapper.style.cssText = `
       // Code container - Apply expanded state from React state
       const codeContainer = document.createElement("div");
       codeContainer.className = "code-container";
-      
+
       // ✅ Check if this block is expanded in state
       const isExpanded = expandedBlocks.has(index);
       console.log(`📦 Block ${index} isExpanded:`, isExpanded);
-      
-      codeContainer.style.cssText = shouldScroll 
-        ? (isExpanded 
-            ? "max-height: none; overflow-y: visible; position: relative;"
-            : "max-height: 500px; overflow-y: auto; position: relative;")
+
+      codeContainer.style.cssText = shouldScroll
+        ? isExpanded
+          ? "max-height: none; overflow-y: visible; position: relative;"
+          : "max-height: 500px; overflow-y: auto; position: relative;"
         : "position: relative;";
 
       const styledBlock = block.cloneNode(true) as HTMLElement;
       styledBlock.style.cssText = "margin: 0; border-radius: 0; border: none;";
-      
+
       codeContainer.appendChild(styledBlock);
       wrapper.appendChild(header);
       wrapper.appendChild(codeContainer);
 
       block.replaceWith(wrapper);
-      
+
       console.log(`✅ Enhanced block ${index + 1}: ${languageDisplay}`);
     });
 
@@ -328,77 +363,82 @@ wrapper.style.cssText = `
   // ✅ Attach event listeners using EVENT DELEGATION
   useEffect(() => {
     const container = contentRef.current;
-    
-    console.log("🔗 useEffect triggered - renderedContent length:", renderedContent.length);
+
+    console.log(
+      "🔗 useEffect triggered - renderedContent length:",
+      renderedContent.length
+    );
     console.log("🔗 contentRef.current exists:", !!container);
-    
+
     if (!container || !renderedContent) {
-      console.warn("⚠️ Skipping event attachment - container or content missing");
+      console.warn(
+        "⚠️ Skipping event attachment - container or content missing"
+      );
       return;
     }
 
     console.log("🔗 Attaching event listeners using EVENT DELEGATION");
-    
+
     const handleContainerClick = async (e: Event) => {
       const target = e.target as HTMLElement;
-      
+
       // Check if click is on copy button or its children
-      const copyBtn = target.closest('.copy-code-btn') as HTMLButtonElement;
+      const copyBtn = target.closest(".copy-code-btn") as HTMLButtonElement;
       if (copyBtn) {
         e.preventDefault();
         e.stopPropagation();
         console.log("🖱️ COPY BUTTON CLICKED via delegation!");
-        
-        const codeBlock = copyBtn.closest('.code-block-enhanced');
-        const codeElement = codeBlock?.querySelector('code');
+
+        const codeBlock = copyBtn.closest(".code-block-enhanced");
+        const codeElement = codeBlock?.querySelector("code");
         const codeText = codeElement?.textContent || "";
-        
+
         console.log("📝 Code text length:", codeText.length);
-        
+
         if (!codeText) {
           console.error("❌ No code found to copy");
           return;
         }
-        
+
         try {
           await navigator.clipboard.writeText(codeText);
           console.log("✅ Successfully copied to clipboard!");
-          
+
           const originalBg = copyBtn.style.background;
-          
+
           copyBtn.style.background = "#d1fae5";
           copyBtn.style.color = "#10b981";
-          const span = copyBtn.querySelector('span');
-          if (span) span.textContent = 'Copied!';
-          
+          const span = copyBtn.querySelector("span");
+          if (span) span.textContent = "Copied!";
+
           setTimeout(() => {
             copyBtn.style.background = originalBg;
             copyBtn.style.color = "";
-            if (span) span.textContent = 'Copy';
+            if (span) span.textContent = "Copy";
           }, 2000);
         } catch (err) {
           console.error("❌ Copy failed:", err);
         }
         return;
       }
-      
+
       // Check if click is on expand button or its children
-      const expandBtn = target.closest('.expand-code-btn') as HTMLButtonElement;
+      const expandBtn = target.closest(".expand-code-btn") as HTMLButtonElement;
       if (expandBtn) {
         e.preventDefault();
         e.stopPropagation();
         console.log("🖱️ EXPAND BUTTON CLICKED via delegation!");
-        
-        const blockIndexStr = expandBtn.getAttribute('data-index');
+
+        const blockIndexStr = expandBtn.getAttribute("data-index");
         if (!blockIndexStr) {
           console.error("❌ Block index not found");
           return;
         }
-        
+
         const blockIndex = parseInt(blockIndexStr, 10);
         console.log("📏 Toggling block index:", blockIndex);
-        
-        setExpandedBlocks(prev => {
+
+        setExpandedBlocks((prev) => {
           const newSet = new Set(prev);
           if (newSet.has(blockIndex)) {
             newSet.delete(blockIndex);
@@ -411,38 +451,59 @@ wrapper.style.cssText = `
         });
       }
     };
-    
+
     const handleContainerMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
-      if (btn && !btn.textContent?.includes('Copied!')) {
+      const btn = target.closest(
+        ".copy-code-btn, .expand-code-btn"
+      ) as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes("Copied!")) {
         btn.style.background = "#f3f4f6";
       }
     };
-    
+
     const handleContainerMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
-      if (btn && !btn.textContent?.includes('Copied!')) {
+      const btn = target.closest(
+        ".copy-code-btn, .expand-code-btn"
+      ) as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes("Copied!")) {
         btn.style.background = "transparent";
       }
     };
 
     // Attach single listeners to container
     container.addEventListener("click", handleContainerClick as EventListener);
-    container.addEventListener("mouseover", handleContainerMouseOver as EventListener);
-    container.addEventListener("mouseout", handleContainerMouseOut as EventListener);
-    
+    container.addEventListener(
+      "mouseover",
+      handleContainerMouseOver as EventListener
+    );
+    container.addEventListener(
+      "mouseout",
+      handleContainerMouseOut as EventListener
+    );
+
     console.log("✅ Event delegation listeners attached to container");
-    
-    const copyButtons = container.querySelectorAll('.copy-code-btn');
-    const expandButtons = container.querySelectorAll('.expand-code-btn');
-    console.log(`✅ Monitoring ${copyButtons.length} copy buttons and ${expandButtons.length} expand buttons via delegation`);
+
+    const copyButtons = container.querySelectorAll(".copy-code-btn");
+    const expandButtons = container.querySelectorAll(".expand-code-btn");
+    console.log(
+      `✅ Monitoring ${copyButtons.length} copy buttons and ${expandButtons.length} expand buttons via delegation`
+    );
 
     return () => {
-      container.removeEventListener("click", handleContainerClick as EventListener);
-      container.removeEventListener("mouseover", handleContainerMouseOver as EventListener);
-      container.removeEventListener("mouseout", handleContainerMouseOut as EventListener);
+      container.removeEventListener(
+        "click",
+        handleContainerClick as EventListener
+      );
+      container.removeEventListener(
+        "mouseover",
+        handleContainerMouseOver as EventListener
+      );
+      container.removeEventListener(
+        "mouseout",
+        handleContainerMouseOut as EventListener
+      );
       console.log("🧹 Cleaning up event delegation listeners");
     };
   }, [renderedContent]);
@@ -461,12 +522,12 @@ wrapper.style.cssText = `
     if (navigator.share && post) {
       try {
         await navigator.share({
-          title: post.title,
-          text: post.description,
+          title: post?.title,
+          text: post?.description,
           url: window.location.href,
         });
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
+        if ((err as Error).name !== "AbortError") {
           console.log("Share cancelled");
         }
       }
@@ -479,9 +540,12 @@ wrapper.style.cssText = `
       }
     }
   }, [post]);
-useEffect(() => {
-  document.documentElement.classList.toggle('dark', theme.resolvedTheme === 'dark');
-}, [theme.resolvedTheme]);
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      theme.resolvedTheme === "dark"
+    );
+  }, [theme.resolvedTheme]);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -490,7 +554,8 @@ useEffect(() => {
   const scrollToComments = useCallback(() => {
     const commentSection = document.querySelector(".tiptap-preview-content");
     if (commentSection) {
-      const offset = commentSection.getBoundingClientRect().top + window.scrollY + 500;
+      const offset =
+        commentSection.getBoundingClientRect().top + window.scrollY + 500;
       window.scrollTo({
         top: offset,
         behavior: "smooth",
@@ -522,8 +587,13 @@ useEffect(() => {
           <Heading variant="heading-strong-xl" marginBottom="16">
             Post Not Found
           </Heading>
-          <Text marginBottom="24">The post you&apos;re looking for doesn&apos;t exist.</Text>
-          <SmartLink href="/blog" className="text-blue-600 hover:underline transition-colors">
+          <Text marginBottom="24">
+            The post you&apos;re looking for doesn&apos;t exist.
+          </Text>
+          <SmartLink
+            href="/blog"
+            className="text-blue-600 hover:underline transition-colors"
+          >
             ← Back to Blog
           </SmartLink>
         </div>
@@ -533,8 +603,6 @@ useEffect(() => {
 
   return (
     <>
-    
-
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
         <div
@@ -549,292 +617,331 @@ useEffect(() => {
       </div>
 
       {/* Floating Action Buttons */}
- 
- 
-{showFloatingActions && (
-  <AnimatePresence>
-    <motion.div 
-      className="fixed left-4 md:left-6 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block"
-      initial={{ opacity: 0, x: -30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
-      <motion.div 
-        className="flex flex-col gap-3 p-3 rounded-[20px] relative overflow-hidden"
-        style={{
-          background: theme.resolvedTheme === 'dark' 
-            ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.4), rgba(20, 20, 20, 0.3))'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
-          backdropFilter: 'blur(40px) saturate(200%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-          border: theme.resolvedTheme === 'dark'
-            ? '1.5px solid rgba(255, 255, 255, 0.1)'
-            : '1.5px solid rgba(255, 255, 255, 0.18)',
-          boxShadow: theme.resolvedTheme === 'dark'
-            ? `0 8px 32px 0 rgba(0, 0, 0, 0.4),
+
+      {showFloatingActions && (
+        <AnimatePresence>
+          <motion.div
+            className="fixed left-4 md:left-6 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <motion.div
+              className="flex flex-col gap-3 p-3 rounded-[20px] relative overflow-hidden"
+              style={{
+                background:
+                  theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(30, 30, 30, 0.4), rgba(20, 20, 20, 0.3))"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+                backdropFilter: "blur(40px) saturate(200%)",
+                WebkitBackdropFilter: "blur(40px) saturate(200%)",
+                border:
+                  theme.resolvedTheme === "dark"
+                    ? "1.5px solid rgba(255, 255, 255, 0.1)"
+                    : "1.5px solid rgba(255, 255, 255, 0.18)",
+                boxShadow:
+                  theme.resolvedTheme === "dark"
+                    ? `0 8px 32px 0 rgba(0, 0, 0, 0.4),
                inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
                inset 0 -1px 1px 0 rgba(255, 255, 255, 0.05)`
-            : `0 8px 32px 0 rgba(0, 0, 0, 0.08),
+                    : `0 8px 32px 0 rgba(0, 0, 0, 0.08),
                inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
                inset 0 -1px 1px 0 rgba(255, 255, 255, 0.1)`,
-        }}
-        whileHover={{
-          background: theme.resolvedTheme === 'dark'
-            ? 'linear-gradient(135deg, rgba(40, 40, 40, 0.5), rgba(30, 30, 30, 0.4))'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))',
-          border: theme.resolvedTheme === 'dark'
-            ? '1.5px solid rgba(255, 255, 255, 0.15)'
-            : '1.5px solid rgba(255, 255, 255, 0.25)',
-          boxShadow: theme.resolvedTheme === 'dark'
-            ? `0 12px 48px 0 rgba(0, 0, 0, 0.5),
+              }}
+              whileHover={{
+                background:
+                  theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(40, 40, 40, 0.5), rgba(30, 30, 30, 0.4))"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))",
+                border:
+                  theme.resolvedTheme === "dark"
+                    ? "1.5px solid rgba(255, 255, 255, 0.15)"
+                    : "1.5px solid rgba(255, 255, 255, 0.25)",
+                boxShadow:
+                  theme.resolvedTheme === "dark"
+                    ? `0 12px 48px 0 rgba(0, 0, 0, 0.5),
                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
                inset 0 -1px 1px 0 rgba(255, 255, 255, 0.08)`
-            : `0 12px 48px 0 rgba(0, 0, 0, 0.12),
+                    : `0 12px 48px 0 rgba(0, 0, 0, 0.12),
                inset 0 1px 1px 0 rgba(255, 255, 255, 1),
                inset 0 -1px 1px 0 rgba(255, 255, 255, 0.2)`,
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Glossy overlay */}
-        <div 
-          className="absolute inset-0 rounded-[20px] pointer-events-none"
-          style={{
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 100%)'
-              : 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.02) 100%)',
-          }}
-        />
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Glossy overlay */}
+              <div
+                className="absolute inset-0 rounded-[20px] pointer-events-none"
+                style={{
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 100%)"
+                      : "linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.02) 100%)",
+                }}
+              />
 
-        {/* Like Button */}
-        <motion.button
-          onClick={handleLike}
-          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
-            isLiked 
-              ? "text-red-500" 
-              : theme.resolvedTheme === 'dark' ? "text-red-600" : "text-red-600"
-          }`}
-          style={{
-            background: isLiked 
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1))'
-                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(166, 10, 10, 0.05), rgba(255, 255, 255, 0.02))'
-                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))'),
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: isLiked 
-              ? '1px solid rgba(239, 68, 68, 0.25)' 
-              : (theme.resolvedTheme === 'dark'
-                  ? '1px solid rgba(242, 2, 2, 0.08)'
-                  : '1px solid rgba(255, 255, 255, 0.15)'),
-            boxShadow: isLiked
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(239, 68, 68, 0.2)'
-                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(239, 68, 68, 0.15)')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
-                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)'),
-          }}
-          whileHover={{
-            scale: 1.08,
-            background: isLiked 
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15))'
-                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.12))')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))'
-                  : 'linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06))'),
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(239, 68, 68, 0.3)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(239, 68, 68, 0.2)',
-            color: 'rgb(239, 68, 68)',
-          }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          title="Like this post"
-          aria-label={isLiked ? "Unlike post" : "Like post"}
-        >
-          <div 
-            className="absolute inset-0 rounded-[14px] pointer-events-none"
-            style={{
-              background: theme.resolvedTheme === 'dark'
-                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
-                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
-            }}
-          />
-          <Heart className={`w-5 h-5 relative z-10 ${isLiked ? "fill-current" : ""}`} />
-        </motion.button>
+              {/* Like Button */}
+              <motion.button
+                onClick={handleLike}
+                className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+                  isLiked
+                    ? "text-red-500"
+                    : theme.resolvedTheme === "dark"
+                    ? "text-red-600"
+                    : "text-red-600"
+                }`}
+                style={{
+                  background: isLiked
+                    ? theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1))"
+                      : "linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))"
+                    : theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(166, 10, 10, 0.05), rgba(255, 255, 255, 0.02))"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: isLiked
+                    ? "1px solid rgba(239, 68, 68, 0.25)"
+                    : theme.resolvedTheme === "dark"
+                    ? "1px solid rgba(242, 2, 2, 0.08)"
+                    : "1px solid rgba(255, 255, 255, 0.15)",
+                  boxShadow: isLiked
+                    ? theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(239, 68, 68, 0.2)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(239, 68, 68, 0.15)"
+                    : theme.resolvedTheme === "dark"
+                    ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)"
+                    : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  background: isLiked
+                    ? theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15))"
+                      : "linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.12))"
+                    : theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08))"
+                    : "linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06))",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(239, 68, 68, 0.3)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(239, 68, 68, 0.2)",
+                  color: "rgb(239, 68, 68)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                title="Like this post"
+                aria-label={isLiked ? "Unlike post" : "Like post"}
+              >
+                <div
+                  className="absolute inset-0 rounded-[14px] pointer-events-none"
+                  style={{
+                    background:
+                      theme.resolvedTheme === "dark"
+                        ? "linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)"
+                        : "linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+                  }}
+                />
+                <Heart
+                  className={`w-5 h-5 relative z-10 ${
+                    isLiked ? "fill-current" : ""
+                  }`}
+                />
+              </motion.button>
 
-        {/* Divider */}
-        <div 
-          className="w-full h-px relative"
-          style={{
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent)'
-              : 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent)',
-          }}
-        />
+              {/* Divider */}
+              <div
+                className="w-full h-px relative"
+                style={{
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent)"
+                      : "linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent)",
+                }}
+              />
 
-        {/* Comment Button */}
-        <motion.button
-          onClick={openComments}
-          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
-            theme.resolvedTheme === 'dark' ? "text-gray-300" : "text-gray-700"
-          }`}
-          style={{
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: theme.resolvedTheme === 'dark'
-              ? '1px solid rgba(255, 255, 255, 0.08)'
-              : '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)',
-          }}
-          whileHover={{
-            scale: 1.08,
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08))'
-              : 'linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.06))',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(59, 130, 246, 0.3)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(59, 130, 246, 0.2)',
-            color: 'rgb(59, 130, 246)',
-          }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          title="Go to comments"
-          aria-label="Scroll to comments"
-        >
-          <div 
-            className="absolute inset-0 rounded-[14px] pointer-events-none"
-            style={{
-              background: theme.resolvedTheme === 'dark'
-                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
-                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
-            }}
-          />
-          <MessageCircle className="w-5 h-5 relative z-10" />
-        </motion.button>
+              {/* Comment Button */}
+              <motion.button
+                onClick={openComments}
+                className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-300"
+                    : "text-gray-700"
+                }`}
+                style={{
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))"
+                      : "linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border:
+                    theme.resolvedTheme === "dark"
+                      ? "1px solid rgba(255, 255, 255, 0.08)"
+                      : "1px solid rgba(255, 255, 255, 0.15)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08))"
+                      : "linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(59, 130, 246, 0.06))",
+                  border: "1px solid rgba(59, 130, 246, 0.3)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(59, 130, 246, 0.3)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(59, 130, 246, 0.2)",
+                  color: "rgb(59, 130, 246)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                title="Go to comments"
+                aria-label="Scroll to comments"
+              >
+                <div
+                  className="absolute inset-0 rounded-[14px] pointer-events-none"
+                  style={{
+                    background:
+                      theme.resolvedTheme === "dark"
+                        ? "linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)"
+                        : "linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+                  }}
+                />
+                <MessageCircle className="w-5 h-5 relative z-10" />
+              </motion.button>
 
-        {/* Bookmark Button */}
-        <motion.button
-          onClick={handleBookmark}
-          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
-            isBookmarked 
-              ? "text-yellow-500" 
-              : theme.resolvedTheme === 'dark' ? "text-amber-600" : "text-amber-600"
-          }`}
-          style={{
-            background: isBookmarked 
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.1))'
-                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
-                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))'),
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: isBookmarked 
-              ? '1px solid rgba(234, 179, 8, 0.25)' 
-              : (theme.resolvedTheme === 'dark'
-                  ? '1px solid rgba(255, 255, 255, 0.08)'
-                  : '1px solid rgba(255, 255, 255, 0.15)'),
-            boxShadow: isBookmarked
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(234, 179, 8, 0.2)'
-                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(234, 179, 8, 0.15)')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
-                  : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)'),
-          }}
-          whileHover={{
-            scale: 1.08,
-            background: isBookmarked 
-              ? (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(234, 179, 8, 0.15))'
-                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.12))')
-              : (theme.resolvedTheme === 'dark'
-                  ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))'
-                  : 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(234, 179, 8, 0.06))'),
-            border: '1px solid rgba(234, 179, 8, 0.3)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(234, 179, 8, 0.3)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(234, 179, 8, 0.2)',
-            color: 'rgb(234, 179, 8)',
-          }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          title={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
-          aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
-        >
-          <div 
-            className="absolute inset-0 rounded-[14px] pointer-events-none"
-            style={{
-              background: theme.resolvedTheme === 'dark'
-                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
-                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
-            }}
-          />
-          <Bookmark className={`w-5 h-5 relative z-10 ${isBookmarked ? "fill-current" : ""}`} />
-        </motion.button>
+              {/* Bookmark Button */}
+              <motion.button
+                onClick={handleBookmark}
+                className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+                  isBookmarked
+                    ? "text-yellow-500"
+                    : theme.resolvedTheme === "dark"
+                    ? "text-amber-600"
+                    : "text-amber-600"
+                }`}
+                style={{
+                  background: isBookmarked
+                    ? theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.1))"
+                      : "linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))"
+                    : theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))"
+                    : "linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: isBookmarked
+                    ? "1px solid rgba(234, 179, 8, 0.25)"
+                    : theme.resolvedTheme === "dark"
+                    ? "1px solid rgba(255, 255, 255, 0.08)"
+                    : "1px solid rgba(255, 255, 255, 0.15)",
+                  boxShadow: isBookmarked
+                    ? theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(234, 179, 8, 0.2)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), 0 2px 8px rgba(234, 179, 8, 0.15)"
+                    : theme.resolvedTheme === "dark"
+                    ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)"
+                    : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  background: isBookmarked
+                    ? theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(234, 179, 8, 0.15))"
+                      : "linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.12))"
+                    : theme.resolvedTheme === "dark"
+                    ? "linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.08))"
+                    : "linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(234, 179, 8, 0.06))",
+                  border: "1px solid rgba(234, 179, 8, 0.3)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(234, 179, 8, 0.3)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(234, 179, 8, 0.2)",
+                  color: "rgb(234, 179, 8)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                title={isBookmarked ? "Remove bookmark" : "Bookmark this post"}
+                aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
+              >
+                <div
+                  className="absolute inset-0 rounded-[14px] pointer-events-none"
+                  style={{
+                    background:
+                      theme.resolvedTheme === "dark"
+                        ? "linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)"
+                        : "linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+                  }}
+                />
+                <Bookmark
+                  className={`w-5 h-5 relative z-10 ${
+                    isBookmarked ? "fill-current" : ""
+                  }`}
+                />
+              </motion.button>
 
-        {/* Share Button */}
-        <motion.button
-          onClick={handleShare}
-          className={`p-2.5 rounded-[14px] relative overflow-hidden ${
-            theme.resolvedTheme === 'dark' ? "text-gray-300" : "text-gray-700"
-          }`}
-          style={{
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: theme.resolvedTheme === 'dark'
-              ? '1px solid rgba(255, 255, 255, 0.08)'
-              : '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)',
-          }}
-          whileHover={{
-            scale: 1.08,
-            background: theme.resolvedTheme === 'dark'
-              ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08))'
-              : 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06))',
-            border: '1px solid rgba(34, 197, 94, 0.3)',
-            boxShadow: theme.resolvedTheme === 'dark'
-              ? 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(34, 197, 94, 0.3)'
-              : 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(34, 197, 94, 0.2)',
-            color: 'rgb(34, 197, 94)',
-          }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          title="Share this post"
-          aria-label="Share post"
-        >
-          <div 
-            className="absolute inset-0 rounded-[14px] pointer-events-none"
-            style={{
-              background: theme.resolvedTheme === 'dark'
-                ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)'
-                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)',
-            }}
-          />
-          <Share2 className="w-5 h-5 relative z-10" />
-        </motion.button>
-      </motion.div>
-    </motion.div>
-  </AnimatePresence>
-)}
+              {/* Share Button */}
+              <motion.button
+                onClick={handleShare}
+                className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-300"
+                    : "text-gray-700"
+                }`}
+                style={{
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))"
+                      : "linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border:
+                    theme.resolvedTheme === "dark"
+                      ? "1px solid rgba(255, 255, 255, 0.08)"
+                      : "1px solid rgba(255, 255, 255, 0.15)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
+                whileHover={{
+                  scale: 1.08,
+                  background:
+                    theme.resolvedTheme === "dark"
+                      ? "linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08))"
+                      : "linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06))",
+                  border: "1px solid rgba(34, 197, 94, 0.3)",
+                  boxShadow:
+                    theme.resolvedTheme === "dark"
+                      ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 12px rgba(34, 197, 94, 0.3)"
+                      : "inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 4px 12px rgba(34, 197, 94, 0.2)",
+                  color: "rgb(34, 197, 94)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                title="Share this post"
+                aria-label="Share post"
+              >
+                <div
+                  className="absolute inset-0 rounded-[14px] pointer-events-none"
+                  style={{
+                    background:
+                      theme.resolvedTheme === "dark"
+                        ? "linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%)"
+                        : "linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)",
+                  }}
+                />
+                <Share2 className="w-5 h-5 relative z-10" />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      )}
 
       {/* Scroll to Top Button */}
       {showFloatingActions && (
@@ -850,22 +957,32 @@ useEffect(() => {
 
       <Column maxWidth="m" paddingTop="24" paddingBottom="40">
         {/* Back Link */}
-        <SmartLink 
-          href="/blog" 
+        <SmartLink
+          href="/blog"
           className="inline-flex items-center gap-2 mb-8 transition-all duration-200 text-gray-500 hover:text-gray-700 hover:gap-3 group"
         >
-          <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           <span>Back to Blog</span>
         </SmartLink>
 
         {/* Cover Image */}
-        {post.coverImage && (
+        {post?.coverImage && (
           <div className="mb-8 overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group">
             <img
-              src={post.coverImage}
-              alt={post.title}
+              src={post?.coverImage}
+              alt={post?.title}
               className="w-full h-48 md:h-64 lg:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
               loading="eager"
             />
@@ -875,34 +992,35 @@ useEffect(() => {
         {/* Post Header */}
         <header className="mb-8">
           <Heading variant="display-strong-l" marginBottom="16">
-            {post.title}
+            {post?.title}
           </Heading>
 
-          {post.description && (
-            <Text variant="body-default-l" className="text-gray-600" marginBottom="24">
-              {post.description}
+          {post?.description && (
+            <Text
+              variant="body-default-l"
+              className="text-gray-600"
+              marginBottom="24"
+            >
+              {post?.description}
             </Text>
           )}
 
           {/* Post Meta */}
           <Row gap="16" wrap vertical="center" marginBottom="24">
-            {post.author && (
+            {post?.author && (
               <Row gap="12" vertical="center">
-                {post.author.profileImage && (
-                  <Avatar 
-                    src={post.author.profileImage}
-                    size="m"
-                  />
+                {post?.author?.profileImage && (
+                  <Avatar src={post?.author?.profileImage} size="m" />
                 )}
                 <Text variant="label-default-s" className="text-gray-600">
-                  {post.author.firstName} {post.author.lastName}
+                  {post?.author.firstName} {post?.author?.lastName}
                 </Text>
               </Row>
             )}
 
-            {post.publishedAt && (
+            {post?.publishedAt && (
               <Text variant="body-default-xs" className="text-gray-500">
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                {new Date(post?.publishedAt).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -910,28 +1028,28 @@ useEffect(() => {
               </Text>
             )}
 
-            {post.readingTime && (
+            {post?.readingTime && (
               <Text variant="body-default-xs" className="text-gray-500">
-                {post.readingTime} min read
+                {post?.readingTime} min read
               </Text>
             )}
 
-            {post.category && (
+            {post?.category && (
               <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                {post.category}
+                {post?.category}
               </span>
             )}
           </Row>
 
           {/* Social Actions Bar */}
-          <Row 
-            gap="24" 
-            paddingY="16" 
-            horizontal="stretch" 
+          <Row
+            gap="24"
+            paddingY="16"
+            horizontal="stretch"
             vertical="center"
-            style={{ 
-              borderTop: '1px solid #e5e7eb', 
-              borderBottom: '1px solid #e5e7eb' 
+            style={{
+              borderTop: "1px solid #e5e7eb",
+              borderBottom: "1px solid #e5e7eb",
             }}
           >
             <Row gap="24" vertical="center">
@@ -940,18 +1058,26 @@ useEffect(() => {
                 className={`flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 ${
                   isLiked ? "text-red-500" : "text-gray-500 hover:text-red-500"
                 }`}
-                aria-label={isLiked ? `Unlike (${likeCount} likes)` : `Like (${likeCount} likes)`}
+                aria-label={
+                  isLiked
+                    ? `Unlike (${likeCount} likes)`
+                    : `Like (${likeCount} likes)`
+                }
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
-                <Text variant="label-default-s" className="font-medium">{likeCount}</Text>
+                <Text variant="label-default-s" className="font-medium">
+                  {likeCount}
+                </Text>
               </button>
 
-              <button 
-          onClick={openComments}
+              <button
+                onClick={openComments}
                 className="flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 text-gray-500 hover:text-blue-500"
               >
                 <MessageCircle className="w-5 h-5" />
-                <Text variant="label-default-s" className="hidden sm:inline">Comment</Text>
+                <Text variant="label-default-s" className="hidden sm:inline">
+                  Comment
+                </Text>
               </button>
             </Row>
 
@@ -959,12 +1085,16 @@ useEffect(() => {
               <button
                 onClick={handleBookmark}
                 className={`transition-all duration-200 hover:scale-110 active:scale-95 ${
-                  isBookmarked ? "text-yellow-500" : "text-gray-500 hover:text-yellow-500"
+                  isBookmarked
+                    ? "text-yellow-500"
+                    : "text-gray-500 hover:text-yellow-500"
                 }`}
                 title={isBookmarked ? "Remove bookmark" : "Bookmark"}
                 aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"}
               >
-                <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
+                <Bookmark
+                  className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+                />
               </button>
 
               <button
@@ -980,17 +1110,20 @@ useEffect(() => {
         </header>
 
         {/* Post Content with TipTap styling */}
-  <article
-  ref={contentRef}
-  className="tiptap-preview-content prose prose-lg   max-w-none"
-  dangerouslySetInnerHTML={{ __html: renderedContent }}
-/>
-
-
+        <article
+          ref={contentRef}
+          className="tiptap-preview-content prose prose-lg   max-w-none"
+          dangerouslySetInnerHTML={{ __html: renderedContent }}
+        />
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <Column gap="16" marginTop="48" paddingTop="24" style={{ borderTop: '1px solid #e5e7eb' }}>
+          <Column
+            gap="16"
+            marginTop="48"
+            paddingTop="24"
+            style={{ borderTop: "1px solid #e5e7eb" }}
+          >
             <Text variant="label-default-s" className="text-gray-600">
               Tags
             </Text>
@@ -1007,14 +1140,13 @@ useEffect(() => {
           </Column>
         )}
       </Column>
-    <div className="absolute">
-
- 
-  <CommentsSheet  
-  show={isCommentsOpen}
-  onClose={closeComments}
-  blogId={post.id}
- />   </div>
-     </>
+      <div className="absolute">
+        <CommentsSheet
+          show={isCommentsOpen}
+          onClose={closeComments}
+          blogId={post.id}
+        />{" "}
+      </div>
+    </>
   );
 }

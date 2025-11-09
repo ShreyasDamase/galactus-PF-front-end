@@ -26,18 +26,18 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   return (
     <Card
       fillWidth
-      key={post._id}
-      href={`/blog/${post.slug}`}
+      key={post?._id}
+      href={`/blog/${post?.slug}`}
       transition="micro-medium"
       direction={direction}
       border="transparent"
@@ -54,33 +54,38 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
           border="neutral-alpha-weak"
           cursor="interactive"
           radius="l"
-          src={post.coverImage}
-          alt={"Thumbnail of " + post.title}
+          src={post?.coverImage}
+          alt={"Thumbnail of " + post?.title}
           aspectRatio="16 / 9"
         />
       )}
       <Row fillWidth>
-        <Column maxWidth={28} paddingY="24" paddingX="l" gap="20" vertical="center">
+        <Column
+          maxWidth={28}
+          paddingY="24"
+          paddingX="l"
+          gap="20"
+          vertical="center"
+        >
           <Row gap="24" vertical="center">
             <Row vertical="center" gap="16">
-              <Avatar 
-                src={post.author.profileImage} 
-                size="s" 
-              />
+              {post?.author?.profileImage && (
+                <Avatar src={post?.author?.profileImage} size="s" />
+              )}
               <Text variant="label-default-s">
-                {post.author.firstName} {post.author.lastName}
+                {post?.author?.firstName} {post?.author?.lastName}
               </Text>
             </Row>
             <Text variant="body-default-xs" onBackground="neutral-weak">
-              {formatDate(post.publishedAt)}
+              {formatDate(post?.publishedAt)}
             </Text>
           </Row>
           <Text variant="heading-strong-l" wrap="balance">
-            {post.title}
+            {post?.title}
           </Text>
-          {post.category && (
+          {post?.category && (
             <Text variant="label-strong-s" onBackground="neutral-weak">
-              {post.category}
+              {post?.category}
             </Text>
           )}
         </Column>
