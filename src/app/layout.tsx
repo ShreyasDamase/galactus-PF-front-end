@@ -23,9 +23,9 @@ export async function generateMetadata() {
   // 🎯 Select favicon based on env value
   const icon =
     userName === "shreyas"
-      ? "/icons/shreyas.ico"
+      ? "/shreyas.ico"
       : userName === "avi"
-      ? "/icons/avi.ico"
+      ? "/avi.ico"
       : "/favicon.ico";
 
   // Generate meta from Once UI’s Meta generator
