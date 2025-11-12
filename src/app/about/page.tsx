@@ -12,6 +12,7 @@ import {
   Meta,
   Schema,
   Row,
+  RevealFx,
 } from "@once-ui-system/core";
 import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
@@ -59,13 +60,6 @@ export default function About() {
   ];
   return (
     <Column maxWidth="m">
-      {profile?.resume?.url && (
-        <ResumeViewer
-          resumeUrl={profile.resume.url}
-          resumeName={profile.resume.name}
-        />
-      )}
-
       <Schema
         as="webPage"
         baseURL={baseURL}
@@ -79,6 +73,7 @@ export default function About() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
+
       {about.tableOfContent.display && (
         <Column
           left="0"
@@ -118,6 +113,14 @@ export default function About() {
               </Text>
               <Text>{profile.experience?.[0]?.technologies?.join(" • ")}</Text>
             </Row>
+            {profile?.resume?.url && (
+              <RevealFx translateY="16" delay={1.1}>
+                <ResumeViewer
+                  resumeUrl={profile.resume.url}
+                  resumeName={profile.resume.name}
+                />
+              </RevealFx>
+            )}
             {/* {person.languages && person.languages.length > 0 && (
               <Row wrap gap="8">
                 {person.languages.map((language, index) => (
@@ -137,7 +140,7 @@ export default function About() {
             vertical="center"
             marginBottom="32"
           >
-            {about.calendar.display && (
+            {/* {about.calendar.display && (
               <Row
                 fitWidth
                 border="brand-alpha-medium"
@@ -165,7 +168,7 @@ export default function About() {
                   icon="chevronRight"
                 />
               </Row>
-            )}
+            )} */}
             <Heading className={styles.textAlign} variant="display-strong-xl">
               {profile?.firstName} {profile?.lastName}
             </Heading>
