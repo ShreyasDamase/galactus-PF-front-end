@@ -19,6 +19,7 @@ import styles from "@/components/about/about.module.scss";
 import React from "react";
 import { useProfileStore } from "@/lib/store/useProfileStore";
 import { useProfile } from "@/lib/hooks/useProfile";
+// import { ResumeViewer } from "@/components/ResumeViewer";
 
 export default function About() {
   const { data, isLoading, error } = useProfile();
@@ -58,6 +59,13 @@ export default function About() {
   ];
   return (
     <Column maxWidth="m">
+      {/* {profile?.resume?.url && (
+        <ResumeViewer
+          resumeUrl={profile.resume.url}
+          resumeName={profile.resume.name}
+        />
+      )} */}
+
       <Schema
         as="webPage"
         baseURL={baseURL}
@@ -104,9 +112,13 @@ export default function About() {
             )}
             <Row gap="8" vertical="center">
               <Icon onBackground="accent-weak" name="globe" />
-              {person.location}
+              <Text>
+                {profile.experience?.[0]?.position} @{" "}
+                {profile.experience?.[0]?.company}
+              </Text>
+              <Text>{profile.experience?.[0]?.technologies?.join(" • ")}</Text>
             </Row>
-            {person.languages && person.languages.length > 0 && (
+            {/* {person.languages && person.languages.length > 0 && (
               <Row wrap gap="8">
                 {person.languages.map((language, index) => (
                   <Tag key={index} size="l">
@@ -114,7 +126,7 @@ export default function About() {
                   </Tag>
                 ))}
               </Row>
-            )}
+            )} */}
           </Column>
         )}
         <Column className={styles.blockAlign} flex={9} maxWidth={40}>
