@@ -20,7 +20,7 @@ export const profileApi = {
   getProfile: () =>
     apiClient.post<UserProfile>(
       `${BASE_PATH}/public-profile`,
-
+      {}, // empty body, since we're just sending headers
       {
         headers: {
           "x-user-id": process.env.NEXT_PUBLIC_USER_TO_FETCH,
