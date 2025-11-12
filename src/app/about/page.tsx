@@ -19,7 +19,7 @@ import styles from "@/components/about/about.module.scss";
 import React from "react";
 import { useProfileStore } from "@/lib/store/useProfileStore";
 import { useProfile } from "@/lib/hooks/useProfile";
-// import { ResumeViewer } from "@/components/ResumeViewer";
+import { ResumeViewer } from "@/components/ResumeViewer";
 
 export default function About() {
   const { data, isLoading, error } = useProfile();
@@ -59,12 +59,12 @@ export default function About() {
   ];
   return (
     <Column maxWidth="m">
-      {/* {profile?.resume?.url && (
+      {profile?.resume?.url && (
         <ResumeViewer
           resumeUrl={profile.resume.url}
           resumeName={profile.resume.name}
         />
-      )} */}
+      )}
 
       <Schema
         as="webPage"
