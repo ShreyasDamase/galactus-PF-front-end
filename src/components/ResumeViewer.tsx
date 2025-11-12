@@ -1,6 +1,14 @@
 "use client";
-import { useState } from "react";
-import { X, Download, ExternalLink } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Button,
+  Column,
+  Heading,
+  IconButton,
+  IconName,
+  Row,
+  Text,
+} from "@once-ui-system/core";
 
 export const ResumeViewer = ({
   resumeUrl,
@@ -13,10 +21,7 @@ export const ResumeViewer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const handleIframeLoad = () => {
-    setLoading(false);
-  };
-
+  const handleIframeLoad = () => setLoading(false);
   const handleIframeError = () => {
     setError(true);
     setLoading(false);
@@ -24,100 +29,149 @@ export const ResumeViewer = ({
 
   return (
     <>
-      {/* Button */}
-      <button
+      {/* Trigger Button */}
+      <Button
+        variant="primary"
+        size="m"
+        label="View Resume"
+        suffixIcon={"arrowUpRight" as IconName}
         onClick={() => {
           setShow(true);
           setLoading(true);
           setError(false);
         }}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-      >
-        View Resume
-      </button>
+      />
 
       {/* Modal */}
       {show && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-900 rounded-xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(6px)",
+            zIndex: 1000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              background: "var(--surface)",
+              borderRadius: "16px",
+              width: "100%",
+              maxWidth: "1200px",
+              height: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.3)",
+            }}
+          >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-gray-700">
-              <h2 className="truncate font-semibold text-gray-900 dark:text-white">
-                {resumeName}
-              </h2>
-              <div className="flex items-center gap-3">
-                <a
+            <Row
+              fillWidth
+              horizontal="between"
+              vertical="center"
+              borderBottom="neutral-medium"
+              padding="m"
+            >
+              <Heading variant="heading-strong-l">{resumeName}</Heading>
+
+              <Row gap="8">
+                <IconButton
+                  icon={"arrowUpRightFromSquare" as IconName}
+                  variant="secondary"
                   href={resumeUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                  title="Open in new tab"
-                >
-                  <ExternalLink className="w-5 h-5" />
-                </a>
-                <a
+                  tooltip="Open in new tab"
+                />
+                <IconButton
+                  icon={"document" as IconName}
+                  variant="secondary"
                   href={resumeUrl}
                   download={resumeName}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                  title="Download PDF"
-                >
-                  <Download className="w-5 h-5" />
-                </a>
-                <button
+                  tooltip="Download PDF"
+                />
+                <IconButton
+                  icon={"x" as IconName}
+                  variant="secondary"
                   onClick={() => setShow(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                  title="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+                  tooltip="Close"
+                />
+              </Row>
+            </Row>
 
             {/* PDF Viewer */}
-            <div className="flex-1 overflow-hidden bg-gray-100 dark:bg-gray-800 relative">
-              {loading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-gray-600 dark:text-gray-400">
-                    Loading PDF...
-                  </div>
+            <div
+              style={{
+                flex: 1,
+                position: "relative",
+                background: "var(--neutral-weak)",
+                overflow: "hidden",
+              }}
+            >
+              {loading && !error && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    gap: "8px",
+                    color: "var(--neutral-weak)",
+                  }}
+                >
+                  <Text variant="body-default-s">Loading PDF...</Text>
                 </div>
               )}
 
               {error ? (
-                <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
-                  <div className="text-gray-600 dark:text-gray-400">
-                    <p className="text-lg font-semibold mb-2">
-                      Unable to preview PDF
-                    </p>
-                    <p className="text-sm">
-                      This PDF cannot be displayed in the browser.
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <a
+                <Column
+                  fillWidth
+                  fillHeight
+                  vertical="center"
+                  horizontal="center"
+                  gap="m"
+                  padding="l"
+                  style={{ textAlign: "center" }}
+                >
+                  <Heading variant="heading-strong-s">
+                    Unable to preview PDF
+                  </Heading>
+                  <Text onBackground="neutral-weak">
+                    This PDF cannot be displayed in the browser.
+                  </Text>
+                  <Row gap="m" paddingTop="m">
+                    <Button
                       href={resumeUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Open in New Tab
-                    </a>
-                    <a
+                      prefixIcon={"arrowUpRightFromSquare" as IconName}
+                      label="Open in New Tab"
+                      variant="primary"
+                    />
+                    <Button
                       href={resumeUrl}
                       download={resumeName}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors inline-flex items-center gap-2"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download
-                    </a>
-                  </div>
-                </div>
+                      prefixIcon={"document" as IconName}
+                      label="Download"
+                      variant="secondary"
+                    />
+                  </Row>
+                </Column>
               ) : (
                 <iframe
                   src={`${resumeUrl}#view=FitH`}
-                  className="w-full h-full border-0"
                   title={resumeName}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                  }}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
                 />
