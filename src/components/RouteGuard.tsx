@@ -3,8 +3,16 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { routes, protectedRoutes } from "@/resources";
-import { Flex, Spinner, Button, Heading, Column, PasswordInput } from "@once-ui-system/core";
+import {
+  Flex,
+  Spinner,
+  Button,
+  Heading,
+  Column,
+  PasswordInput,
+} from "@once-ui-system/core";
 import NotFound from "@/app/not-found";
+import { PoliceLightLoader } from "./PoliceLightLoader";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -79,7 +87,7 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   if (loading) {
     return (
       <Flex fillWidth paddingY="128" horizontal="center">
-        <Spinner />
+        <PoliceLightLoader />
       </Flex>
     );
   }

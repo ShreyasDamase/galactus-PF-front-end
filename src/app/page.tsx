@@ -42,12 +42,6 @@ export default function Home() {
 
       {/* About Section */}
       <Column fillWidth gap="24" marginTop="xl" id="about-section">
-        <RevealFx translateY="12" delay={0.1}>
-          <Row fillWidth paddingRight="64">
-            <Line maxWidth={48} />
-          </Row>
-        </RevealFx>
-
         <RevealFx translateY="8" delay={0.2}>
           <Row fillWidth horizontal="center" marginY="l">
             <Heading as="h2" variant="display-strong-l">
@@ -70,12 +64,6 @@ export default function Home() {
       {/* Work/Projects Section */}
       {routes["/work"] && (
         <Column fillWidth gap="24" marginTop="xl" id="work-section">
-          <RevealFx translateY="12" delay={0.5}>
-            <Row fillWidth paddingRight="64">
-              <Line maxWidth={48} />
-            </Row>
-          </RevealFx>
-
           <RevealFx translateY="8" delay={0.6}>
             <Row fillWidth horizontal="center" marginY="l">
               <Heading as="h2" variant="display-strong-l">
@@ -99,12 +87,6 @@ export default function Home() {
       {/* Blog Section */}
       {routes["/blog"] && (
         <Column fillWidth gap="24" marginTop="xl" id="blog-section">
-          <RevealFx translateY="12" delay={0.9}>
-            <Row fillWidth paddingRight="64">
-              <Line maxWidth={48} />
-            </Row>
-          </RevealFx>
-
           <RevealFx translateY="8" delay={1.0}>
             <Row fillWidth horizontal="center" marginY="l">
               <Heading as="h2" variant="display-strong-l">
