@@ -1,14 +1,14 @@
 // src/lib/api/projects.api.ts
-import { apiClient } from './apiClient';
-import type { 
+import { apiClient } from "./apiClient";
+import type {
   ProjectResponse,
   MultipleProjectsResponse,
   SingleProjectResponse,
   PublicProjectsQueryParams,
-  PaginatedProjectsResponse
-} from   "../types/project.type"
+  PaginatedProjectsResponse,
+} from "../types/project.type";
 
-const BASE_PATH = '/projects';
+const BASE_PATH = "/projects";
 
 export const projectsApi = {
   /**
@@ -16,14 +16,21 @@ export const projectsApi = {
    * PUBLIC - No auth required
    */
   getAllProjects: (params?: PublicProjectsQueryParams) => {
-    const queryString = params ? new URLSearchParams(
-      Object.entries(params)
-        .filter(([_, value]) => value !== undefined)
-        .map(([key, value]) => [key, String(value)])
-    ).toString() : '';
-    
+    const queryString = params
+      ? new URLSearchParams(
+          Object.entries(params)
+            .filter(([_, value]) => value !== undefined)
+            .map(([key, value]) => [key, String(value)])
+        ).toString()
+      : "";
+
     return apiClient.get<PaginatedProjectsResponse>(
-      `${BASE_PATH}/projects-pub/${queryString ? `?${queryString}` : ''}`
+      `${BASE_PATH}/projects-pub/${queryString ? `?${queryString}` : ""}`,
+      {
+        headers: {
+          "x-user-id": process.env.NEXT_PUBLIC_USER_TO_FETCH,
+        },
+      }
     );
   },
 
@@ -38,7 +45,11 @@ export const projectsApi = {
    * Get projects by category
    * PUBLIC - No auth required
    */
-  getProjectsByCategory: (category: string, page: number = 1, limit: number = 10) =>
+  getProjectsByCategory: (
+    category: string,
+    page: number = 1,
+    limit: number = 10
+  ) =>
     apiClient.get<MultipleProjectsResponse>(
       `${BASE_PATH}?category=${category}&page=${page}&limit=${limit}`
     ),
@@ -67,7 +78,9 @@ export const projectsApi = {
    */
   searchProjects: (query: string, page: number = 1, limit: number = 10) =>
     apiClient.get<MultipleProjectsResponse>(
-      `${BASE_PATH}?search=${encodeURIComponent(query)}&page=${page}&limit=${limit}`
+      `${BASE_PATH}?search=${encodeURIComponent(
+        query
+      )}&page=${page}&limit=${limit}`
     ),
 
   /**
@@ -94,7 +107,7 @@ export const projectsApi = {
    */
   downloadArtifact: (slug: string, artifactId: string) =>
     apiClient.get(`${BASE_PATH}/download/${slug}/artifact/${artifactId}`, {
-      responseType: 'blob'
+      responseType: "blob",
     }),
 
   /**
@@ -103,7 +116,7 @@ export const projectsApi = {
    */
   downloadFile: (slug: string, fileId: string) =>
     apiClient.get(`${BASE_PATH}/download/${slug}/file/${fileId}`, {
-      responseType: 'blob'
+      responseType: "blob",
     }),
 
   /**
@@ -112,6 +125,6 @@ export const projectsApi = {
    */
   downloadButton: (slug: string, buttonId: string) =>
     apiClient.get(`${BASE_PATH}/download/${slug}/button/${buttonId}`, {
-      responseType: 'blob'
+      responseType: "blob",
     }),
 };

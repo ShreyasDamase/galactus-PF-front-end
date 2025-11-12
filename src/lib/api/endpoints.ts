@@ -1,12 +1,11 @@
 // src/lib/api/endpoints.ts
-'use client';
+"use client";
 
 import { apiClient } from "./apiClient";
 import { UserProfile } from "../types";
- 
 
 // Base path for user auth routes
-const BASE_PATH = '/user-auth';
+const BASE_PATH = "/user-auth";
 
 /**
  * Profile API endpoints
@@ -18,6 +17,14 @@ export const profileApi = {
    * Fetch current user's profile
    * @returns Promise with user profile data
    */
+  getProfile: () =>
+    apiClient.post<UserProfile>(
+      `${BASE_PATH}/public-profile`,
 
-getProfile: (userId: string) => 
-    apiClient.post<UserProfile>(`${BASE_PATH}/public-profile`, { userId }),};
+      {
+        headers: {
+          "x-user-id": process.env.NEXT_PUBLIC_USER_TO_FETCH,
+        },
+      }
+    ),
+};
