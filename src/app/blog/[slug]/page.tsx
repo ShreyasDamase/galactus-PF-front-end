@@ -9,6 +9,8 @@ import {
   Avatar,
   Row,
   SmartLink,
+  HoverCard,
+  Tag,
 } from "@once-ui-system/core";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
@@ -28,12 +30,16 @@ import "@/styles/syntax-theme.css";
 import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
 import CommentsSheet from "@/components/blog/CommentsSheet";
+import { useProfileStore } from "@/lib/store/useProfileStore";
+import { useProfile } from "@/lib/hooks/useProfile";
 
 export default function BlogPost() {
   const params = useParams();
   const slug = params.slug as string;
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const { data: profiledata } = useProfile();
+  const profile = useProfileStore((state) => state.profile);
+  const isComplete = useProfileStore((state) => state.isProfileComplete());
   const { data: post, isLoading, error } = usePostDetail(slug);
 
   // State management
@@ -1010,7 +1016,53 @@ export default function BlogPost() {
             {post?.author && (
               <Row gap="12" vertical="center">
                 {post?.author?.profileImage && (
-                  <Avatar src={post?.author?.profileImage} size="m" />
+                  <HoverCard
+                    placement="top"
+                    trigger={
+                      <Avatar
+                        size="l"
+                        src={post?.author?.profileImage}
+                        tabIndex={0}
+                      />
+                    }
+                  >
+                    <Column
+                      padding="20"
+                      gap="20"
+                      radius="l"
+                      maxWidth={24}
+                      background="page"
+                      border="neutral-alpha-weak"
+                      // href="https://lorant.one"
+                    >
+                      <Row gap="20" fillWidth vertical="center">
+                        <Avatar size={3} src={post?.author?.profileImage} />
+                        <Column gap="4">
+                          <Text variant="heading-strong-m">
+                            {post?.author.firstName} {post?.author?.lastName}
+                          </Text>
+                          <Text
+                            variant="body-default-s"
+                            onBackground="neutral-weak"
+                          >
+                            {profiledata?.role}
+                          </Text>
+                        </Column>
+                      </Row>
+                      <Text
+                        variant="body-default-s"
+                        onBackground="neutral-weak"
+                      >
+                        {profiledata?.bio}
+                      </Text>
+                      <Row gap="8" wrap>
+                        {profiledata?.skills.slice(0, 4).map((item) => (
+                          <Tag>{item}</Tag>
+                        ))}
+                        <Text>...</Text>
+                      </Row>
+                    </Column>
+                  </HoverCard>
                 )}
                 <Text variant="label-default-s" className="text-gray-600">
                   {post?.author.firstName} {post?.author?.lastName}

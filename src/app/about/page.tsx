@@ -86,6 +86,7 @@ export default function About() {
           <TableOfContents structure={structure} about={about} />
         </Column>
       )}
+
       <Row fillWidth s={{ direction: "column" }} horizontal="center">
         {profile?.profileImage && (
           <Column
@@ -207,13 +208,15 @@ export default function About() {
                             />
                           </Row>
                           <Row hide s={{ hide: false }}>
-                            <IconButton
-                              size="l"
-                              key={`${item.name}-icon`}
-                              href={item.link}
-                              icon={item.icon}
-                              variant="secondary"
-                            />
+                            <RevealFx translateY="16" delay={0.7}>
+                              <IconButton
+                                size="l"
+                                key={`${item.name}-icon`}
+                                href={item.link}
+                                icon={item.icon}
+                                variant="secondary"
+                              />
+                            </RevealFx>
                           </Row>
                         </React.Fragment>
                       )
@@ -336,17 +339,19 @@ export default function About() {
 
                               {experience.location && (
                                 <Row gap="8" vertical="center" marginBottom="m">
-                                  <Icon
-                                    name="mapPin"
-                                    size="xs"
-                                    onBackground="neutral-weak"
-                                  />
-                                  <Text
-                                    variant="body-default-xs"
-                                    onBackground="neutral-weak"
-                                  >
-                                    {experience.location}
-                                  </Text>
+                                  <RevealFx translateY="16" delay={0.7}>
+                                    <Icon
+                                      name="mapPin"
+                                      size="xs"
+                                      onBackground="neutral-weak"
+                                    />
+                                    <Text
+                                      variant="body-default-xs"
+                                      onBackground="neutral-weak"
+                                    >
+                                      {experience.location}
+                                    </Text>
+                                  </RevealFx>
                                 </Row>
                               )}
 

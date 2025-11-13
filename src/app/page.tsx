@@ -41,14 +41,14 @@ export default function Home() {
       {/* Hero Section - Preserved Animation */}
 
       {/* About Section */}
-      <Column fillWidth gap="24" marginTop="xl" id="about-section">
-        <RevealFx translateY="8" delay={0.2}>
-          <Row fillWidth horizontal="center" marginY="l">
+      <Column fillWidth gap="24" marginTop="1" id="about-section">
+        {/* <RevealFx translateY="8" delay={0.2}>
+          <Row fillWidth horizontal="center" marginY="1">
             <Heading as="h2" variant="display-strong-l">
               About Me
             </Heading>
           </Row>
-        </RevealFx>
+        </RevealFx> */}
 
         <RevealFx translateY="16" delay={0.3}>
           <About />

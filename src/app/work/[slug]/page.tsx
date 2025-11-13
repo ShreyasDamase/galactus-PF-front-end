@@ -1,16 +1,41 @@
-'use client';
+"use client";
 
 import { useParams } from "next/navigation";
-import { Column, Heading, Text, Row, SmartLink, Carousel } from "@once-ui-system/core";
+import {
+  Column,
+  Heading,
+  Text,
+  Row,
+  SmartLink,
+  Carousel,
+} from "@once-ui-system/core";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { 
-  Heart, Bookmark, Share2, Download, Eye, Calendar, ChevronUp,
-  ExternalLink, Github, Globe, Package, Zap, Award, FileText,
-  BookOpen, HelpCircle, Cpu, Clock, Tag, Layers, TrendingUp,
+import {
+  Heart,
+  Bookmark,
+  Share2,
+  Download,
+  Eye,
+  Calendar,
+  ChevronUp,
+  ExternalLink,
+  Github,
+  Globe,
+  Package,
+  Zap,
+  Award,
+  FileText,
+  BookOpen,
+  HelpCircle,
+  Cpu,
+  Clock,
+  Tag,
+  Layers,
+  TrendingUp,
 } from "lucide-react";
 import hljs from "highlight.js";
-import { useTheme } from '@once-ui-system/core';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from "@once-ui-system/core";
+import { motion, AnimatePresence } from "framer-motion";
 
 import "@/styles/blog-preview.css";
 import "@/styles/syntax-theme.css";
@@ -28,9 +53,9 @@ declare global {
 export default function ProjectDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  
+
   const { data: project, isLoading, error } = useProject(slug);
-   
+
   const contentRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
@@ -55,7 +80,7 @@ export default function ProjectDetailPage() {
       if (window.mermaid && window.mermaidLoaded) {
         window.mermaid.initialize({
           startOnLoad: false,
-          theme: theme.resolvedTheme === 'dark' ? 'dark' : 'default',
+          theme: theme.resolvedTheme === "dark" ? "dark" : "default",
           securityLevel: "loose",
           fontFamily: "inherit",
         });
@@ -69,7 +94,7 @@ export default function ProjectDetailPage() {
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
         mermaid.initialize({
           startOnLoad: false,
-          theme: '${theme.resolvedTheme === 'dark' ? 'dark' : 'default'}',
+          theme: '${theme.resolvedTheme === "dark" ? "dark" : "default"}',
           securityLevel: 'loose',
           fontFamily: 'inherit',
         });
@@ -85,7 +110,8 @@ export default function ProjectDetailPage() {
       };
       window.addEventListener("mermaidLoaded", handleMermaidLoaded);
 
-      return () => window.removeEventListener("mermaidLoaded", handleMermaidLoaded);
+      return () =>
+        window.removeEventListener("mermaidLoaded", handleMermaidLoaded);
     };
 
     loadMermaid();
@@ -94,11 +120,12 @@ export default function ProjectDetailPage() {
   // Reading progress
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+          const { scrollTop, scrollHeight, clientHeight } =
+            document.documentElement;
           const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
           setReadingProgress(Math.min(100, Math.max(0, progress)));
           setShowFloatingActions(scrollTop > 300);
@@ -119,17 +146,37 @@ export default function ProjectDetailPage() {
     hljs.configure({
       ignoreUnescapedHTML: true,
       languages: [
-        "javascript", "typescript", "python", "java", "cpp", "c",
-        "html", "css", "json", "xml", "sql", "bash", "shell",
-        "go", "rust", "php", "ruby", "swift", "kotlin", "dart",
-        "yaml", "dockerfile", "markdown", "graphql"
+        "javascript",
+        "typescript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "html",
+        "css",
+        "json",
+        "xml",
+        "sql",
+        "bash",
+        "shell",
+        "go",
+        "rust",
+        "php",
+        "ruby",
+        "swift",
+        "kotlin",
+        "dart",
+        "yaml",
+        "dockerfile",
+        "markdown",
+        "graphql",
       ],
     });
 
-    const temp = document.createElement('div');
+    const temp = document.createElement("div");
     temp.innerHTML = project.description;
     const preBlocks = temp.querySelectorAll("pre");
-    
+
     preBlocks.forEach((block, index) => {
       const code = block.querySelector("code");
       if (!code) return;
@@ -137,7 +184,7 @@ export default function ProjectDetailPage() {
       hljs.highlightElement(code as HTMLElement);
 
       const codeText = code.textContent || "";
-      const lines = codeText.split("\n").filter(line => line.trim() !== "");
+      const lines = codeText.split("\n").filter((line) => line.trim() !== "");
       const shouldScroll = lines.length > 70;
 
       const detectLanguage = (codeElement: Element): string => {
@@ -151,9 +198,13 @@ export default function ProjectDetailPage() {
       };
 
       const languageClass = detectLanguage(code);
-      const languageDisplay = languageClass.charAt(0).toUpperCase() + languageClass.slice(1);
+      const languageDisplay =
+        languageClass.charAt(0).toUpperCase() + languageClass.slice(1);
 
-      const languageColors: Record<string, { bg: string; text: string; border: string }> = {
+      const languageColors: Record<
+        string,
+        { bg: string; text: string; border: string }
+      > = {
         javascript: { bg: "#fef3c7", text: "#d97706", border: "#fbbf24" },
         typescript: { bg: "#dbeafe", text: "#2563eb", border: "#60a5fa" },
         python: { bg: "#dcfce7", text: "#16a34a", border: "#4ade80" },
@@ -163,18 +214,20 @@ export default function ProjectDetailPage() {
         css: { bg: "#fce7f3", text: "#db2777", border: "#f472b6" },
         json: { bg: "#d1fae5", text: "#059669", border: "#34d399" },
         bash: { bg: "#f3f4f6", text: "#4b5563", border: "#d1d5db" },
-        plaintext: { bg: "#f9fafb", text: "#6b7280", border: "#e5e7eb" }
+        plaintext: { bg: "#f9fafb", text: "#6b7280", border: "#e5e7eb" },
       };
 
       const colors = languageColors[languageClass] || languageColors.plaintext;
       const wrapper = document.createElement("div");
       wrapper.className = `code-block-enhanced ${theme.resolvedTheme}`;
       wrapper.style.cssText = `
-        background: ${theme.resolvedTheme === 'dark' ? '#1f2937' : 'white'};
+        background: ${theme.resolvedTheme === "dark" ? "#1f2937" : "white"};
         border-radius: 12px;
         overflow: hidden;
         margin: 1.5rem 0;
-        border: 1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'};
+        border: 1px solid ${
+          theme.resolvedTheme === "dark" ? "#374151" : "#e5e7eb"
+        };
       `;
 
       const header = document.createElement("div");
@@ -184,12 +237,15 @@ export default function ProjectDetailPage() {
         justify-content: space-between;
         align-items: center;
         padding: 0.75rem 1rem;
-        background: ${theme.resolvedTheme === 'dark' ? '#1f2937' : '#f9fafb'};
-        border-bottom: 1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'};
+        background: ${theme.resolvedTheme === "dark" ? "#1f2937" : "#f9fafb"};
+        border-bottom: 1px solid ${
+          theme.resolvedTheme === "dark" ? "#374151" : "#e5e7eb"
+        };
       `;
 
       const leftSide = document.createElement("div");
-      leftSide.style.cssText = "display: flex; align-items: center; gap: 0.75rem;";
+      leftSide.style.cssText =
+        "display: flex; align-items: center; gap: 0.75rem;";
 
       const langBadge = document.createElement("div");
       langBadge.style.cssText = `
@@ -215,7 +271,7 @@ export default function ProjectDetailPage() {
       const metaInfo = document.createElement("div");
       metaInfo.style.cssText = `
         font-size: 0.75rem;
-        color: ${theme.resolvedTheme === 'dark' ? '#9ca3af' : '#6b7280'};
+        color: ${theme.resolvedTheme === "dark" ? "#9ca3af" : "#6b7280"};
         font-family: 'Monaco', 'Menlo', monospace;
         display: flex;
         align-items: center;
@@ -224,7 +280,9 @@ export default function ProjectDetailPage() {
       const sizeKB = (codeText.length / 1024).toFixed(1);
       metaInfo.innerHTML = `
         <span>${lines.length} lines</span>
-        <span style="color: ${theme.resolvedTheme === 'dark' ? '#4b5563' : '#d1d5db'};">•</span>
+        <span style="color: ${
+          theme.resolvedTheme === "dark" ? "#4b5563" : "#d1d5db"
+        };">•</span>
         <span>${sizeKB} KB</span>
       `;
 
@@ -232,7 +290,8 @@ export default function ProjectDetailPage() {
       leftSide.appendChild(metaInfo);
 
       const rightSide = document.createElement("div");
-      rightSide.style.cssText = "display: flex; align-items: center; gap: 0.5rem;";
+      rightSide.style.cssText =
+        "display: flex; align-items: center; gap: 0.5rem;";
 
       const copyBtn = document.createElement("button");
       copyBtn.className = "copy-code-btn";
@@ -246,7 +305,7 @@ export default function ProjectDetailPage() {
         font-size: 0.75rem;
         font-weight: 500;
         background: transparent;
-        color: ${theme.resolvedTheme === 'dark' ? '#9ca3af' : '#4b5563'};
+        color: ${theme.resolvedTheme === "dark" ? "#9ca3af" : "#4b5563"};
         border: none;
         cursor: pointer;
         transition: all 0.2s;
@@ -272,14 +331,16 @@ export default function ProjectDetailPage() {
           font-size: 0.75rem;
           font-weight: 500;
           background: transparent;
-          color: ${theme.resolvedTheme === 'dark' ? '#9ca3af' : '#4b5563'};
+          color: ${theme.resolvedTheme === "dark" ? "#9ca3af" : "#4b5563"};
           border: none;
           cursor: pointer;
           transition: all 0.2s;
         `;
         expandBtn.setAttribute("data-index", index.toString());
         const isExpanded = expandedBlocks.has(index);
-        expandBtn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>${isExpanded ? 'Collapse' : 'Expand'}</span>`;
+        expandBtn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg><span>${
+          isExpanded ? "Collapse" : "Expand"
+        }</span>`;
         rightSide.appendChild(expandBtn);
       }
 
@@ -289,15 +350,15 @@ export default function ProjectDetailPage() {
       const codeContainer = document.createElement("div");
       codeContainer.className = "code-container";
       const isExpanded = expandedBlocks.has(index);
-      codeContainer.style.cssText = shouldScroll 
-        ? (isExpanded 
-            ? "max-height: none; overflow-y: visible; position: relative;"
-            : "max-height: 500px; overflow-y: auto; position: relative;")
+      codeContainer.style.cssText = shouldScroll
+        ? isExpanded
+          ? "max-height: none; overflow-y: visible; position: relative;"
+          : "max-height: 500px; overflow-y: auto; position: relative;"
         : "position: relative;";
 
       const styledBlock = block.cloneNode(true) as HTMLElement;
       styledBlock.style.cssText = "margin: 0; border-radius: 0; border: none;";
-      
+
       codeContainer.appendChild(styledBlock);
       wrapper.appendChild(header);
       wrapper.appendChild(codeContainer);
@@ -314,42 +375,42 @@ export default function ProjectDetailPage() {
 
     const handleContainerClick = async (e: Event) => {
       const target = e.target as HTMLElement;
-      
-      const copyBtn = target.closest('.copy-code-btn') as HTMLButtonElement;
+
+      const copyBtn = target.closest(".copy-code-btn") as HTMLButtonElement;
       if (copyBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const codeBlock = copyBtn.closest('.code-block-enhanced');
-        const codeElement = codeBlock?.querySelector('code');
+        const codeBlock = copyBtn.closest(".code-block-enhanced");
+        const codeElement = codeBlock?.querySelector("code");
         const codeText = codeElement?.textContent || "";
         if (!codeText) return;
-        
+
         try {
           await navigator.clipboard.writeText(codeText);
           const originalBg = copyBtn.style.background;
           copyBtn.style.background = "#d1fae5";
           copyBtn.style.color = "#10b981";
-          const span = copyBtn.querySelector('span');
-          if (span) span.textContent = 'Copied!';
+          const span = copyBtn.querySelector("span");
+          if (span) span.textContent = "Copied!";
           setTimeout(() => {
             copyBtn.style.background = originalBg;
             copyBtn.style.color = "";
-            if (span) span.textContent = 'Copy';
+            if (span) span.textContent = "Copy";
           }, 2000);
         } catch (err) {
           console.error("Copy failed:", err);
         }
         return;
       }
-      
-      const expandBtn = target.closest('.expand-code-btn') as HTMLButtonElement;
+
+      const expandBtn = target.closest(".expand-code-btn") as HTMLButtonElement;
       if (expandBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const blockIndexStr = expandBtn.getAttribute('data-index');
+        const blockIndexStr = expandBtn.getAttribute("data-index");
         if (!blockIndexStr) return;
         const blockIndex = parseInt(blockIndexStr, 10);
-        setExpandedBlocks(prev => {
+        setExpandedBlocks((prev) => {
           const newSet = new Set(prev);
           if (newSet.has(blockIndex)) {
             newSet.delete(blockIndex);
@@ -360,48 +421,76 @@ export default function ProjectDetailPage() {
         });
       }
     };
-    
+
     const handleContainerMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
-      if (btn && !btn.textContent?.includes('Copied!')) {
-        btn.style.background = theme.resolvedTheme === 'dark' ? '#374151' : '#f3f4f6';
+      const btn = target.closest(
+        ".copy-code-btn, .expand-code-btn"
+      ) as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes("Copied!")) {
+        btn.style.background =
+          theme.resolvedTheme === "dark" ? "#374151" : "#f3f4f6";
       }
     };
-    
+
     const handleContainerMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const btn = target.closest('.copy-code-btn, .expand-code-btn') as HTMLButtonElement;
-      if (btn && !btn.textContent?.includes('Copied!')) {
+      const btn = target.closest(
+        ".copy-code-btn, .expand-code-btn"
+      ) as HTMLButtonElement;
+      if (btn && !btn.textContent?.includes("Copied!")) {
         btn.style.background = "transparent";
       }
     };
 
     container.addEventListener("click", handleContainerClick as EventListener);
-    container.addEventListener("mouseover", handleContainerMouseOver as EventListener);
-    container.addEventListener("mouseout", handleContainerMouseOut as EventListener);
+    container.addEventListener(
+      "mouseover",
+      handleContainerMouseOver as EventListener
+    );
+    container.addEventListener(
+      "mouseout",
+      handleContainerMouseOut as EventListener
+    );
 
     return () => {
-      container.removeEventListener("click", handleContainerClick as EventListener);
-      container.removeEventListener("mouseover", handleContainerMouseOver as EventListener);
-      container.removeEventListener("mouseout", handleContainerMouseOut as EventListener);
+      container.removeEventListener(
+        "click",
+        handleContainerClick as EventListener
+      );
+      container.removeEventListener(
+        "mouseover",
+        handleContainerMouseOver as EventListener
+      );
+      container.removeEventListener(
+        "mouseout",
+        handleContainerMouseOut as EventListener
+      );
     };
   }, [renderedContent, theme.resolvedTheme]);
 
   // Render Mermaid
   useEffect(() => {
-    if (!mermaidReady || !project?.diagrams || project.diagrams.length === 0) return;
+    if (!mermaidReady || !project?.diagrams || project.diagrams.length === 0)
+      return;
 
     const renderDiagrams = async () => {
       for (const diagram of project.diagrams) {
-        if (diagram.type !== 'mermaid') continue;
-        const diagramElement = document.getElementById(`mermaid-${diagram.name.replace(/\s+/g, '-')}`);
+        if (diagram.type !== "mermaid") continue;
+        const diagramElement = document.getElementById(
+          `mermaid-${diagram.name.replace(/\s+/g, "-")}`
+        );
         if (!diagramElement) continue;
 
         try {
-          const diagramId = `mermaid-diagram-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          const diagramId = `mermaid-diagram-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
           diagramElement.innerHTML = "";
-          const result = await window.mermaid.render(diagramId, diagram.content);
+          const result = await window.mermaid.render(
+            diagramId,
+            diagram.content
+          );
           if (result && result.svg) {
             diagramElement.innerHTML = result.svg;
             if (result.bindFunctions) {
@@ -423,7 +512,10 @@ export default function ProjectDetailPage() {
   }, [mermaidReady, project?.diagrams]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme.resolvedTheme === 'dark');
+    document.documentElement.classList.toggle(
+      "dark",
+      theme.resolvedTheme === "dark"
+    );
   }, [theme.resolvedTheme]);
 
   const handleLike = useCallback(() => {
@@ -444,7 +536,7 @@ export default function ProjectDetailPage() {
           url: window.location.href,
         });
       } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
+        if ((err as Error).name !== "AbortError") {
           console.log("Share cancelled");
         }
       }
@@ -463,11 +555,11 @@ export default function ProjectDetailPage() {
   }, []);
 
   const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   const formatDate = (dateString: string) => {
@@ -502,8 +594,13 @@ export default function ProjectDetailPage() {
           <Heading variant="heading-strong-xl" marginBottom="16">
             Project Not Found
           </Heading>
-          <Text marginBottom="24">The project you're looking for doesn't exist.</Text>
-          <SmartLink href="/work" className="text-blue-600 hover:underline transition-colors">
+          <Text marginBottom="24">
+            The project you're looking for doesn't exist.
+          </Text>
+          <SmartLink
+            href="/work"
+            className="text-blue-600 hover:underline transition-colors"
+          >
             ← Back to Projects
           </SmartLink>
         </div>
@@ -528,42 +625,67 @@ export default function ProjectDetailPage() {
       {/* Floating Actions */}
       {showFloatingActions && (
         <AnimatePresence>
-          <motion.div 
+          <motion.div
             className="fixed left-4 md:left-6 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -30 }}
           >
-            <div 
+            <div
               className="flex flex-col gap-3 p-3 rounded-2xl shadow-xl"
               style={{
-                background: theme.resolvedTheme === 'dark' ? '#1f2937' : 'white',
-                border: `1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+                background:
+                  theme.resolvedTheme === "dark" ? "#1f2937" : "white",
+                border: `1px solid ${
+                  theme.resolvedTheme === "dark" ? "#374151" : "#e5e7eb"
+                }`,
               }}
             >
               <motion.button
                 onClick={handleLike}
-                className={`p-2.5 rounded-xl ${isLiked ? "text-red-500" : theme.resolvedTheme === 'dark' ? "text-gray-400" : "text-gray-600"}`}
+                className={`p-2.5 rounded-xl ${
+                  isLiked
+                    ? "text-red-500"
+                    : theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
               </motion.button>
 
-              <div className={`w-full h-px ${theme.resolvedTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`} />
+              <div
+                className={`w-full h-px ${
+                  theme.resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-200"
+                }`}
+              />
 
               <motion.button
                 onClick={handleBookmark}
-                className={`p-2.5 rounded-xl ${isBookmarked ? "text-yellow-500" : theme.resolvedTheme === 'dark' ? "text-gray-400" : "text-gray-600"}`}
+                className={`p-2.5 rounded-xl ${
+                  isBookmarked
+                    ? "text-yellow-500"
+                    : theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
+                <Bookmark
+                  className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+                />
               </motion.button>
 
               <motion.button
                 onClick={handleShare}
-                className={`p-2.5 rounded-xl ${theme.resolvedTheme === 'dark' ? "text-gray-400" : "text-gray-600"}`}
+                className={`p-2.5 rounded-xl ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -580,29 +702,47 @@ export default function ProjectDetailPage() {
           onClick={scrollToTop}
           className="fixed bottom-6 right-4 md:right-6 p-3 rounded-2xl shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 z-40"
           style={{
-            background: theme.resolvedTheme === 'dark' ? '#1f2937' : 'white',
-            color: theme.resolvedTheme === 'dark' ? '#e5e7eb' : '#374151',
-            border: `1px solid ${theme.resolvedTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+            background: theme.resolvedTheme === "dark" ? "#1f2937" : "white",
+            color: theme.resolvedTheme === "dark" ? "#e5e7eb" : "#374151",
+            border: `1px solid ${
+              theme.resolvedTheme === "dark" ? "#374151" : "#e5e7eb"
+            }`,
           }}
         >
           <ChevronUp className="w-5 h-5" />
         </button>
       )}
 
-      <Column maxWidth="m" paddingTop="24" paddingBottom="40">
+      <Column maxWidth="xl" paddingTop="24" paddingBottom="40">
         {/* Back Link */}
-        <SmartLink 
-          href="/work" 
-          className={`inline-flex items-center gap-2 mb-8 transition-all ${theme.resolvedTheme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
+        <SmartLink
+          href="/work"
+          className={`inline-flex items-center gap-2 mb-8 transition-all ${
+            theme.resolvedTheme === "dark"
+              ? "text-gray-400 hover:text-gray-200"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           <span>Back to Projects</span>
         </SmartLink>
 
         {/* Hero Section */}
-        <div className={`rounded-2xl overflow-hidden mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div
+          className={`rounded-2xl overflow-hidden mb-8 backdrop-blur-xl bg-white/10 dark:bg-gray-900/10 shadow-lg border border-white/10`}
+        >
           {project.coverImage && (
             <img
               src={project.coverImage}
@@ -610,27 +750,42 @@ export default function ProjectDetailPage() {
               className="w-full h-64 md:h-80 lg:h-96 object-cover"
             />
           )}
-          
+
           <div className="p-6 md:p-8">
             <Heading variant="display-strong-l" marginBottom="16">
               {project.title}
             </Heading>
 
             {project.summary && (
-              <Text variant="body-default-l" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'} marginBottom="24">
+              <Text
+                variant="body-default-l"
+                className={
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-300"
+                    : "text-gray-600"
+                }
+                marginBottom="24"
+              >
                 {project.summary}
               </Text>
             )}
 
             {/* Meta Bar */}
             <Row gap="16" wrap vertical="center" marginBottom="24">
-              <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${
-                project.status === 'active' ? 'bg-green-100 text-green-800' :
-                project.status === 'work-in-progress' ? 'bg-yellow-100 text-yellow-800' :
-                project.status === 'archived' ? 'bg-gray-100 text-gray-800' :
-                'bg-blue-100 text-blue-800'
-              }`}>
-                {project.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              <span
+                className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+                  project.status === "active"
+                    ? "bg-green-100 text-green-800"
+                    : project.status === "work-in-progress"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : project.status === "archived"
+                    ? "bg-gray-100 text-gray-800"
+                    : "bg-blue-100 text-blue-800"
+                }`}
+              >
+                {project.status
+                  .replace("-", " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
               </span>
 
               {project.category && (
@@ -640,23 +795,62 @@ export default function ProjectDetailPage() {
               )}
 
               <Row gap="4" vertical="center">
-                <Eye className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                <Eye
+                  className={`w-4 h-4 ${
+                    theme.resolvedTheme === "dark"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                />
+                <Text
+                  variant="body-default-xs"
+                  className={
+                    theme.resolvedTheme === "dark"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }
+                >
                   {project.views.toLocaleString()} views
                 </Text>
               </Row>
 
               <Row gap="4" vertical="center">
-                <Heart className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                <Heart
+                  className={`w-4 h-4 ${
+                    theme.resolvedTheme === "dark"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                />
+                <Text
+                  variant="body-default-xs"
+                  className={
+                    theme.resolvedTheme === "dark"
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }
+                >
                   {likeCount.toLocaleString()} likes
                 </Text>
               </Row>
 
               {project.downloads > 0 && (
                 <Row gap="4" vertical="center">
-                  <Download className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                  <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                  <Download
+                    className={`w-4 h-4 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-xs"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }
+                  >
                     {project.downloads.toLocaleString()} downloads
                   </Text>
                 </Row>
@@ -664,8 +858,21 @@ export default function ProjectDetailPage() {
 
               {project.publishedAt && (
                 <Row gap="4" vertical="center">
-                  <Calendar className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                  <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                  <Calendar
+                    className={`w-4 h-4 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-xs"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }
+                  >
                     {formatDate(project.publishedAt)}
                   </Text>
                 </Row>
@@ -673,15 +880,23 @@ export default function ProjectDetailPage() {
             </Row>
 
             {/* Action Bar */}
-            <Row gap="12" wrap className={`pt-6 border-t ${theme.resolvedTheme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+            <Row
+              gap="12"
+              wrap
+              className={`pt-6 border-t ${
+                theme.resolvedTheme === "dark"
+                  ? "border-gray-700"
+                  : "border-gray-200"
+              }`}
+            >
               <button
                 onClick={handleLike}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-                  isLiked 
-                    ? 'bg-red-100 text-red-600' 
-                    : theme.resolvedTheme === 'dark' 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  isLiked
+                    ? "bg-red-100 text-red-600"
+                    : theme.resolvedTheme === "dark"
+                    ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
@@ -691,23 +906,25 @@ export default function ProjectDetailPage() {
               <button
                 onClick={handleBookmark}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-                  isBookmarked 
-                    ? 'bg-yellow-100 text-yellow-600' 
-                    : theme.resolvedTheme === 'dark' 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  isBookmarked
+                    ? "bg-yellow-100 text-yellow-600"
+                    : theme.resolvedTheme === "dark"
+                    ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
+                <Bookmark
+                  className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+                />
                 <Text variant="label-default-s">Save</Text>
               </button>
 
               <button
                 onClick={handleShare}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${
-                  theme.resolvedTheme === 'dark' 
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  theme.resolvedTheme === "dark"
+                    ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 <Share2 className="w-5 h-5" />
@@ -719,9 +936,15 @@ export default function ProjectDetailPage() {
 
         {/* Tech Stack */}
         {project.technologyStack && project.technologyStack.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Layers className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+              <Layers
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-blue-400"
+                    : "text-blue-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Technology Stack
               </Heading>
@@ -731,9 +954,9 @@ export default function ProjectDetailPage() {
                 <span
                   key={tech}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    theme.resolvedTheme === 'dark'
-                      ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    theme.resolvedTheme === "dark"
+                      ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {tech}
@@ -745,9 +968,15 @@ export default function ProjectDetailPage() {
 
         {/* Quick Downloads */}
         {project.downloadButtons && project.downloadButtons.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Download className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+              <Download
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-green-400"
+                    : "text-green-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Quick Downloads
               </Heading>
@@ -758,9 +987,9 @@ export default function ProjectDetailPage() {
                   key={index}
                   href={button.downloadUrl}
                   className={`flex items-center gap-3 px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 ${
-                    theme.resolvedTheme === 'dark'
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600'
+                    theme.resolvedTheme === "dark"
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
                   }`}
                 >
                   {button.icon && <span>{button.icon}</span>}
@@ -768,7 +997,8 @@ export default function ProjectDetailPage() {
                     <span className="font-medium">{button.label}</span>
                     {(button.version || button.platform) && (
                       <span className="text-xs opacity-90">
-                        {button.version} {button.platform && `• ${button.platform}`}
+                        {button.version}{" "}
+                        {button.platform && `• ${button.platform}`}
                       </span>
                     )}
                   </div>
@@ -781,9 +1011,15 @@ export default function ProjectDetailPage() {
 
         {/* Screenshots */}
         {project.screenshots && project.screenshots.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Package className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
+              <Package
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-purple-400"
+                    : "text-purple-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Screenshots
               </Heading>
@@ -801,9 +1037,15 @@ export default function ProjectDetailPage() {
 
         {/* Key Features */}
         {project.pinnedFeatures && project.pinnedFeatures.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Zap className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
+              <Zap
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-yellow-400"
+                    : "text-yellow-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Key Features
               </Heading>
@@ -813,13 +1055,26 @@ export default function ProjectDetailPage() {
                 <div
                   key={index}
                   className={`flex items-start gap-3 p-4 rounded-xl ${
-                    theme.resolvedTheme === 'dark'
-                      ? 'bg-gray-700'
-                      : 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'
+                    theme.resolvedTheme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200"
                   }`}
                 >
-                  <Zap className={`w-5 h-5 flex-shrink-0 mt-0.5 ${theme.resolvedTheme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`} />
-                  <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                  <Zap
+                    className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-yellow-400"
+                        : "text-yellow-600"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-m"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-200"
+                        : "text-gray-800"
+                    }
+                  >
                     {feature}
                   </Text>
                 </div>
@@ -830,14 +1085,27 @@ export default function ProjectDetailPage() {
 
         {/* About Section */}
         {project.documentDescription && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <FileText className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
+              <FileText
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-indigo-400"
+                    : "text-indigo-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 About This Project
               </Heading>
             </Row>
-            <Text variant="body-default-m" className={`whitespace-pre-wrap leading-relaxed ${theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+            <Text
+              variant="body-default-m"
+              className={`whitespace-pre-wrap leading-relaxed ${
+                theme.resolvedTheme === "dark"
+                  ? "text-gray-300"
+                  : "text-gray-700"
+              }`}
+            >
               {project.documentDescription}
             </Text>
           </div>
@@ -845,9 +1113,15 @@ export default function ProjectDetailPage() {
 
         {/* Detailed Description */}
         {project.description && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <BookOpen className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+              <BookOpen
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-green-400"
+                    : "text-green-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Detailed Overview
               </Heading>
@@ -862,9 +1136,15 @@ export default function ProjectDetailPage() {
 
         {/* All Features */}
         {project.featureList && project.featureList.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Award className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
+              <Award
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-indigo-400"
+                    : "text-indigo-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Complete Feature List
               </Heading>
@@ -872,8 +1152,21 @@ export default function ProjectDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {project.featureList.map((feature, index) => (
                 <Row key={index} gap="8" vertical="start">
-                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${theme.resolvedTheme === 'dark' ? 'bg-indigo-400' : 'bg-indigo-500'}`} />
-                  <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                  <div
+                    className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                      theme.resolvedTheme === "dark"
+                        ? "bg-indigo-400"
+                        : "bg-indigo-500"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-m"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-300"
+                        : "text-gray-700"
+                    }
+                  >
                     {feature}
                   </Text>
                 </Row>
@@ -884,30 +1177,56 @@ export default function ProjectDetailPage() {
 
         {/* Diagrams */}
         {project.diagrams && project.diagrams.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Globe className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'}`} />
+              <Globe
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-cyan-400"
+                    : "text-cyan-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Architecture & Diagrams
               </Heading>
             </Row>
             {project.diagrams.map((diagram, index) => (
-              <div key={index} className={`mb-6 last:mb-0 rounded-xl p-6 ${theme.resolvedTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
+              <div
+                key={index}
+                className={`mb-6 last:mb-0 rounded-xl p-6 ${
+                  theme.resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-50"
+                }`}
+              >
                 <Heading as="h3" variant="heading-strong-s" marginBottom="8">
                   {diagram.name}
                 </Heading>
                 {diagram.description && (
-                  <Text variant="body-default-s" className={`mb-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <Text
+                    variant="body-default-s"
+                    className={`mb-4 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-600"
+                    }`}
+                  >
                     {diagram.description}
                   </Text>
                 )}
-                {diagram.type === 'mermaid' ? (
-                  <div 
-                    id={`mermaid-${diagram.name.replace(/\s+/g, '-')}`}
-                    className={`w-full flex items-center justify-center p-4 min-h-[300px] rounded-lg ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+                {diagram.type === "mermaid" ? (
+                  <div
+                    id={`mermaid-${diagram.name.replace(/\s+/g, "-")}`}
+                    className={`w-full flex items-center justify-center p-4 min-h-[300px] rounded-lg ${
+                      theme.resolvedTheme === "dark"
+                        ? "bg-gray-800"
+                        : "bg-white"
+                    }`}
                   />
-                ) : diagram.type === 'image' ? (
-                  <img src={diagram.content} alt={diagram.name} className="w-full rounded-lg" />
+                ) : diagram.type === "image" ? (
+                  <img
+                    src={diagram.content}
+                    alt={diagram.name}
+                    className="w-full rounded-lg"
+                  />
                 ) : (
                   <div dangerouslySetInnerHTML={{ __html: diagram.content }} />
                 )}
@@ -918,18 +1237,28 @@ export default function ProjectDetailPage() {
 
         {/* Releases */}
         {project.releases && project.releases.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <Package className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+              <Package
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-blue-400"
+                    : "text-blue-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Releases ({project.releases.length})
               </Heading>
             </Row>
             <Column gap="12">
               {project.releases.map((release) => (
-                <div 
+                <div
                   key={release.version}
-                  className={`p-6 rounded-xl ${theme.resolvedTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}
+                  className={`p-6 rounded-xl ${
+                    theme.resolvedTheme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-50"
+                  }`}
                 >
                   <Row horizontal="between" vertical="center" marginBottom="12">
                     <Row gap="8" vertical="center">
@@ -947,64 +1276,145 @@ export default function ProjectDetailPage() {
                         </span>
                       )}
                     </Row>
-                    <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                    <Text
+                      variant="body-default-xs"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-400"
+                          : "text-gray-500"
+                      }
+                    >
                       {formatDate(release.releaseDate)}
                     </Text>
                   </Row>
 
                   {release.name && (
-                    <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} marginBottom="8">
+                    <Text
+                      variant="body-default-m"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                      marginBottom="8"
+                    >
                       {release.name}
                     </Text>
                   )}
 
-                  <Text variant="body-default-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} marginBottom="12">
+                  <Text
+                    variant="body-default-s"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-600"
+                    }
+                    marginBottom="12"
+                  >
                     {release.changelog}
                   </Text>
 
                   {release.downloadCount > 0 && (
                     <Row gap="4" vertical="center" marginBottom="12">
-                      <Download className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Download
+                        className={`w-4 h-4 ${
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }`}
+                      />
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         {release.downloadCount.toLocaleString()} downloads
                       </Text>
                     </Row>
                   )}
-                  
+
                   {release.artifacts && release.artifacts.length > 0 && (
                     <Column gap="8">
-                      <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                      <Text
+                        variant="label-strong-s"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-300"
+                            : "text-gray-700"
+                        }
+                      >
                         Download Files:
                       </Text>
                       {release.artifacts.map((artifact, idx) => (
-                        <Row 
+                        <Row
                           key={idx}
                           gap="12"
                           paddingY="12"
                           paddingX="12"
-                          className={`rounded-lg ${theme.resolvedTheme === 'dark' ? 'bg-gray-600 hover:bg-gray-500' : 'border border-gray-200 hover:bg-gray-50'} transition-colors`}
+                          className={`rounded-lg ${
+                            theme.resolvedTheme === "dark"
+                              ? "bg-gray-600 hover:bg-gray-500"
+                              : "border border-gray-200 hover:bg-gray-50"
+                          } transition-colors`}
                           horizontal="between"
                           vertical="center"
                         >
                           <Column gap="4" flex={1}>
-                            <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                            <Text
+                              variant="body-default-m"
+                              className={
+                                theme.resolvedTheme === "dark"
+                                  ? "text-gray-200"
+                                  : "text-gray-800"
+                              }
+                            >
                               {artifact.name}
                             </Text>
                             <Row gap="8">
-                              <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                              <Text
+                                variant="body-default-xs"
+                                className={
+                                  theme.resolvedTheme === "dark"
+                                    ? "text-gray-400"
+                                    : "text-gray-500"
+                                }
+                              >
                                 {artifact.format.toUpperCase()}
                               </Text>
-                              <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                              <Text
+                                variant="body-default-xs"
+                                className={
+                                  theme.resolvedTheme === "dark"
+                                    ? "text-gray-400"
+                                    : "text-gray-500"
+                                }
+                              >
                                 {formatBytes(artifact.size)}
                               </Text>
                               {artifact.category && (
-                                <span className={`px-2 py-0.5 text-xs rounded ${theme.resolvedTheme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+                                <span
+                                  className={`px-2 py-0.5 text-xs rounded ${
+                                    theme.resolvedTheme === "dark"
+                                      ? "bg-gray-700 text-gray-300"
+                                      : "bg-gray-100 text-gray-700"
+                                  }`}
+                                >
                                   {artifact.category}
                                 </span>
                               )}
                             </Row>
                             {artifact.description && (
-                              <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                              <Text
+                                variant="body-default-xs"
+                                className={
+                                  theme.resolvedTheme === "dark"
+                                    ? "text-gray-400"
+                                    : "text-gray-500"
+                                }
+                              >
                                 {artifact.description}
                               </Text>
                             )}
@@ -1028,44 +1438,85 @@ export default function ProjectDetailPage() {
 
         {/* Milestones */}
         {project.milestones && project.milestones.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <TrendingUp className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
+              <TrendingUp
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-purple-400"
+                    : "text-purple-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Project Milestones
               </Heading>
             </Row>
             <Column gap="12">
               {project.milestones.map((milestone, index) => (
-                <Row 
+                <Row
                   key={index}
                   gap="12"
                   paddingY="16"
                   paddingX="16"
                   className={`rounded-xl ${
-                    milestone.completed 
-                      ? theme.resolvedTheme === 'dark' ? 'bg-green-900/30 border border-green-700' : 'bg-green-50 border border-green-200'
-                      : theme.resolvedTheme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+                    milestone.completed
+                      ? theme.resolvedTheme === "dark"
+                        ? "bg-green-900/30 border border-green-700"
+                        : "bg-green-50 border border-green-200"
+                      : theme.resolvedTheme === "dark"
+                      ? "bg-gray-700"
+                      : "bg-gray-50"
                   }`}
                   vertical="start"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    milestone.completed 
-                      ? 'bg-green-500 text-white' 
-                      : theme.resolvedTheme === 'dark' ? 'bg-gray-600 text-gray-300' : 'bg-gray-300 text-gray-600'
-                  }`}>
-                    {milestone.completed ? '✓' : index + 1}
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      milestone.completed
+                        ? "bg-green-500 text-white"
+                        : theme.resolvedTheme === "dark"
+                        ? "bg-gray-600 text-gray-300"
+                        : "bg-gray-300 text-gray-600"
+                    }`}
+                  >
+                    {milestone.completed ? "✓" : index + 1}
                   </div>
                   <Column gap="4" flex={1}>
-                    <Text variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                    <Text
+                      variant="heading-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                    >
                       {milestone.title}
                     </Text>
-                    <Text variant="body-default-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                    <Text
+                      variant="body-default-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-400"
+                          : "text-gray-600"
+                      }
+                    >
                       {milestone.description}
                     </Text>
                     <Row gap="8" vertical="center">
-                      <Clock className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Clock
+                        className={`w-4 h-4 ${
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }`}
+                      />
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         Target: {formatDate(milestone.targetDate)}
                       </Text>
                       {milestone.completed && (
@@ -1084,96 +1535,186 @@ export default function ProjectDetailPage() {
         {/* Hardware & Performance in a grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Hardware Compatibility */}
-          {project.hardwareCompatibility && project.hardwareCompatibility.length > 0 && (
-            <div className={`rounded-2xl p-6 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-              <Row gap="8" vertical="center" marginBottom="16">
-                <Cpu className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
-                <Heading as="h2" variant="heading-strong-m">
-                  Hardware
-                </Heading>
-              </Row>
-              <Column  >
-                {project.hardwareCompatibility.map((hw, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg ${
-                      hw.compatible 
-                        ? theme.resolvedTheme === 'dark' ? 'bg-green-900/30 border border-green-700' : 'bg-green-50 border border-green-200'
-                        : theme.resolvedTheme === 'dark' ? 'bg-red-900/30 border border-red-700' : 'bg-red-50 border border-red-200'
+          {project.hardwareCompatibility &&
+            project.hardwareCompatibility.length > 0 && (
+              <div className={`rounded-2xl p-6   shadow-lg`}>
+                <Row gap="8" vertical="center" marginBottom="16">
+                  <Cpu
+                    className={`w-5 h-5 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-red-400"
+                        : "text-red-600"
                     }`}
-                  >
-                    <Row   vertical="center" marginBottom="2">
-                      <div className={`w-2 h-2 rounded-full ${hw.compatible ? 'bg-green-500' : 'bg-red-500'}`} />
-                      <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
-                        {hw.device}
-                      </Text>
-                    </Row>
-                    {(hw.version || hw.notes) && (
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                        {hw.version && `Version: ${hw.version}`}
-                        {hw.version && hw.notes && ' • '}
-                        {hw.notes}
-                      </Text>
-                    )}
-                  </div>
-                ))}
-              </Column>
-            </div>
-          )}
+                  />
+                  <Heading as="h2" variant="heading-strong-m">
+                    Hardware
+                  </Heading>
+                </Row>
+                <Column>
+                  {project.hardwareCompatibility.map((hw, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-lg ${
+                        hw.compatible
+                          ? theme.resolvedTheme === "dark"
+                            ? "bg-green-900/30 border border-green-700"
+                            : "bg-green-50 border border-green-200"
+                          : theme.resolvedTheme === "dark"
+                          ? "bg-red-900/30 border border-red-700"
+                          : "bg-red-50 border border-red-200"
+                      }`}
+                    >
+                      <Row vertical="center" marginBottom="2">
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            hw.compatible ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        />
+                        <Text
+                          variant="label-strong-s"
+                          className={
+                            theme.resolvedTheme === "dark"
+                              ? "text-gray-200"
+                              : "text-gray-800"
+                          }
+                        >
+                          {hw.device}
+                        </Text>
+                      </Row>
+                      {(hw.version || hw.notes) && (
+                        <Text
+                          variant="body-default-xs"
+                          className={
+                            theme.resolvedTheme === "dark"
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }
+                        >
+                          {hw.version && `Version: ${hw.version}`}
+                          {hw.version && hw.notes && " • "}
+                          {hw.notes}
+                        </Text>
+                      )}
+                    </div>
+                  ))}
+                </Column>
+              </div>
+            )}
 
           {/* Performance Benchmarks */}
-          {project.performanceBenchmarks && project.performanceBenchmarks.length > 0 && (
-            <div className={`rounded-2xl p-6 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-              <Row gap="8" vertical="center" marginBottom="16">
-                <Zap className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
-                <Heading as="h2" variant="heading-strong-m">
-                  Performance
-                </Heading>
-              </Row>
-              <Column  >
-                {project.performanceBenchmarks.map((benchmark, index) => (
-                  <div
-                    key={index}
-                    className={`p-4 rounded-lg ${theme.resolvedTheme === 'dark' ? 'bg-orange-900/20 border border-orange-700' : 'bg-orange-50 border border-orange-200'}`}
-                  >
-                    <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} marginBottom="4">
-                      {benchmark.name}
-                    </Text>
-                    <div className="flex items-baseline gap-2">
-                      <span className={`text-2xl font-bold ${theme.resolvedTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>
-                        {benchmark.value}
-                      </span>
-                      <span className={`text-sm ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {benchmark.unit}
-                      </span>
+          {project.performanceBenchmarks &&
+            project.performanceBenchmarks.length > 0 && (
+              <div className={`rounded-2xl p-6  shadow-lg`}>
+                <Row gap="8" vertical="center" marginBottom="16">
+                  <Zap
+                    className={`w-5 h-5 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-orange-400"
+                        : "text-orange-600"
+                    }`}
+                  />
+                  <Heading as="h2" variant="heading-strong-m">
+                    Performance
+                  </Heading>
+                </Row>
+                <Column>
+                  {project.performanceBenchmarks.map((benchmark, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${
+                        theme.resolvedTheme === "dark"
+                          ? "bg-orange-900/20 border border-orange-700"
+                          : "bg-orange-50 border border-orange-200"
+                      }`}
+                    >
+                      <Text
+                        variant="label-strong-s"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-200"
+                            : "text-gray-800"
+                        }
+                        marginBottom="4"
+                      >
+                        {benchmark.name}
+                      </Text>
+                      <div className="flex items-baseline gap-2">
+                        <span
+                          className={`text-2xl font-bold ${
+                            theme.resolvedTheme === "dark"
+                              ? "text-orange-400"
+                              : "text-orange-600"
+                          }`}
+                        >
+                          {benchmark.value}
+                        </span>
+                        <span
+                          className={`text-sm ${
+                            theme.resolvedTheme === "dark"
+                              ? "text-gray-400"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {benchmark.unit}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </Column>
-            </div>
-          )}
+                  ))}
+                </Column>
+              </div>
+            )}
         </div>
 
         {/* FAQs */}
         {project.faqs && project.faqs.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8  shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <HelpCircle className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+              <HelpCircle
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-blue-400"
+                    : "text-blue-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 FAQs
               </Heading>
             </Row>
             <Column gap="12">
-              {project.faqs.sort((a, b) => a.order - b.order).map((faq, index) => (
-                <div key={index} className={`p-5 rounded-xl ${theme.resolvedTheme === 'dark' ? 'bg-blue-900/20 border border-blue-700' : 'bg-blue-50 border border-blue-200'}`}>
-                  <Heading as="h3" variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} >
-                    {faq.question}
-                  </Heading>
-                  <Text variant="body-default-m" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
-                    {faq.answer}
-                  </Text>
-                </div>
-              ))}
+              {project.faqs
+                .sort((a, b) => a.order - b.order)
+                .map((faq, index) => (
+                  <div
+                    key={index}
+                    className={`p-5 rounded-xl ${
+                      theme.resolvedTheme === "dark"
+                        ? "bg-blue-900/20 border border-blue-700"
+                        : "bg-blue-50 border border-blue-200"
+                    }`}
+                  >
+                    <Heading
+                      as="h3"
+                      variant="heading-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                    >
+                      {faq.question}
+                    </Heading>
+                    <Text
+                      variant="body-default-m"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-300"
+                          : "text-gray-700"
+                      }
+                    >
+                      {faq.answer}
+                    </Text>
+                  </div>
+                ))}
             </Column>
           </div>
         )}
@@ -1182,20 +1723,48 @@ export default function ProjectDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Glossary */}
           {project.glossary && project.glossary.length > 0 && (
-            <div className={`rounded-2xl p-6 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+            <div className={`rounded-2xl p-6 shadow-lg`}>
               <Row gap="8" vertical="center" marginBottom="16">
-                <BookOpen className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                <BookOpen
+                  className={`w-5 h-5 ${
+                    theme.resolvedTheme === "dark"
+                      ? "text-indigo-400"
+                      : "text-indigo-600"
+                  }`}
+                />
                 <Heading as="h2" variant="heading-strong-m">
                   Glossary
                 </Heading>
               </Row>
-              <Column  >
+              <Column>
                 {project.glossary.map((entry, index) => (
-                  <div key={index} className={`p-3 rounded-lg ${theme.resolvedTheme === 'dark' ? 'bg-indigo-900/20 border border-indigo-700' : 'bg-indigo-50 border border-indigo-200'}`}>
-                    <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'} marginBottom="2">
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg ${
+                      theme.resolvedTheme === "dark"
+                        ? "bg-indigo-900/20 border border-indigo-700"
+                        : "bg-indigo-50 border border-indigo-200"
+                    }`}
+                  >
+                    <Text
+                      variant="label-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                      marginBottom="2"
+                    >
                       {entry.term}
                     </Text>
-                    <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                    <Text
+                      variant="body-default-xs"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-300"
+                          : "text-gray-700"
+                      }
+                    >
                       {entry.definition}
                     </Text>
                   </div>
@@ -1207,9 +1776,15 @@ export default function ProjectDetailPage() {
 
         {/* References */}
         {project.references && project.references.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div className={`rounded-2xl p-6 mb-8   shadow-lg`}>
             <Row gap="8" vertical="center" marginBottom="16">
-              <ExternalLink className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-teal-400' : 'text-teal-600'}`} />
+              <ExternalLink
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-teal-400"
+                    : "text-teal-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 References & Links
               </Heading>
@@ -1222,37 +1797,76 @@ export default function ProjectDetailPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`flex items-center gap-4 p-4 rounded-xl transition-colors group ${
-                    theme.resolvedTheme === 'dark' 
-                      ? 'bg-teal-900/20 border border-teal-700 hover:bg-teal-900/30' 
-                      : 'bg-teal-50 border border-teal-200 hover:bg-teal-100'
+                    theme.resolvedTheme === "dark"
+                      ? "bg-teal-900/20 border border-teal-700 hover:bg-teal-900/30"
+                      : "bg-teal-50 border border-teal-200 hover:bg-teal-100"
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    ref.type === 'repository' ? 'bg-gray-800' :
-                    ref.type === 'documentation' ? 'bg-blue-500' :
-                    ref.type === 'tutorial' ? 'bg-green-500' :
-                    ref.type === 'article' ? 'bg-orange-500' :
-                    'bg-purple-500'
-                  } text-white`}>
-                    {ref.type === 'repository' ? <Github className="w-5 h-5" /> :
-                     ref.type === 'documentation' ? <BookOpen className="w-5 h-5" /> :
-                     ref.type === 'tutorial' ? <FileText className="w-5 h-5" /> :
-                     <ExternalLink className="w-5 h-5" />}
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      ref.type === "repository"
+                        ? "bg-gray-800"
+                        : ref.type === "documentation"
+                        ? "bg-blue-500"
+                        : ref.type === "tutorial"
+                        ? "bg-green-500"
+                        : ref.type === "article"
+                        ? "bg-orange-500"
+                        : "bg-purple-500"
+                    } text-white`}
+                  >
+                    {ref.type === "repository" ? (
+                      <Github className="w-5 h-5" />
+                    ) : ref.type === "documentation" ? (
+                      <BookOpen className="w-5 h-5" />
+                    ) : ref.type === "tutorial" ? (
+                      <FileText className="w-5 h-5" />
+                    ) : (
+                      <ExternalLink className="w-5 h-5" />
+                    )}
                   </div>
                   <Column gap="4" flex={1}>
-                    <Text variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                    <Text
+                      variant="heading-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                    >
                       {ref.title}
                     </Text>
                     {ref.description && (
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-600"
+                        }
+                      >
                         {ref.description}
                       </Text>
                     )}
-                    <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-teal-400' : 'text-teal-600'} style={{ wordBreak: 'break-all' }}>
+                    <Text
+                      variant="body-default-xs"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-teal-400"
+                          : "text-teal-600"
+                      }
+                      style={{ wordBreak: "break-all" }}
+                    >
                       {ref.url}
                     </Text>
                   </Column>
-                  <ExternalLink className={`w-5 h-5 flex-shrink-0 group-hover:translate-x-1 transition-transform ${theme.resolvedTheme === 'dark' ? 'text-teal-400' : 'text-teal-600'}`} />
+                  <ExternalLink
+                    className={`w-5 h-5 flex-shrink-0 group-hover:translate-x-1 transition-transform ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-teal-400"
+                        : "text-teal-600"
+                    }`}
+                  />
                 </a>
               ))}
             </Column>
@@ -1261,9 +1875,19 @@ export default function ProjectDetailPage() {
 
         {/* Contributors */}
         {project.contributors && project.contributors.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-6 mb-8 ${
+              theme.resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg`}
+          >
             <Row gap="8" vertical="center" marginBottom="16">
-              <Award className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-pink-400' : 'text-pink-600'}`} />
+              <Award
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-pink-400"
+                    : "text-pink-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Contributors
               </Heading>
@@ -1272,7 +1896,11 @@ export default function ProjectDetailPage() {
               {project.contributors.map((contributor, index) => (
                 <div
                   key={index}
-                  className={`flex items-center gap-3 p-4 rounded-xl ${theme.resolvedTheme === 'dark' ? 'bg-pink-900/20 border border-pink-700' : 'bg-pink-50 border border-pink-200'}`}
+                  className={`flex items-center gap-3 p-4 rounded-xl ${
+                    theme.resolvedTheme === "dark"
+                      ? "bg-pink-900/20 border border-pink-700"
+                      : "bg-pink-50 border border-pink-200"
+                  }`}
                 >
                   {contributor.avatar ? (
                     <img
@@ -1281,25 +1909,48 @@ export default function ProjectDetailPage() {
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold ${
-                      theme.resolvedTheme === 'dark' ? 'bg-pink-700 text-pink-100' : 'bg-pink-200 text-pink-700'
-                    }`}>
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold ${
+                        theme.resolvedTheme === "dark"
+                          ? "bg-pink-700 text-pink-100"
+                          : "bg-pink-200 text-pink-700"
+                      }`}
+                    >
                       {contributor.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                   <Column gap="4">
-                    <Text variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                    <Text
+                      variant="heading-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                    >
                       {contributor.name}
                     </Text>
                     <Row gap="8">
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
-                        contributor.role === 'owner' ? 'bg-purple-100 text-purple-800' :
-                        contributor.role === 'editor' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {contributor.role.charAt(0).toUpperCase() + contributor.role.slice(1)}
+                      <span
+                        className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                          contributor.role === "owner"
+                            ? "bg-purple-100 text-purple-800"
+                            : contributor.role === "editor"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {contributor.role.charAt(0).toUpperCase() +
+                          contributor.role.slice(1)}
                       </span>
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-600"
+                        }
+                      >
                         Joined {formatDate(contributor.joinedAt)}
                       </Text>
                     </Row>
@@ -1312,9 +1963,19 @@ export default function ProjectDetailPage() {
 
         {/* Embedded Videos */}
         {project.embeddedVideos && project.embeddedVideos.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-6 mb-8 ${
+              theme.resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg`}
+          >
             <Row gap="8" vertical="center" marginBottom="16">
-              <Package className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
+              <Package
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-red-400"
+                    : "text-red-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Video Demonstrations
               </Heading>
@@ -1323,7 +1984,11 @@ export default function ProjectDetailPage() {
               {project.embeddedVideos.map((video, index) => (
                 <div
                   key={index}
-                  className={`aspect-video rounded-xl overflow-hidden shadow-lg ${theme.resolvedTheme === 'dark' ? 'border border-gray-700' : 'border border-gray-200'}`}
+                  className={`aspect-video rounded-xl overflow-hidden shadow-lg ${
+                    theme.resolvedTheme === "dark"
+                      ? "border border-gray-700"
+                      : "border border-gray-200"
+                  }`}
                 >
                   <iframe
                     src={video}
@@ -1339,9 +2004,19 @@ export default function ProjectDetailPage() {
 
         {/* Attached Files */}
         {project.attachedFiles && project.attachedFiles.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-6 mb-8 ${
+              theme.resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg`}
+          >
             <Row gap="8" vertical="center" marginBottom="16">
-              <FileText className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+              <FileText
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Additional Resources
               </Heading>
@@ -1353,30 +2028,75 @@ export default function ProjectDetailPage() {
                   gap="12"
                   paddingY="12"
                   paddingX="16"
-                  className={`rounded-lg transition-colors ${theme.resolvedTheme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'border border-gray-200 hover:bg-gray-50'}`}
+                  className={`rounded-lg transition-colors ${
+                    theme.resolvedTheme === "dark"
+                      ? "bg-gray-700 hover:bg-gray-600"
+                      : "border border-gray-200 hover:bg-gray-50"
+                  }`}
                   horizontal="between"
                   vertical="center"
                 >
                   <Column gap="4" flex={1}>
-                    <Text variant="heading-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-200' : 'text-gray-800'}>
+                    <Text
+                      variant="heading-strong-s"
+                      className={
+                        theme.resolvedTheme === "dark"
+                          ? "text-gray-200"
+                          : "text-gray-800"
+                      }
+                    >
                       {file.name}
                     </Text>
                     <Row gap="8" wrap>
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         {file.format.toUpperCase()}
                       </Text>
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         {formatBytes(file.size)}
                       </Text>
-                      <span className={`px-2 py-0.5 text-xs rounded ${theme.resolvedTheme === 'dark' ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+                      <span
+                        className={`px-2 py-0.5 text-xs rounded ${
+                          theme.resolvedTheme === "dark"
+                            ? "bg-gray-600 text-gray-300"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
                         {file.category}
                       </span>
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         {formatDate(file.uploadedAt)}
                       </Text>
                     </Row>
                     {file.description && (
-                      <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                      <Text
+                        variant="body-default-xs"
+                        className={
+                          theme.resolvedTheme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-500"
+                        }
+                      >
                         {file.description}
                       </Text>
                     )}
@@ -1384,9 +2104,9 @@ export default function ProjectDetailPage() {
                   <a
                     href={file.downloadUrl}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium flex-shrink-0 ${
-                      theme.resolvedTheme === 'dark' 
-                        ? 'bg-gray-600 text-white hover:bg-gray-500' 
-                        : 'bg-gray-600 text-white hover:bg-gray-700'
+                      theme.resolvedTheme === "dark"
+                        ? "bg-gray-600 text-white hover:bg-gray-500"
+                        : "bg-gray-600 text-white hover:bg-gray-700"
                     }`}
                   >
                     <Download className="w-4 h-4" />
@@ -1400,9 +2120,19 @@ export default function ProjectDetailPage() {
 
         {/* Tags */}
         {project.tags && project.tags.length > 0 && (
-          <div className={`rounded-2xl p-6 mb-8 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-6 mb-8 ${
+              theme.resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg`}
+          >
             <Row gap="8" vertical="center" marginBottom="16">
-              <Tag className={`w-5 h-5 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+              <Tag
+                className={`w-5 h-5 ${
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }`}
+              />
               <Heading as="h2" variant="heading-strong-m">
                 Tags
               </Heading>
@@ -1412,9 +2142,9 @@ export default function ProjectDetailPage() {
                 <span
                   key={tag}
                   className={`px-4 py-2 rounded-lg text-sm transition-all cursor-pointer ${
-                    theme.resolvedTheme === 'dark'
-                      ? 'bg-blue-900/30 text-blue-300 hover:bg-blue-900/50 border border-blue-700'
-                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                    theme.resolvedTheme === "dark"
+                      ? "bg-blue-900/30 text-blue-300 hover:bg-blue-900/50 border border-blue-700"
+                      : "bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200"
                   }`}
                 >
                   #{tag}
@@ -1425,45 +2155,98 @@ export default function ProjectDetailPage() {
         )}
 
         {/* Project Meta Footer */}
-        <div className={`rounded-2xl p-6 ${theme.resolvedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+        <div
+          className={`rounded-2xl p-6 ${
+            theme.resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+          } shadow-lg`}
+        >
           <Row horizontal="between" wrap gap="16" vertical="center">
             <Column gap="8">
-              <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+              <Text
+                variant="label-strong-s"
+                className={
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }
+              >
                 Project Information
               </Text>
               <Row gap="16" wrap>
                 <Row gap="4" vertical="center">
-                  <Calendar className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                  <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                  <Calendar
+                    className={`w-4 h-4 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-xs"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }
+                  >
                     Created: {formatDate(project.createdAt)}
                   </Text>
                 </Row>
                 <Row gap="4" vertical="center">
-                  <Calendar className={`w-4 h-4 ${theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
-                  <Text variant="body-default-xs" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                  <Calendar
+                    className={`w-4 h-4 ${
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }`}
+                  />
+                  <Text
+                    variant="body-default-xs"
+                    className={
+                      theme.resolvedTheme === "dark"
+                        ? "text-gray-400"
+                        : "text-gray-500"
+                    }
+                  >
                     Updated: {formatDate(project.updatedAt)}
                   </Text>
                 </Row>
                 {project.visibility && (
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    project.visibility === 'public' ? 'bg-green-100 text-green-800' :
-                    project.visibility === 'unlisted' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {project.visibility.charAt(0).toUpperCase() + project.visibility.slice(1)}
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      project.visibility === "public"
+                        ? "bg-green-100 text-green-800"
+                        : project.visibility === "unlisted"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {project.visibility.charAt(0).toUpperCase() +
+                      project.visibility.slice(1)}
                   </span>
                 )}
               </Row>
             </Column>
 
             <Column gap="8" horizontal="end">
-              <Text variant="label-strong-s" className={theme.resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+              <Text
+                variant="label-strong-s"
+                className={
+                  theme.resolvedTheme === "dark"
+                    ? "text-gray-400"
+                    : "text-gray-600"
+                }
+              >
                 Share this project
               </Text>
               <Row gap="8">
                 <button
                   onClick={handleShare}
-                  className={`p-2 rounded-lg transition-colors ${theme.resolvedTheme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
+                  className={`p-2 rounded-lg transition-colors ${
+                    theme.resolvedTheme === "dark"
+                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                  }`}
                   title="Share"
                 >
                   <Share2 className="w-5 h-5" />
@@ -1471,24 +2254,32 @@ export default function ProjectDetailPage() {
                 <button
                   onClick={handleBookmark}
                   className={`p-2 rounded-lg transition-colors ${
-                    isBookmarked 
-                      ? 'bg-yellow-100 text-yellow-600' 
-                      : theme.resolvedTheme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                    isBookmarked
+                      ? "bg-yellow-100 text-yellow-600"
+                      : theme.resolvedTheme === "dark"
+                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-600"
                   }`}
                   title="Bookmark"
                 >
-                  <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
+                  <Bookmark
+                    className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+                  />
                 </button>
                 <button
                   onClick={handleLike}
                   className={`p-2 rounded-lg transition-colors ${
-                    isLiked 
-                      ? 'bg-red-100 text-red-600' 
-                      : theme.resolvedTheme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                    isLiked
+                      ? "bg-red-100 text-red-600"
+                      : theme.resolvedTheme === "dark"
+                      ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-600"
                   }`}
                   title="Like"
                 >
-                  <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+                  <Heart
+                    className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`}
+                  />
                 </button>
               </Row>
             </Column>
@@ -1497,14 +2288,26 @@ export default function ProjectDetailPage() {
 
         {/* Back to Projects Link */}
         <div className="text-center py-12">
-          <SmartLink 
-            href="/work" 
+          <SmartLink
+            href="/work"
             className={`inline-flex items-center gap-2 font-medium transition-colors ${
-              theme.resolvedTheme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'
+              theme.resolvedTheme === "dark"
+                ? "text-blue-400 hover:text-blue-300"
+                : "text-blue-600 hover:text-blue-800"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             View All Projects
           </SmartLink>
