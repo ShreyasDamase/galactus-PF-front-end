@@ -38,8 +38,6 @@ export default function BlogPost() {
   const slug = params.slug as string;
   const contentRef = useRef<HTMLDivElement>(null);
   const { data: profiledata } = useProfile();
-  const profile = useProfileStore((state) => state.profile);
-  const isComplete = useProfileStore((state) => state.isProfileComplete());
   const { data: post, isLoading, error } = usePostDetail(slug);
 
   // State management
