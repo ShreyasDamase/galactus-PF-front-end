@@ -69,7 +69,8 @@ export interface Education {
   fieldOfStudy?: string;
   startYear?: number;
   endYear?: number;
-  gpa?: number;
+  gradeCategory?: "percentage" | "cgpa" | "grade" | "marks" | "other";
+  gradeValue?: string;
   description?: string;
 }
 
@@ -93,9 +94,9 @@ export interface Project {
 // PREFERENCES
 // ====================
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   emailNotifications: boolean;
-  profileVisibility: 'public' | 'private';
+  profileVisibility: "public" | "private";
   showEmail: boolean; // determines if email is shown on public profile
 }
 
@@ -123,7 +124,6 @@ export interface UserAnalytics {
   resumeDownloads: number;
   lastUpdated: string;
 }
-
 
 // ============================================
 // Blog store types

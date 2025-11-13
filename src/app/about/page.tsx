@@ -447,6 +447,7 @@ export default function About() {
                           horizontal="end"
                           style={{ minWidth: "fit-content" }}
                         >
+                          {/* Duration */}
                           <Text
                             variant="heading-default-xs"
                             onBackground="neutral-weak"
@@ -455,12 +456,30 @@ export default function About() {
                             {formatYear(institution.startYear)} -{" "}
                             {formatYear(institution.endYear)}
                           </Text>
-                          {institution.gpa && (
+
+                          {/* Grade or Marks */}
+                          {institution.gradeValue && (
                             <Text
                               variant="body-default-xs"
                               onBackground="neutral-weak"
+                              style={{ whiteSpace: "nowrap" }}
                             >
-                              GPA: {institution.gpa}
+                              {(() => {
+                                const cat =
+                                  institution.gradeCategory || "other";
+                                switch (cat) {
+                                  case "cgpa":
+                                    return `CGPA: ${institution.gradeValue}`;
+                                  case "percentage":
+                                    return `Percentage: ${institution.gradeValue}`;
+                                  case "grade":
+                                    return `Grade: ${institution.gradeValue}`;
+                                  case "marks":
+                                    return `Marks: ${institution.gradeValue}`;
+                                  default:
+                                    return `Score: ${institution.gradeValue}`;
+                                }
+                              })()}
                             </Text>
                           )}
                         </Column>
