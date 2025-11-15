@@ -50,7 +50,7 @@ export default function Home() {
         </RevealFx> */}
 
         <RevealFx translateY="16" delay={0.3}>
-          <About isContactFormVisible={false} />
+          return <About />;
         </RevealFx>
 
         <RevealFx translateY="12" delay={0.4}>
@@ -103,9 +103,6 @@ export default function Home() {
           </RevealFx>
         </Column>
       )}
-      <RevealFx translateY="16" delay={1.3}>
-        <ContactForm />
-      </RevealFx>
     </Column>
   );
 }

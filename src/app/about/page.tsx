@@ -23,9 +23,7 @@ import { useProfile } from "@/lib/hooks/useProfile";
 import { ResumeViewer } from "@/components/ResumeViewer";
 import { ContactForm } from "@/components/Mailchimp";
 
-const About: React.FC<{ isContactFormVisible?: boolean }> = ({
-  isContactFormVisible = true,
-}) => {
+export default function AboutPage() {
   const { data, isLoading, error } = useProfile();
   const profile = useProfileStore((state) => state.profile);
   const isComplete = useProfileStore((state) => state.isProfileComplete());
@@ -648,12 +646,10 @@ const About: React.FC<{ isContactFormVisible?: boolean }> = ({
           )}
         </Column>
       </Row>
-      {isContactFormVisible && (
-        <RevealFx translateY="16" delay={1.3}>
-          <ContactForm />
-        </RevealFx>
-      )}
+
+      <RevealFx translateY="16" delay={1.3}>
+        <ContactForm />
+      </RevealFx>
     </Column>
   );
-};
-export default About;
+}
