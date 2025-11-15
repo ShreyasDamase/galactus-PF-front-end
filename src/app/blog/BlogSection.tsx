@@ -1,6 +1,5 @@
 "use client";
 import { Column, Heading } from "@once-ui-system/core";
-import { Mailchimp } from "@/components";
 import { Posts } from "@/components/blog/Posts";
 import { blog } from "@/resources";
 import { usePostsList, usePrefetchNextPage } from "@/lib/hooks/usePosts";
@@ -53,7 +52,6 @@ export const BlogSection = () => {
             direction="column"
           />
         )}
-        <Mailchimp marginBottom="l" />
         <Heading as="h2" variant="heading-strong-xl" marginLeft="l">
           Earlier posts
         </Heading>
