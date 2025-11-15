@@ -21,8 +21,13 @@ import React from "react";
 import { useProfileStore } from "@/lib/store/useProfileStore";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { ResumeViewer } from "@/components/ResumeViewer";
+import { ContactForm } from "@/components/Mailchimp";
 
-export default function About() {
+export default function About({
+  isContactFormVisible = true,
+}: {
+  isContactFormVisible?: boolean;
+}) {
   const { data, isLoading, error } = useProfile();
   const profile = useProfileStore((state) => state.profile);
   const isComplete = useProfileStore((state) => state.isProfileComplete());
@@ -645,6 +650,11 @@ export default function About() {
           )}
         </Column>
       </Row>
+      {isContactFormVisible && (
+        <RevealFx translateY="16" delay={1.3}>
+          <ContactForm />
+        </RevealFx>
+      )}
     </Column>
   );
 }

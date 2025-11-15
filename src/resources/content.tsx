@@ -11,14 +11,14 @@ import {
 import { Line, Logo, Row, Text } from "@once-ui-system/core";
 
 const person: Person = {
-  firstName: "Selene",
-  lastName: "Yu",
-  name: `Selene Yu`,
-  role: "Design Engineer",
+  firstName: "Shreyas",
+  lastName: "Damase",
+  name: `Shreyas Damase`,
+  role: "Software Developer",
   avatar: "/images/avatar.jpg",
-  email: "example@gmail.com",
+  email: "shreyasdamase@gmail.com",
   location: "Asia/Kolkata",
-  languages: ["English", "Bahasa"],
+  languages: ["English", "Hindi", "Marathi"],
 };
 
 const newsletter: Newsletter = {

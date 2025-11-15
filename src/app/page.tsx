@@ -13,7 +13,6 @@ import {
   Line,
 } from "@once-ui-system/core";
 import { home, about, person, baseURL, routes, work, blog } from "@/resources";
-import { Mailchimp } from "@/components";
 import { Posts } from "@/components/blog/Posts";
 import { Projects } from "@/components/work/Projects";
 import About from "@/app/about/page";
@@ -21,6 +20,7 @@ import Work from "@/app/work/page";
 import Blog from "@/app/blog/page";
 import { useProjects } from "@/lib/hooks/useProject";
 import { usePostsList } from "@/lib/hooks/usePosts";
+import { ContactForm } from "@/components/Mailchimp";
 
 export default function Home() {
   // Fetch projects data for conditional rendering
@@ -39,7 +39,6 @@ export default function Home() {
   return (
     <Column maxWidth="m" gap="xl" paddingY="12" horizontal="center">
       {/* Hero Section - Preserved Animation */}
-
       {/* About Section */}
       <Column fillWidth gap="24" marginTop="1" id="about-section">
         {/* <RevealFx translateY="8" delay={0.2}>
@@ -51,7 +50,7 @@ export default function Home() {
         </RevealFx> */}
 
         <RevealFx translateY="16" delay={0.3}>
-          <About />
+          <About isContactFormVisible={false} />
         </RevealFx>
 
         <RevealFx translateY="12" delay={0.4}>
@@ -60,7 +59,6 @@ export default function Home() {
           </Row>
         </RevealFx>
       </Column>
-
       {/* Work/Projects Section */}
       {routes["/work"] && (
         <Column fillWidth gap="24" marginTop="xl" id="work-section">
@@ -83,7 +81,6 @@ export default function Home() {
           </RevealFx>
         </Column>
       )}
-
       {/* Blog Section */}
       {routes["/blog"] && (
         <Column fillWidth gap="24" marginTop="xl" id="blog-section">
@@ -106,11 +103,9 @@ export default function Home() {
           </RevealFx>
         </Column>
       )}
-
-      {/* Newsletter Section */}
-      {/* <RevealFx translateY="16" delay={1.3}>
-        <Mailchimp />
-      </RevealFx> */}
+      <RevealFx translateY="16" delay={1.3}>
+        <ContactForm />
+      </RevealFx>
     </Column>
   );
 }

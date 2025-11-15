@@ -27,4 +27,10 @@ export const profileApi = {
         },
       }
     ),
+  sendMail: (payload: { name: string; email: string; message: string }) =>
+    apiClient.post(`/contact-us/send`, payload, {
+      headers: {
+        "x-user-id": process.env.NEXT_PUBLIC_USER_TO_FETCH,
+      },
+    }),
 };
