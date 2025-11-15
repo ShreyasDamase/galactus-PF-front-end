@@ -15,7 +15,7 @@ const person: Person = {
   lastName: "Damase",
   name: `Shreyas Damase`,
   role: "Software Developer",
-  avatar: "/images/avatar.jpg",
+  avatar: "/images/avatar.png",
   email: "shreyasdamase@gmail.com",
   location: "Asia/Kolkata",
   languages: ["English", "Hindi", "Marathi"],

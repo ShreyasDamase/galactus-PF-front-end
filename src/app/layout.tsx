@@ -36,7 +36,7 @@ export async function generateMetadata() {
     description: home.description,
     baseURL: baseURL,
     path: home.path,
-    image: home.image,
+    image: "./home.png",
   });
 
   // 🧩 Step 2: Merge favicon information manually
