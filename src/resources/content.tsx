@@ -24,31 +24,29 @@ const person: Person = {
 const newsletter: Newsletter = {
   display: true,
   title: <>Subscribe to {person.firstName}'s Newsletter</>,
-  description: <>My weekly newsletter about creativity and engineering</>,
+  description: <>Weekly insights about mobile development and engineering</>,
 };
 
 const social: Social = [
-  // Links are automatically displayed.
-  // Import new icons in /once-ui/icons.ts
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/once-ui-system",
+    link: "https://github.com/shreyasdamase",
   },
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/company/once-ui/",
-  },
-  {
-    name: "Threads",
-    icon: "threads",
-    link: "https://www.threads.com/@once_ui",
+    link: "https://www.linkedin.com/in/shreyasdamase",
   },
   {
     name: "Email",
     icon: "email",
     link: `mailto:${person.email}`,
+  },
+  {
+    name: "WhatsApp",
+    icon: "phone",
+    link: "https://wa.me/8600283155",
   },
 ];
 
@@ -57,31 +55,25 @@ const home: Home = {
   image: "/images/og/home.jpg",
   label: "Home",
   title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Building bridges between design and code</>,
+  description: `Portfolio website showcasing my work as a Software Developer`,
+  headline: <>Building cross-platform mobile experiences</>,
   featured: {
     display: true,
     title: (
       <Row gap="12" vertical="center">
-        <strong className="ml-4">Once UI</strong>{" "}
+        <strong className="ml-4">Eulerian Square</strong>{" "}
         <Line background="brand-alpha-strong" vert height="20" />
         <Text marginRight="4" onBackground="brand-medium">
           Featured work
         </Text>
       </Row>
     ),
-    href: "/work/building-once-ui-a-customizable-design-system",
+    href: "/work/eulerian-square-sudoku-game",
   },
   subline: (
     <>
-      I'm Selene, a design engineer at{" "}
-      <Logo
-        dark
-        icon="/trademarks/wordmark-dark.svg"
-        style={{ display: "inline-flex", top: "0.25em", marginLeft: "-0.25em" }}
-      />
-      , where I craft intuitive
-      <br /> user experiences. After hours, I build my own projects.
+      I'm Shreyas, a React Native developer at Boomm, where I craft intuitive
+      <br /> mobile experiences. After hours, I build my own projects.
     </>
   ),
 };
@@ -90,7 +82,7 @@ const about: About = {
   path: "/about",
   label: "About",
   title: `About – ${person.name}`,
-  description: `Meet ${person.name}, ${person.role} from ${person.location}`,
+  description: `Meet ${person.name}, ${person.role} from Navi Mumbai, India`,
   tableOfContent: {
     display: true,
     subItems: false,
@@ -99,7 +91,7 @@ const about: About = {
     display: true,
   },
   calendar: {
-    display: true,
+    display: false,
     link: "https://cal.com",
   },
   intro: {
@@ -107,132 +99,186 @@ const about: About = {
     title: "Introduction",
     description: (
       <>
-        Selene is a Jakarta-based design engineer with a passion for
-        transforming complex challenges into simple, elegant design solutions.
-        Her work spans digital interfaces, interactive experiences, and the
-        convergence of design and technology.
+        Shreyas is a Navi Mumbai-based React Native developer with a passion for
+        building cross-platform mobile applications. His work focuses on
+        creating intuitive, user-friendly experiences with clean, maintainable
+        code and modern frontend best practices.
       </>
     ),
   },
   work: {
-    display: true, // set to false to hide this section
+    display: true,
     title: "Work Experience",
     experiences: [
       {
-        company: "FLY",
-        timeframe: "2022 - Present",
-        role: "Senior Design Engineer",
+        company: "Boomm",
+        timeframe: "Sep 2025 - Present",
+        role: "SDE-1 (Frontend Developer – React Native)",
         achievements: [
           <>
-            Redesigned the UI/UX for the FLY platform, resulting in a 20%
-            increase in user engagement and 30% faster load times.
+            Building and shipping new features for the Boomm mobile app (Android
+            & iOS) using React Native, Expo, and TypeScript
           </>,
           <>
-            Spearheaded the integration of AI tools into design workflows,
-            enabling designers to iterate 50% faster.
+            Maintaining and optimizing app performance, improving
+            responsiveness, and fixing production bugs
+          </>,
+          <>
+            Writing clean, modular, strongly-typed code following modern
+            frontend best practices
+          </>,
+          <>
+            Integrating APIs, enhancing state management, and improving overall
+            UX flows
+          </>,
+          <>
+            Collaborating with the engineering team through PR reviews, pair
+            programming, and daily Agile standups
           </>,
         ],
-        images: [
-          // optional: leave the array empty if you don't want to display images
-          {
-            src: "/images/projects/project-01/cover-01.jpg",
-            alt: "Once UI Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        images: [],
       },
       {
-        company: "Creativ3",
-        timeframe: "2018 - 2022",
-        role: "Lead Designer",
+        company: "Boomm",
+        timeframe: "Jul 2025 - Sep 2025",
+        role: "Frontend Developer Intern",
         achievements: [
           <>
-            Developed a design system that unified the brand across multiple
-            platforms, improving design consistency by 40%.
+            Assisted in developing app features using React Native, Expo, and
+            TypeScript
           </>,
           <>
-            Led a cross-functional team to launch a new product line,
-            contributing to a 15% increase in overall company revenue.
+            Supported UI fixes, minor bug resolutions, and small performance
+            improvements
           </>,
+          <>
+            Helped with basic API integrations and introductory state-management
+            tasks
+          </>,
+          <>Collaborated with senior developers in code reviews and standups</>,
         ],
         images: [],
       },
     ],
   },
   studies: {
-    display: true, // set to false to hide this section
-    title: "Studies",
+    display: true,
+    title: "Education",
     institutions: [
       {
-        name: "University of Jakarta",
-        description: <>Studied software engineering.</>,
+        name: "Centre for Development of Advanced Computing ACTS (C-DAC)",
+        description: (
+          <>
+            PG Diploma in Advanced Computing - Secured 71.63% (Jan 2024 - Apr
+            2024)
+          </>
+        ),
       },
       {
-        name: "Build the Future",
-        description: <>Studied online marketing and personal branding.</>,
+        name: "DY Patil College of Engineering, Akurdi",
+        description: (
+          <>
+            Bachelor of Engineering in Civil (Honours) - Secured 81.4% (Jan 2021
+            - Jun 2023)
+          </>
+        ),
       },
     ],
   },
   technical: {
-    display: true, // set to false to hide this section
-    title: "Technical skills",
+    display: true,
+    title: "Technical Skills",
     skills: [
       {
-        title: "Figma",
+        title: "React Native Development",
         description: (
-          <>Able to prototype in Figma with Once UI with unnatural speed.</>
+          <>
+            Building cross-platform mobile apps with React Native, Expo, and
+            TypeScript.
+          </>
         ),
         tags: [
           {
-            name: "Figma",
-            icon: "figma",
-          },
-        ],
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-02.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
+            name: "React Native",
+            icon: "react",
           },
           {
-            src: "/images/projects/project-01/cover-03.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
+            name: "TypeScript",
+            icon: "typescript",
+          },
+          {
+            name: "Expo",
+            icon: "mobile",
           },
         ],
+        images: [],
       },
       {
-        title: "Next.js",
+        title: "Frontend Technologies",
         description: (
-          <>Building next gen apps with Next.js + Once UI + Supabase.</>
+          <>
+            Proficient in React, Redux, Zustand, and modern state management
+            solutions.
+          </>
         ),
         tags: [
+          {
+            name: "React",
+            icon: "react",
+          },
           {
             name: "JavaScript",
             icon: "javascript",
           },
           {
-            name: "Next.js",
-            icon: "nextjs",
-          },
-          {
-            name: "Supabase",
-            icon: "supabase",
+            name: "Redux",
+            icon: "code",
           },
         ],
-        // optional: leave the array empty if you don't want to display images
-        images: [
+        images: [],
+      },
+      {
+        title: "Backend & Databases",
+        description: (
+          <>
+            Building RESTful APIs with Node.js, Express, MongoDB, MySQL, and
+            Firebase.
+          </>
+        ),
+        tags: [
           {
-            src: "/images/projects/project-01/cover-04.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
+            name: "Node.js",
+            icon: "nodejs",
+          },
+          {
+            name: "MongoDB",
+            icon: "database",
+          },
+          {
+            name: "Firebase",
+            icon: "firebase",
           },
         ],
+        images: [],
+      },
+      {
+        title: "Android Development",
+        description: (
+          <>
+            Learning Kotlin and Jetpack Compose for native Android development.
+          </>
+        ),
+        tags: [
+          {
+            name: "Kotlin",
+            icon: "android",
+          },
+          {
+            name: "Android Studio",
+            icon: "code",
+          },
+        ],
+        images: [],
       },
     ],
   },
@@ -241,19 +287,15 @@ const about: About = {
 const blog: Blog = {
   path: "/blog",
   label: "Blog",
-  title: "Writing about design and tech...",
+  title: "Writing about mobile development and tech...",
   description: `Read what ${person.name} has been up to recently`,
-  // Create new blog posts by adding a new .mdx file to app/blog/posts
-  // All posts will be listed on the /blog route
 };
 
 const work: Work = {
   path: "/work",
   label: "Work",
   title: `Projects – ${person.name}`,
-  description: `Design and dev projects by ${person.name}`,
-  // Create new project pages by adding a new .mdx file to app/blog/posts
-  // All projects will be listed on the /home and /work routes
+  description: `Mobile and web projects by ${person.name}`,
 };
 
 const gallery: Gallery = {
@@ -261,8 +303,6 @@ const gallery: Gallery = {
   label: "Gallery",
   title: `Photo gallery – ${person.name}`,
   description: `A photo collection by ${person.name}`,
-  // Images by https://lorant.one
-  // These are placeholder images, replace with your own
   images: [
     {
       src: "/images/gallery/horizontal-1.jpg",

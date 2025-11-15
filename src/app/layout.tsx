@@ -33,10 +33,10 @@ export async function generateMetadata() {
   // 🧩 Step 1: Get base metadata from Once UI Meta helper
   const baseMetadata = Meta.generate({
     title: home.title,
-    description: home.description,
-    baseURL: baseURL,
-    path: home.path,
-    image: "./home.png",
+    description: "Portfolio website showcasing my work as a ${person.role}",
+    baseURL: "https://shreyasdamase.info/api",
+    path: "/",
+    image: "./home.jpg",
   });
 
   // 🧩 Step 2: Merge favicon information manually
