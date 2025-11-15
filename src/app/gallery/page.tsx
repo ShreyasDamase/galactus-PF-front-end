@@ -1,6 +1,7 @@
 import { Flex, Meta, Schema } from "@once-ui-system/core";
 import GalleryView from "@/components/gallery/GalleryView";
 import { baseURL, gallery, person } from "@/resources";
+// import MobileFrameVideo from "@/components/MobileFrameVideo";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -29,6 +30,7 @@ export default function Gallery() {
         }}
       />
       <GalleryView />
+      {/* <MobileFrameVideo src="https://www.youtube.com/embed/4EoLXSOpL70?si=nLXb39Lk471SrOgS" /> */}
     </Flex>
   );
 }
