@@ -50,7 +50,7 @@ export default function Home() {
         </RevealFx> */}
 
         <RevealFx translateY="16" delay={0.3}>
-          return <About />;
+          <About />
         </RevealFx>
 
         <RevealFx translateY="12" delay={0.4}>

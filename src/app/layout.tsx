@@ -33,20 +33,68 @@ export async function generateMetadata() {
   // 🧩 Step 1: Get base metadata from Once UI Meta helper
   const baseMetadata = Meta.generate({
     title: home.title,
-    description: "Portfolio website showcasing my work as a ${person.role}",
-    baseURL: "https://shreyasdamase.info/api",
+    description: "Portfolio website showcasing my work as a app developer",
+    baseURL: "https://shreyasdamase.info",
     path: "/",
-    image: "./home.jpg",
+    image: "/images/og/home.jpg",
   });
 
   // 🧩 Step 2: Merge favicon information manually
   return {
-    ...baseMetadata,
+    title: baseMetadata.title,
+    description: baseMetadata.description,
+    metadataBase: new URL("https://shreyasdamase.info"),
+
+    alternates: {
+      canonical: "https://shreyasdamase.info",
+    },
+
+    openGraph: {
+      title: baseMetadata.title,
+      description: baseMetadata.description,
+      url: "https://shreyasdamase.info",
+      siteName: "Shreyas Damase — Portfolio",
+      locale: "en_IN",
+      type: "website",
+      images: [
+        {
+          url: "/images/og/home.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Shreyas Damase Portfolio Preview",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: baseMetadata.title,
+      description: baseMetadata.description,
+      creator: "@shreyasdamase", // optional
+      images: ["/images/og/home.jpg"],
+    },
+
     icons: {
       icon: selectedIcon,
       shortcut: selectedIcon,
       apple: selectedIcon,
     },
+
+    themeColor: "#0d1117", // dark background hint for browsers
+    viewport:
+      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    category: "portfolio",
   };
 }
 
