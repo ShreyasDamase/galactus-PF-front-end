@@ -15,6 +15,7 @@ import {
 } from "@once-ui-system/core";
 import { Footer, Header, RouteGuard, Providers } from "@/components";
 import { baseURL, effects, fonts, style, dataStyle, home } from "@/resources";
+import Script from "next/script";
 
 export async function generateMetadata() {
   const userName =
@@ -118,6 +119,20 @@ export default async function RootLayout({
         )}
       >
         <head>
+          {/* Google Analytics */}
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-H04M6H0F6E"
+            strategy="afterInteractive"
+          />
+
+          <Script id="ga-init" strategy="afterInteractive">
+            {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H04M6H0F6E');
+    `}
+          </Script>
           <script
             id="theme-init"
             dangerouslySetInnerHTML={{
