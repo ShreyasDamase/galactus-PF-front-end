@@ -43,19 +43,24 @@ export const BlogSection = () => {
       </Heading>
 
       <Column fillWidth flex={1} gap="40">
+        {posts.length === 0 && (
+          <p style={{ textAlign: "center", padding: "3rem", opacity: 0.5 }}>
+            No posts published yet.
+          </p>
+        )}
+
+        {/* Featured post — always show first */}
         {posts.length > 0 && <Posts posts={[posts[0]]} thumbnail />}
-        {posts.length > 2 && (
+
+        {/* All remaining posts in 2-column grid */}
+        {posts.length > 1 && (
           <Posts
-            posts={posts.slice(1, 3)}
+            posts={posts.slice(1)}
             columns="2"
             thumbnail
             direction="column"
           />
         )}
-        <Heading as="h2" variant="heading-strong-xl" marginLeft="l">
-          Earlier posts
-        </Heading>
-        {posts.length > 3 && <Posts posts={posts.slice(3)} columns="2" />}
       </Column>
     </Column>
   );
