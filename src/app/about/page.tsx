@@ -92,7 +92,7 @@ export default function AboutPage() {
         {profile?.profileImage && (
           <Column
             className={styles.avatar}
-            top="64"
+            top="160"
             fitHeight
             position="sticky"
             s={{ position: "relative", style: { top: "auto" } }}
@@ -107,14 +107,16 @@ export default function AboutPage() {
             {(profile?.profileImage || person?.avatar) && (
               <Avatar src={profile?.profileImage || person?.avatar} size="xl" />
             )}
-            <Row gap="8" vertical="center">
-              <Icon onBackground="accent-weak" name="globe" />
-              <Text>
-                {profile.experience?.[0]?.position} @{" "}
-                {profile.experience?.[0]?.company}
-              </Text>
-              <Text>{profile.experience?.[0]?.technologies?.join(" • ")}</Text>
-            </Row>
+            <Column gap="8" vertical="center">
+              <Row gap="8"  >
+                  <Icon onBackground="accent-weak" name="globe" top="1"/>
+                <Text>
+                  {profile.experience?.[0]?.position} @{" "}
+                  {profile.experience?.[0]?.company}
+                </Text>
+              </Row>
+              <Text paddingLeft="32" >{profile.experience?.[0]?.technologies?.join(" • ")}</Text>
+            </Column>
             {profile?.resume?.url && (
               <RevealFx translateY="16" delay={1.1}>
                 <ResumeViewer
