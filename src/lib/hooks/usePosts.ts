@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postsApi } from '../api/posts.api';
 import { usePostsStore } from '../store/usePostsStore';
  
@@ -104,4 +104,46 @@ export function usePrefetchNextPage(currentPage: number) {
   };
 
   return { prefetchNext };
+}
+
+/**
+ * Hook: Like a post
+ */
+export function useLikePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => postsApi.likePost(id),
+    onSuccess: (_, id) => {
+      // Invalidate specific post detail
+      queryClient.invalidateQueries({
+        queryKey: postsKeys.detail(id),
+      });
+      // Invalidate all posts lists
+      queryClient.invalidateQueries({
+        queryKey: postsKeys.lists(),
+      });
+    },
+  });
+}
+
+/**
+ * Hook: Unlike a post
+ */
+export function useUnlikePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => postsApi.unlikePost(id),
+    onSuccess: (_, id) => {
+      // Invalidate specific post detail
+      queryClient.invalidateQueries({
+        queryKey: postsKeys.detail(id),
+      });
+      // Invalidate all posts lists
+      queryClient.invalidateQueries({
+        queryKey: postsKeys.lists(),
+      });
+    },
+  });
 }

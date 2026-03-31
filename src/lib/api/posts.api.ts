@@ -41,4 +41,16 @@ export const postsApi = {
    */
   getByTag: (tag: string, page: number = 1) =>
     apiClient.get<PostsListResponse>(`${BASE_PATH}/tag/${tag}?page=${page}`),
+
+  /**
+   * Like a post
+   */
+  likePost: (id: string) =>
+    apiClient.patch<{ likes: number }>(`${BASE_PATH}/posts/${id}/like`),
+
+  /**
+   * Unlike a post
+   */
+  unlikePost: (id: string) =>
+    apiClient.patch<{ likes: number }>(`${BASE_PATH}/posts/${id}/unlike`),
 };

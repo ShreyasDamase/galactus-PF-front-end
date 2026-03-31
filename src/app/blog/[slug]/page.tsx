@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { usePostDetail } from "@/lib/hooks/usePosts";
+import { usePostDetail, useLikePost, useUnlikePost } from "@/lib/hooks/usePosts";
 import {
   Column,
   Heading,
@@ -40,6 +40,9 @@ export default function BlogPost() {
   const { data: profiledata } = useProfile();
   const { data: post, isLoading, error } = usePostDetail(slug);
 
+  const likePostMutation = useLikePost();
+  const unlikePostMutation = useUnlikePost();
+
   // State management
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -60,10 +63,20 @@ export default function BlogPost() {
 
   const theme = useTheme();
   console.log("current theme", theme.resolvedTheme);
-  // Initialize like count from post data
+  // Initialize like count and liked state from storage
   useEffect(() => {
-    if (post?.likes) {
-      setLikeCount(post.likes);
+    if (post) {
+      setLikeCount(post.likes || 0);
+      
+      if (post._id) {
+        const savedLikedPosts = localStorage.getItem("liked_posts");
+        if (savedLikedPosts) {
+          const parsed = JSON.parse(savedLikedPosts);
+          if (parsed.includes(post._id)) {
+            setIsLiked(true);
+          }
+        }
+      }
     }
   }, [post]);
 
@@ -513,10 +526,46 @@ export default function BlogPost() {
   }, [renderedContent]);
 
   // Rest of your handlers
-  const handleLike = useCallback(() => {
-    setIsLiked(!isLiked);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-  }, [isLiked]);
+  const handleLike = useCallback(async () => {
+    if (!post?._id) return;
+
+    try {
+      if (isLiked) {
+        // Optimistic UI update
+        setIsLiked(false);
+        setLikeCount((prev) => Math.max(0, prev - 1));
+        
+        await unlikePostMutation.mutateAsync(post._id);
+
+        // Update local storage
+        const saved = localStorage.getItem("liked_posts");
+        const parsed = saved ? JSON.parse(saved) : [];
+        localStorage.setItem(
+          "liked_posts",
+          JSON.stringify(parsed.filter((id: string) => id !== post._id))
+        );
+      } else {
+        // Optimistic UI update
+        setIsLiked(true);
+        setLikeCount((prev) => prev + 1);
+        
+        await likePostMutation.mutateAsync(post._id);
+
+        // Update local storage
+        const saved = localStorage.getItem("liked_posts");
+        const parsed = saved ? JSON.parse(saved) : [];
+        if (!parsed.includes(post._id)) {
+          parsed.push(post._id);
+          localStorage.setItem("liked_posts", JSON.stringify(parsed));
+        }
+      }
+    } catch (error) {
+      console.error("Failed to like/unlike post", error);
+      // Revert UI on failure
+      setIsLiked(!isLiked);
+      setLikeCount((prev) => (isLiked ? prev + 1 : Math.max(0, prev - 1)));
+    }
+  }, [isLiked, post, likePostMutation, unlikePostMutation]);
 
   const handleBookmark = useCallback(() => {
     setIsBookmarked(!isBookmarked);
