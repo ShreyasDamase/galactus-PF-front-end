@@ -1,7 +1,8 @@
 import { Flex, Meta, Schema } from "@once-ui-system/core";
-import GalleryView from "@/components/gallery/GalleryView";
+import GalleryView, {
+  type GalleryImage,
+} from "@/components/gallery/GalleryView";
 import { baseURL, gallery, person } from "@/resources";
-// import MobileFrameVideo from "@/components/MobileFrameVideo";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -13,7 +14,25 @@ export async function generateMetadata() {
   });
 }
 
-export default function Gallery() {
+async function getGalleryImages(): Promise<GalleryImage[]> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/gallery`,
+      {
+        next: { revalidate: 60 }, // ISR — revalidate every 60 seconds
+      }
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function Gallery() {
+  const images = await getGalleryImages();
+
   return (
     <Flex maxWidth="l">
       <Schema
@@ -29,8 +48,7 @@ export default function Gallery() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
-      <GalleryView />
-      {/* <MobileFrameVideo src="https://www.youtube.com/embed/4EoLXSOpL70?si=nLXb39Lk471SrOgS" /> */}
+      <GalleryView images={images} />
     </Flex>
   );
 }
