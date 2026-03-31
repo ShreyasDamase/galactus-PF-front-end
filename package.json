@@ -12,7 +12,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.33.7",
     "@mdx-js/loader": "^3.1.0",
-    "@next/mdx": "^15.3.1",
+    "@next/mdx": "^16.2.1",
     "@once-ui-system/core": "^1.4.27",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^5.90.5",
@@ -26,7 +26,7 @@
     "highlight.js": "^11.11.1",
     "lint-staged": "^16.1.5",
     "lucide-react": "^0.546.0",
-    "next": "^15.3.1",
+    "next": "^16.2.1",
     "next-mdx-remote": "^5.0.0",
     "nextjs-pdf-viewer": "^0.1.1",
     "pdfjs-dist": "^5.4.394",
@@ -45,6 +45,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.25.0",
+    "eslint-config-next": "^16.2.1",
     "tailwindcss": "3",
     "typescript": "^5.8.3",
     "tzdata": "^1.0.44"

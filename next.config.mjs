@@ -10,9 +10,13 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   transpilePackages: ["next-mdx-remote"],
   images: {
-    unoptimized: true, // ← allows any image domain
-    // You can remove `remotePatterns` entirely
-    domains: ["images.clerk.dev"], // optional if you have some local CDN images
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   sassOptions: {
     compiler: "modern",
