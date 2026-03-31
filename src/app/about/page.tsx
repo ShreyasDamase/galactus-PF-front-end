@@ -119,10 +119,12 @@ export default function AboutPage() {
             </Column>
             {profile?.resume?.url && (
               <RevealFx translateY="16" delay={1.1}>
-                <ResumeViewer
-                  resumeUrl={profile.resume.url}
-                  resumeName={profile.resume.name}
-                />
+                <Row fillWidth horizontal="center">
+                  <ResumeViewer
+                    resumeUrl={profile.resume.url}
+                    resumeName={profile.resume.name}
+                  />
+                </Row>
               </RevealFx>
             )}
             {/* {person.languages && person.languages.length > 0 && (

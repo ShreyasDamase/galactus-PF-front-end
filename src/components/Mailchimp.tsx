@@ -36,8 +36,8 @@ const TextArea: React.FC<
         fontFamily: "inherit",
         fontSize: "16px",
         resize: "vertical",
-        background: "var(--surface)",
-        color: "var(--on-surface)",
+        background: "var(--neutral-alpha-weak)",
+        color: "var(--neutral-strong)",
         outline: "none",
         transition: "border-color 0.2s ease",
         ...style,
@@ -187,13 +187,14 @@ export const ContactForm: React.FC<React.ComponentProps<typeof Column>> = ({
     <Column
       overflow="hidden"
       fillWidth
-      padding="m"
-      radius="l"
+      padding="xl"
+      radius="xl"
       marginBottom="xl"
       horizontal="center"
       align="center"
       background="surface"
       border="neutral-alpha-weak"
+      position="relative"
       {...flex}
     >
       {/* Background styling */}
@@ -219,77 +220,81 @@ export const ContactForm: React.FC<React.ComponentProps<typeof Column>> = ({
         }}
       />
 
-      {/* Header Section */}
-      <Column maxWidth="xs" horizontal="center">
-        <Heading marginBottom="s" variant="display-strong-xs">
-          Contact Us
-        </Heading>
-        <Text
-          wrap="balance"
-          marginBottom="l"
-          variant="body-default-l"
-          onBackground="neutral-weak"
-        >
-          Have questions or feedback? Fill out the form below — we'll get back
-          to you soon.
-        </Text>
-      </Column>
-
-      {/* Form Section */}
-      <Column id="contact_form" fillWidth maxWidth={24} gap="12">
-        {/* Name */}
-        <Input
-          id="contact-name"
-          name="name"
-          type="text"
-          placeholder="Your Name"
-          required
-          value={form.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-          onBlur={() => handleBlur("name")}
-          error={!!(touched.name && errors.name)}
-          errorMessage={touched.name ? errors.name : ""}
-        />
-
-        {/* Email */}
-        <Input
-          id="contact-email"
-          name="email"
-          type="email"
-          placeholder="Your Email"
-          required
-          value={form.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          onBlur={() => handleBlur("email")}
-          error={!!(touched.email && errors.email)}
-          errorMessage={touched.email ? errors.email : ""}
-        />
-
-        {/* Message */}
-        <TextArea
-          id="contact-message"
-          name="message"
-          placeholder="Your Message"
-          required
-          rows={6}
-          value={form.message}
-          onChange={(e) => handleChange("message", e.target.value)}
-          onBlur={() => handleBlur("message")}
-          error={!!(touched.message && errors.message)}
-          errorMessage={touched.message ? errors.message : ""}
-        />
-
-        {/* Submit Button */}
-        <Row height="48" vertical="center" marginTop="m">
-          <Button
-            size="m"
-            fillWidth
-            onClick={handleSubmit}
-            disabled={isSubmitting || isPending}
+      <Column maxWidth="s" horizontal="center" fillWidth gap="24">
+        {/* Header Section */}
+        <Column fillWidth horizontal="center">
+          <Heading marginBottom="s" variant="display-strong-xs">
+            Contact Us
+          </Heading>
+          <Text
+            wrap="balance"
+            variant="body-default-l"
+            onBackground="neutral-weak"
+            align="center"
           >
-            {isPending ? "Sending..." : "Send Message"}
-          </Button>
-        </Row>
+            Have questions or feedback? Fill out the form below — we'll get back
+            to you soon.
+          </Text>
+        </Column>
+
+        {/* Form Section */}
+        <Column id="contact_form" fillWidth gap="16">
+          <Row fillWidth gap="16" s={{ direction: "column" }}>
+            {/* Name */}
+            <Input
+              id="contact-name"
+              name="name"
+              type="text"
+              placeholder="Your Name"
+              required
+              value={form.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              onBlur={() => handleBlur("name")}
+              error={!!(touched.name && errors.name)}
+              errorMessage={touched.name ? errors.name : ""}
+            />
+
+            {/* Email */}
+            <Input
+              id="contact-email"
+              name="email"
+              type="email"
+              placeholder="Your Email"
+              required
+              value={form.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              onBlur={() => handleBlur("email")}
+              error={!!(touched.email && errors.email)}
+              errorMessage={touched.email ? errors.email : ""}
+            />
+          </Row>
+
+          {/* Message */}
+          <TextArea
+            id="contact-message"
+            name="message"
+            placeholder="Your Message"
+            required
+            rows={5}
+            value={form.message}
+            onChange={(e) => handleChange("message", e.target.value)}
+            onBlur={() => handleBlur("message")}
+            error={!!(touched.message && errors.message)}
+            errorMessage={touched.message ? errors.message : ""}
+          />
+
+          {/* Submit Button */}
+          <Row height="48" vertical="center" marginTop="8">
+            <Button
+              size="l"
+              fillWidth
+              onClick={handleSubmit}
+              disabled={isSubmitting || isPending}
+            >
+              {isPending ? "Sending..." : "Send Message"}
+            </Button>
+          </Row>
+        </Column>
       </Column>
     </Column>
   );
