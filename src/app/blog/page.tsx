@@ -1,66 +1,43 @@
-"use client";
+// No "use client" — this is a Server Component ✅
 import { Column, Heading, Meta, Schema } from "@once-ui-system/core";
-
 import { Posts } from "@/components/blog/Posts";
-import { baseURL, blog, person, newsletter } from "@/resources";
-import { usePostsList, usePrefetchNextPage } from "@/lib/hooks/usePosts";
-import { useState } from "react";
-import { usePostsStore } from "@/lib/store/usePostsStore";
+import { baseURL, blog, person } from "@/resources";
+import { fetchPosts } from "@/lib/server/serverFetch";
 
-export default function Blog() {
-  const [currentPage, setCurrentPage] = useState(1);
+export async function generateMetadata() {
+  return Meta.generate({
+    title: blog.title,
+    description: blog.description,
+    baseURL: baseURL,
+    image: `/api/og/generate?title=${encodeURIComponent(blog.title)}`,
+    path: blog.path,
+  });
+}
 
-  // 🔥 THIS IS THE MAGIC - One hook does everything
-  const {
-    data, // { posts: [], pagination: {} }
-    isLoading, // true/false
-    error, // Error object or null
-    refetch, // Function to manually refetch
-    isFetching, // true when refetching in background
-  } = usePostsList(currentPage);
+export default async function Blog() {
+  // Runs on server — Google sees fully rendered HTML ✅
+  const { posts } = await fetchPosts(1);
 
-  // Get pagination state from Zustand (synced by hook)
-  const pagination = usePostsStore((state) => state.pagination);
-
-  // Prefetch next page for instant navigation
-  const { prefetchNext } = usePrefetchNextPage(currentPage);
-
-  if (isLoading) {
-    return (
-      <Column maxWidth="m" paddingTop="24">
-        <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
-          {blog.title}
-        </Heading>
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4" />
-            <p>Loading posts...</p>
-          </div>
-        </div>
-      </Column>
-    );
-  }
-
-  if (error) {
-    return (
-      <Column maxWidth="m" paddingTop="24">
-        <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
-          {blog.title}
-        </Heading>
-        <div className="text-center py-20">
-          <p className="text-red-600">Error: {error.message}</p>
-        </div>
-      </Column>
-    );
-  }
-
-  const posts = data?.posts || [];
   return (
     <>
+      <Schema
+        as="webPage"
+        baseURL={baseURL}
+        title={blog.title}
+        description={blog.description}
+        path={blog.path}
+        image={`/api/og/generate?title=${encodeURIComponent(blog.title)}`}
+        author={{
+          name: person.name,
+          url: `${baseURL}${blog.path}`,
+          image: `${baseURL}${person.avatar}`,
+        }}
+      />
       <Column maxWidth="m" paddingTop="24">
         <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
           {blog.title}
         </Heading>
+
         <Column fillWidth flex={1} gap="40">
           {posts.length === 0 && (
             <p style={{ textAlign: "center", padding: "3rem", opacity: 0.5 }}>
@@ -71,7 +48,7 @@ export default function Blog() {
           {/* Featured post — always show if at least 1 post */}
           {posts.length > 0 && <Posts posts={[posts[0]]} thumbnail />}
 
-          {/* Remaining posts in 2-column grid — show if at least 2 posts */}
+          {/* Remaining posts in 2-column grid */}
           {posts.length > 1 && (
             <Posts
               posts={posts.slice(1)}
