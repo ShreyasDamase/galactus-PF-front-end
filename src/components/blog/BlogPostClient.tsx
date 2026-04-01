@@ -31,6 +31,7 @@ import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
 import CommentsSheet from "@/components/blog/CommentsSheet";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { sanitizeHTML } from "@/lib/sanitize";
 import type { BlogPost } from "@/lib/types";
 
 interface BlogPostClientProps {
@@ -359,7 +360,8 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
       block.replaceWith(wrapper);
     });
 
-    setRenderedContent(temp.innerHTML);
+    // Sanitize before setting — strips any XSS injected via CMS
+    setRenderedContent(sanitizeHTML(temp.innerHTML));
   }, [post?.content, slug, expandedBlocks]);
 
   // ✅ Attach event listeners using EVENT DELEGATION

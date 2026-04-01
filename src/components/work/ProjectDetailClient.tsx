@@ -46,6 +46,7 @@ import "@/styles/syntax-theme.css";
 import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
 import { useLikeProject, useUnlikeProject } from "@/lib/hooks/useProject";
+import { sanitizeHTML } from "@/lib/sanitize";
 import type { ProjectResponse } from "@/lib/types/project.type";
 
 declare global {
@@ -210,7 +211,8 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
       wrapper.appendChild(header); wrapper.appendChild(codeContainer);
       block.replaceWith(wrapper);
     });
-    setRenderedContent(temp.innerHTML);
+    // Sanitize before setting — strips any XSS injected via CMS
+    setRenderedContent(sanitizeHTML(temp.innerHTML));
   }, [project?.description, expandedBlocks, theme.resolvedTheme]);
 
   // Event listeners
