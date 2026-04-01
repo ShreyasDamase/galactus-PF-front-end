@@ -1,22 +1,26 @@
-"use client";
-
-import { Column, Heading, Schema, Spinner, Text } from "@once-ui-system/core";
+// No "use client" — this is a Server Component ✅
+import { Column, Heading, Schema, Text } from "@once-ui-system/core";
 import { baseURL, about, person, work } from "@/resources";
 import { Projects } from "@/components/work/Projects";
-import { useProjects } from "@/lib/hooks/useProject";
+import { fetchProjects } from "@/lib/server/serverFetch";
 
-export default function Work() {
-  const {
-    data: projectData,
-    isLoading,
-    error,
-  } = useProjects({
-    page: 1,
-    limit: 10,
-    sortBy: "publishedAt",
-    sortOrder: "desc",
-  });
-  console.log("first", projectData);
+export async function generateMetadata() {
+  return {
+    title: work.title,
+    description: work.description,
+    openGraph: {
+      title: work.title,
+      description: work.description,
+      images: [`/api/og/generate?title=${encodeURIComponent(work.title)}`],
+    },
+  };
+}
+
+export default async function Work() {
+  // Runs on server — Google sees project cards fully rendered ✅
+  const projectData = await fetchProjects(1, 10);
+  const projects = projectData?.projects ?? [];
+
   return (
     <Column maxWidth="m" paddingTop="24">
       <Schema
@@ -37,40 +41,22 @@ export default function Work() {
         My work
       </Heading>
 
-      {/* Loading State */}
-      {isLoading && (
+      {projects.length === 0 && (
         <Column fillWidth align="center" paddingY="xl">
-          <Spinner size="l" />
-          <Text
-            variant="body-default-s"
-            onBackground="neutral-weak"
-            marginTop="m"
-          >
-            Loading projects...
+          <Text variant="body-default-s" onBackground="neutral-weak">
+            No projects published yet.
           </Text>
         </Column>
       )}
 
-      {/* Error State */}
-      {error && (
-        <Column fillWidth align="center" paddingY="xl">
-          <Text variant="body-default-l" onBackground="danger-strong">
-            Failed to load projects. Please try again later.
-          </Text>
-        </Column>
-      )}
-
-      {/* Projects List */}
-      {projectData && !isLoading && !error && (
+      {projects.length > 0 && (
         <>
-          <Projects projects={projectData?.projects} />
-
-          {/* Pagination Info */}
+          <Projects projects={projects} />
           {projectData?.pagination && (
             <Column fillWidth align="center" paddingY="m">
               <Text variant="body-default-s" onBackground="neutral-weak">
-                Showing {projectData.projects.length} of{" "}
-                {projectData.pagination.total} projects
+                Showing {projects.length} of {projectData.pagination.total}{" "}
+                projects
               </Text>
             </Column>
           )}

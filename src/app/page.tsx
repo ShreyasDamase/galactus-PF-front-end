@@ -1,54 +1,22 @@
-"use client";
-
+// Server Component — composes all sections ✅
+// Child pages (About, Work, Blog) are also server components that fetch their own data
 import {
   Heading,
-  Text,
-  Button,
-  Avatar,
-  RevealFx,
   Column,
-  Badge,
   Row,
-  Schema,
+  RevealFx,
   Line,
 } from "@once-ui-system/core";
-import { home, about, person, baseURL, routes, work, blog } from "@/resources";
-import { Posts } from "@/components/blog/Posts";
-import { Projects } from "@/components/work/Projects";
+import { routes } from "@/resources";
 import About from "@/app/about/page";
 import Work from "@/app/work/page";
 import Blog from "@/app/blog/page";
-import { useProjects } from "@/lib/hooks/useProject";
-import { usePostsList } from "@/lib/hooks/usePosts";
-import { ContactForm } from "@/components/Mailchimp";
 
-export default function Home() {
-  // Fetch projects data for conditional rendering
-  const { data: projectData } = useProjects({
-    page: 1,
-    limit: 6,
-    sortBy: "publishedAt",
-    sortOrder: "desc",
-  });
-
-  // Fetch blog posts for conditional rendering
-  const { data: postsData } = usePostsList(1);
-
-  const posts = postsData?.posts || [];
-
+export default async function Home() {
   return (
     <Column maxWidth="m" gap="xl" paddingY="12" horizontal="center">
-      {/* Hero Section - Preserved Animation */}
       {/* About Section */}
       <Column fillWidth gap="24" marginTop="1" id="about-section">
-        {/* <RevealFx translateY="8" delay={0.2}>
-          <Row fillWidth horizontal="center" marginY="1">
-            <Heading as="h2" variant="display-strong-l">
-              About Me
-            </Heading>
-          </Row>
-        </RevealFx> */}
-
         <RevealFx translateY="16" delay={0.3}>
           <About />
         </RevealFx>
@@ -59,6 +27,7 @@ export default function Home() {
           </Row>
         </RevealFx>
       </Column>
+
       {/* Work/Projects Section */}
       {routes["/work"] && (
         <Column fillWidth gap="24" marginTop="xl" id="work-section">
@@ -81,6 +50,7 @@ export default function Home() {
           </RevealFx>
         </Column>
       )}
+
       {/* Blog Section */}
       {routes["/blog"] && (
         <Column fillWidth gap="24" marginTop="xl" id="blog-section">
