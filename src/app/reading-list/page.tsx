@@ -197,7 +197,7 @@ export default function ReadingListPage() {
       {posts.length > 0 && (
         <Column fillWidth gap="12" marginBottom="48">
           {/* Section header */}
-          <Row gap="10" vertical="center" marginBottom="4">
+          <Row gap="8" vertical="center" marginBottom="4">
             <BookOpen className="w-4 h-4" style={{ color: "#60a5fa" }} />
             <Text variant="label-default-m" style={{ color: textPrimary, fontWeight: 600 }}>
               Blog Posts
@@ -308,7 +308,7 @@ export default function ReadingListPage() {
       {/* ── Projects Section ── */}
       {projects.length > 0 && (
         <Column fillWidth gap="12" marginBottom="48">
-          <Row gap="10" vertical="center" marginBottom="4">
+          <Row gap="8" vertical="center" marginBottom="4">
             <Folder className="w-4 h-4" style={{ color: "#c4b5fd" }} />
             <Text variant="label-default-m" style={{ color: textPrimary, fontWeight: 600 }}>
               Projects
