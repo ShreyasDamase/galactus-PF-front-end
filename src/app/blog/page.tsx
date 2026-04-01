@@ -3,6 +3,7 @@ import { Column, Heading, Meta, Schema } from "@once-ui-system/core";
 import { Posts } from "@/components/blog/Posts";
 import { baseURL, blog, person } from "@/resources";
 import { fetchPosts } from "@/lib/server/serverFetch";
+import ReadingListFAB from "@/components/blog/ReadingListFAB";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -59,6 +60,9 @@ export default async function Blog() {
           )}
         </Column>
       </Column>
+
+      {/* Floating Reading List button — client component */}
+      <ReadingListFAB />
     </>
   );
 }
