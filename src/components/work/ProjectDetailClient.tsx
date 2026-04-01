@@ -76,6 +76,7 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
   const [renderedContent, setRenderedContent] = useState<string>("");
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
   const [mermaidReady, setMermaidReady] = useState<boolean>(false);
+  const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
 
   useEffect(() => {
     if (project) {
@@ -85,6 +86,12 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
         if (savedLikedProjects) {
           const parsed = JSON.parse(savedLikedProjects);
           if (parsed.includes(project.id)) setIsLiked(true);
+        }
+        // Restore bookmarked state
+        const savedBookmarks = localStorage.getItem("bookmarked_projects");
+        if (savedBookmarks) {
+          const parsed: Array<{ id: string }> = JSON.parse(savedBookmarks);
+          if (parsed.some((b) => b.id === project.id)) setIsBookmarked(true);
         }
       }
     }
@@ -277,7 +284,46 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
     } catch { setIsLiked(!isLiked); setLikeCount((p) => (isLiked ? p + 1 : Math.max(0, p - 1))); }
   }, [isLiked, project, likeProjectMutation, unlikeProjectMutation]);
 
-  const handleBookmark = useCallback(() => setIsBookmarked(!isBookmarked), [isBookmarked]);
+  const handleBookmark = useCallback(async () => {
+    if (!project?.id) return;
+
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.share) {
+      // On mobile — open native share sheet (iOS has "Add to Reading List")
+      try {
+        await navigator.share({
+          title: project.title,
+          text: project.summary || `Check out: ${project.title}`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") console.error("Share failed", err);
+      }
+      return;
+    }
+
+    // Desktop — save to localStorage reading list
+    const saved = localStorage.getItem("bookmarked_projects");
+    const bookmarks: Array<{ id: string; slug: string; title: string; coverImage?: string }> =
+      saved ? JSON.parse(saved) : [];
+
+    if (isBookmarked) {
+      const updated = bookmarks.filter((b) => b.id !== project.id);
+      localStorage.setItem("bookmarked_projects", JSON.stringify(updated));
+      setIsBookmarked(false);
+      setBookmarkToast("Removed from saved projects");
+    } else {
+      if (!bookmarks.some((b) => b.id === project.id)) {
+        bookmarks.push({ id: project.id, slug: project.slug, title: project.title, coverImage: project.coverImage });
+        localStorage.setItem("bookmarked_projects", JSON.stringify(bookmarks));
+      }
+      setIsBookmarked(true);
+      setBookmarkToast("Project saved ✓");
+    }
+
+    setTimeout(() => setBookmarkToast(null), 2500);
+  }, [isBookmarked, project]);
 
   const handleShare = useCallback(async () => {
     if (navigator.share && project) {
@@ -307,6 +353,23 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-700 z-50">
         <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-150 ease-out" style={{ width: `${readingProgress}%` }} role="progressbar" aria-valuenow={readingProgress} aria-valuemin={0} aria-valuemax={100} />
       </div>
+
+      {/* Bookmark Toast */}
+      {bookmarkToast && (
+        <div
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl text-sm font-medium shadow-lg pointer-events-none"
+          style={{
+            background: "rgba(30,30,30,0.92)",
+            color: "#fff",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+          }}
+        >
+          {bookmarkToast}
+        </div>
+      )}
+
 
       {/* Floating Actions */}
       {showFloatingActions && (

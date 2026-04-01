@@ -55,6 +55,7 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
   const [renderedContent, setRenderedContent] = useState<string>("");
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
 
   const openComments = useCallback(() => {
     setIsCommentsOpen(true);
@@ -66,18 +67,23 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
 
   const theme = useTheme();
 
-  // Initialize like count and liked state from storage
+  // Initialize like count, liked state, and bookmark state from localStorage
   useEffect(() => {
     if (post) {
       setLikeCount(post.likes || 0);
 
       if (post._id) {
+        // Restore liked state
         const savedLikedPosts = localStorage.getItem("liked_posts");
         if (savedLikedPosts) {
           const parsed = JSON.parse(savedLikedPosts);
-          if (parsed.includes(post._id)) {
-            setIsLiked(true);
-          }
+          if (parsed.includes(post._id)) setIsLiked(true);
+        }
+        // Restore bookmarked state
+        const savedBookmarks = localStorage.getItem("bookmarked_posts");
+        if (savedBookmarks) {
+          const parsed: Array<{ id: string }> = JSON.parse(savedBookmarks);
+          if (parsed.some((b) => b.id === post._id)) setIsBookmarked(true);
         }
       }
     }
@@ -501,9 +507,58 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
     }
   }, [isLiked, post, likePostMutation, unlikePostMutation]);
 
-  const handleBookmark = useCallback(() => {
-    setIsBookmarked(!isBookmarked);
-  }, [isBookmarked]);
+  const handleBookmark = useCallback(async () => {
+    if (!post?._id) return;
+
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.share) {
+      // On mobile — open native share sheet (iOS has "Add to Reading List")
+      try {
+        await navigator.share({
+          title: post.title,
+          text: post.description || `Read: ${post.title}`,
+          url: window.location.href,
+        });
+        // No state change — native share handles it
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          console.error("Share failed", err);
+        }
+      }
+      return;
+    }
+
+    // Desktop — save to localStorage reading list
+    const saved = localStorage.getItem("bookmarked_posts");
+    const bookmarks: Array<{ id: string; slug: string; title: string; coverImage?: string; publishedAt: string }> =
+      saved ? JSON.parse(saved) : [];
+
+    if (isBookmarked) {
+      // Remove bookmark
+      const updated = bookmarks.filter((b) => b.id !== post._id);
+      localStorage.setItem("bookmarked_posts", JSON.stringify(updated));
+      setIsBookmarked(false);
+      setBookmarkToast("Removed from reading list");
+    } else {
+      // Add bookmark
+      if (!bookmarks.some((b) => b.id === post._id)) {
+        bookmarks.push({
+          id: post._id,
+          slug: post.slug,
+          title: post.title,
+          coverImage: post.coverImage,
+          publishedAt: post.publishedAt,
+        });
+        localStorage.setItem("bookmarked_posts", JSON.stringify(bookmarks));
+      }
+      setIsBookmarked(true);
+      setBookmarkToast("Saved to reading list ✓");
+    }
+
+    // Auto-hide toast after 2.5s
+    setTimeout(() => setBookmarkToast(null), 2500);
+  }, [isBookmarked, post]);
 
   const handleShare = useCallback(async () => {
     if (navigator.share && post) {
@@ -553,6 +608,23 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
           aria-label="Reading progress"
         />
       </div>
+
+      {/* Bookmark Toast */}
+      {bookmarkToast && (
+        <div
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl text-sm font-medium shadow-lg pointer-events-none"
+          style={{
+            background: "rgba(30,30,30,0.92)",
+            color: "#fff",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            animation: "fadeInUp 0.2s ease",
+          }}
+        >
+          {bookmarkToast}
+        </div>
+      )}
 
       {/* Floating Action Buttons */}
       {showFloatingActions && (
