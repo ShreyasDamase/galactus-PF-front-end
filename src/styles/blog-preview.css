@@ -134,8 +134,55 @@
   @apply bg-gray-100 font-semibold;
 }
 
+/* Block images — full width with styling */
 .tiptap-preview-content img {
   @apply max-w-full h-auto rounded-lg shadow-md my-4;
+}
+
+/* Inline emoji/icon images — constrain to text size, no block styling */
+.tiptap-preview-content img[src*="emoji"],
+.tiptap-preview-content img[data-emoji],
+.tiptap-preview-content img.emoji,
+.tiptap-preview-content img.icon {
+  display: inline !important;
+  width: 1.25em !important;
+  height: 1.25em !important;
+  max-width: 1.25em !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 0.1em !important;
+  vertical-align: middle !important;
+}
+
+/* Task list checkbox images (✅ ❌ rendered by TipTap as images) */
+.tiptap-preview-content li[data-type="taskItem"] img,
+.tiptap-preview-content ul[data-type="taskList"] img {
+  display: inline !important;
+  width: 1.25em !important;
+  height: 1.25em !important;
+  max-width: 1.25em !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 0.25em 0 0 !important;
+  vertical-align: middle !important;
+}
+
+/* General: any small image that's clearly an icon, not a content image.
+   Images with no explicit width set that are inside inline contexts */
+.tiptap-preview-content p img,
+.tiptap-preview-content li img,
+.tiptap-preview-content td img,
+.tiptap-preview-content th img {
+  /* If the image is naturally small (emoji/icon), don't stretch it */
+  max-height: 2em;
+  vertical-align: middle;
+  display: inline;
+  margin: 0 0.1em;
+  border-radius: 2px;
+  box-shadow: none;
+  /* Remove block-level margin */
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .tiptap-preview-content a {
