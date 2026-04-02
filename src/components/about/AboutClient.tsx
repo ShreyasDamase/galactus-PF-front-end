@@ -89,11 +89,11 @@ export default function AboutClient({ profile }: AboutClientProps) {
             top="160"
             fitHeight
             position="sticky"
-            s={{ position: "relative", style: { top: "auto" } }}
+            s={{ position: "relative", style: { top: "auto" }, paddingBottom: "0" }}
             xs={{ style: { top: "auto" } }}
             minWidth="160"
             paddingX="l"
-            paddingBottom="xl"
+            paddingBottom="l"
             gap="m"
             flex={3}
             horizontal="center"
@@ -101,7 +101,7 @@ export default function AboutClient({ profile }: AboutClientProps) {
             {(profile?.profileImage || person?.avatar) && (
               <Avatar src={profile?.profileImage || person?.avatar} size="xl" />
             )}
-            <Column gap="8" vertical="center">
+            <Column gap="8" vertical="center" s={{ hide: true }}>
               <Row gap="8">
                 <Icon onBackground="accent-weak" name="globe" top="1" />
                 <Text>
@@ -115,7 +115,7 @@ export default function AboutClient({ profile }: AboutClientProps) {
             </Column>
             {profile?.resume?.url && (
               <RevealFx translateY="16" delay={1.1}>
-                <Row fillWidth horizontal="center">
+                <Row fillWidth horizontal="center" s={{ hide: true }}>
                   <ResumeViewer
                     resumeUrl={profile.resume.url}
                     resumeName={profile.resume.name}
@@ -127,134 +127,346 @@ export default function AboutClient({ profile }: AboutClientProps) {
         )}
 
         <Column className={styles.blockAlign} flex={9} maxWidth={40}>
-          <Column id="intro" fillWidth minHeight="160" vertical="center" marginBottom="32">
+          <Column
+            id="intro"
+            fillWidth
+            minHeight="160"
+            vertical="center"
+            marginBottom="32"
+            s={{ minHeight: "auto", marginBottom: "16" }}
+          >
             <Heading className={styles.textAlign} variant="display-strong-xl">
               {profile?.firstName} {profile?.lastName}
             </Heading>
-            <Text className={styles.textAlign} variant="display-default-xs" onBackground="neutral-weak">
+            <Text
+              className={styles.textAlign}
+              variant="display-default-xs"
+              onBackground="neutral-weak"
+            >
               {profile?.role}
             </Text>
             {social.length > 0 && (
-              <Row className={styles.blockAlign} paddingTop="20" paddingBottom="8" gap="8" wrap horizontal="center" fitWidth data-border="rounded">
-                {profile?.social &&
-                  profile?.social.map(
-                    (item) =>
-                      item.link && (
-                        <React.Fragment key={item.name}>
-                          <Row s={{ hide: true }}>
-                            <Button href={item.link} prefixIcon={item.icon} label={item.name} size="s" weight="default" variant="secondary" />
-                          </Row>
-                          <Row hide s={{ hide: false }}>
-                            <RevealFx translateY="16" delay={0.7}>
-                              <IconButton size="l" key={`${item.name}-icon`} href={item.link} icon={item.icon} variant="secondary" />
-                            </RevealFx>
-                          </Row>
-                        </React.Fragment>
-                      )
-                  )}
+              <Row
+                className={styles.blockAlign}
+                paddingTop="20"
+                paddingBottom="8"
+                gap="8"
+                wrap
+                horizontal="center"
+                fitWidth
+                data-border="rounded"
+              >
+                {profile?.social?.map(
+                  (item) =>
+                    item.link && (
+                      <React.Fragment key={item.name}>
+                        <Row s={{ hide: true }}>
+                          <Button
+                            href={item.link}
+                            prefixIcon={item.icon}
+                            label={item.name}
+                            size="s"
+                            weight="default"
+                            variant="secondary"
+                          />
+                        </Row>
+                        <Row hide s={{ hide: false }}>
+                          <RevealFx translateY="16" delay={0.7}>
+                            <IconButton
+                              size="l"
+                              key={`${item.name}-icon`}
+                              href={item.link}
+                              icon={item.icon}
+                              variant="secondary"
+                            />
+                          </RevealFx>
+                        </Row>
+                      </React.Fragment>
+                    ),
+                )}
               </Row>
             )}
           </Column>
 
+          {profile?.resume?.url && (
+            <Column
+              hide
+              s={{ hide: false, display: "flex" }}
+              fillWidth
+              horizontal="center"
+              marginBottom="xl"
+              className={styles.blockAlign}
+            >
+              <RevealFx translateY="16" delay={1.1}>
+                <Row fillWidth horizontal="center">
+                  <ResumeViewer
+                    resumeUrl={profile.resume.url}
+                    resumeName={profile.resume.name}
+                  />
+                </Row>
+              </RevealFx>
+            </Column>
+          )}
+
+          {profile.experience && profile.experience.length > 0 && (
+            <Column
+              hide
+              s={{ hide: false, display: "flex" }}
+              className={styles.blockAlign}
+              gap="8"
+              horizontal="center"
+              vertical="center"
+              marginBottom="32"
+            >
+              <Row gap="8" vertical="center" horizontal="center" wrap>
+                <Icon onBackground="accent-weak" name="globe" top="0" />
+                <Text className={styles.textAlign} align="center">
+                  {profile.experience?.[0]?.position} @{" "}
+                  {profile.experience?.[0]?.company}
+                </Text>
+              </Row>
+              <Text
+                className={styles.textAlign}
+                align="center"
+                onBackground="neutral-weak"
+              >
+                {profile.experience?.[0]?.technologies?.join(" • ")}
+              </Text>
+            </Column>
+          )}
+
           {profile?.bio && (
-            <Column textVariant="body-default-l" fillWidth gap="m" marginBottom="xl">
+            <Column
+              textVariant="body-default-l"
+              fillWidth
+              gap="m"
+              marginBottom="xl"
+            >
               {profile.bio}
             </Column>
           )}
 
-          {about.work.display && profile?.experience && profile.experience.length > 0 && (
-            <>
-              <Heading as="h2" id="work" variant="display-strong-s" marginBottom="m">
-                {about.work.title}
-              </Heading>
-              <Column fillWidth gap="l" marginBottom="40">
-                {profile.experience.map((experience, index) => {
-                  const formatDate = (dateString: string | null | undefined) => {
-                    if (!dateString) return "Present";
-                    return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short" });
-                  };
-                  const descriptionPoints = experience.description
-                    ? experience.description.split("\n").filter((l: string) => l.trim().startsWith("-")).map((l: string) => l.trim().substring(1).trim())
-                    : [];
-                  return (
-                    <Column key={`${experience.company}-${experience.position}-${index}`} fillWidth>
-                      <Row fillWidth horizontal="between" vertical="start" marginBottom="4" gap="12" wrap>
-                        <Row gap="12" vertical="center" flex={1}>
-                          {experience.companyLogo && (
-                            <img src={experience.companyLogo} alt={`${experience.company} logo`} style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "4px" }} />
-                          )}
-                          <Column gap="4">
-                            <Text id={experience.company} variant="heading-strong-l">{experience.company}</Text>
-                            <Text variant="body-default-s" onBackground="brand-weak">{experience.position}</Text>
+          {about.work.display &&
+            profile?.experience &&
+            profile.experience.length > 0 && (
+              <>
+                <Heading
+                  as="h2"
+                  id="work"
+                  variant="display-strong-s"
+                  marginBottom="m"
+                >
+                  {about.work.title}
+                </Heading>
+                <Column fillWidth gap="l" marginBottom="40">
+                  {profile.experience.map((experience, index) => {
+                    const formatDate = (
+                      dateString: string | null | undefined,
+                    ) => {
+                      if (!dateString) return "Present";
+                      return new Date(dateString).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                      });
+                    };
+                    const descriptionPoints = experience.description
+                      ? experience.description
+                          .split("\n")
+                          .filter((l: string) => l.trim().startsWith("-"))
+                          .map((l: string) => l.trim().substring(1).trim())
+                      : [];
+                    return (
+                      <Column
+                        key={`${experience.company}-${experience.position}-${index}`}
+                        fillWidth
+                      >
+                        <Row
+                          fillWidth
+                          horizontal="between"
+                          vertical="start"
+                          marginBottom="4"
+                          gap="12"
+                          wrap
+                        >
+                          <Row gap="12" vertical="center" flex={1}>
+                            {experience.companyLogo && (
+                              <img
+                                src={experience.companyLogo}
+                                alt={`${experience.company} logo`}
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  objectFit: "contain",
+                                  borderRadius: "4px",
+                                }}
+                              />
+                            )}
+                            <Column gap="4">
+                              <Text
+                                id={experience.company}
+                                variant="heading-strong-l"
+                              >
+                                {experience.company}
+                              </Text>
+                              <Text
+                                variant="body-default-s"
+                                onBackground="brand-weak"
+                              >
+                                {experience.position}
+                              </Text>
+                            </Column>
+                          </Row>
+                          <Column
+                            gap="4"
+                            horizontal="end"
+                            style={{ minWidth: "fit-content" }}
+                          >
+                            <Text
+                              variant="heading-default-xs"
+                              onBackground="neutral-weak"
+                              style={{ whiteSpace: "nowrap" }}
+                            >
+                              {formatDate(experience.startDate)} -{" "}
+                              {formatDate(experience.endDate)}
+                            </Text>
+                            {experience.isCurrentJob && (
+                              <Tag size="s" variant="success">
+                                Current
+                              </Tag>
+                            )}
                           </Column>
                         </Row>
-                        <Column gap="4" horizontal="end" style={{ minWidth: "fit-content" }}>
-                          <Text variant="heading-default-xs" onBackground="neutral-weak" style={{ whiteSpace: "nowrap" }}>
-                            {formatDate(experience.startDate)} - {formatDate(experience.endDate)}
-                          </Text>
-                          {experience.isCurrentJob && <Tag size="s" variant="success">Current</Tag>}
-                        </Column>
-                      </Row>
-                      {experience.location && (
-                        <Row gap="8" vertical="center" marginBottom="m">
-                          <RevealFx translateY="16" delay={0.7}>
-                            <Icon name="mapPin" size="xs" onBackground="neutral-weak" />
-                            <Text variant="body-default-xs" onBackground="neutral-weak">{experience.location}</Text>
-                          </RevealFx>
-                        </Row>
-                      )}
-                      {descriptionPoints.length > 0 && (
-                        <Column as="ul" gap="16" marginBottom="m">
-                          {descriptionPoints.map((point: string, idx: number) => (
-                            <Text as="li" variant="body-default-m" key={`${experience.company}-desc-${idx}`}>{point}</Text>
-                          ))}
-                        </Column>
-                      )}
-                      {experience.technologies && experience.technologies.length > 0 && (
-                        <Row wrap gap="8" paddingTop="8">
-                          {experience.technologies.map((tech: string, techIndex: number) => (
-                            <Tag key={`${experience.company}-tech-${techIndex}`} size="l">{tech}</Tag>
-                          ))}
-                        </Row>
-                      )}
-                    </Column>
-                  );
-                })}
-              </Column>
-            </>
-          )}
+                        {experience.location && (
+                          <Row gap="8" vertical="center" marginBottom="m">
+                            <RevealFx translateY="16" delay={0.7}>
+                              <Icon
+                                name="mapPin"
+                                size="xs"
+                                onBackground="neutral-weak"
+                              />
+                              <Text
+                                variant="body-default-xs"
+                                onBackground="neutral-weak"
+                              >
+                                {experience.location}
+                              </Text>
+                            </RevealFx>
+                          </Row>
+                        )}
+                        {descriptionPoints.length > 0 && (
+                          <Column as="ul" gap="16" marginBottom="m">
+                            {descriptionPoints.map(
+                              (point: string, idx: number) => (
+                                <Text
+                                  as="li"
+                                  variant="body-default-m"
+                                  key={`${experience.company}-desc-${idx}`}
+                                >
+                                  {point}
+                                </Text>
+                              ),
+                            )}
+                          </Column>
+                        )}
+                        {experience.technologies &&
+                          experience.technologies.length > 0 && (
+                            <Row wrap gap="8" paddingTop="8">
+                              {experience.technologies.map(
+                                (tech: string, techIndex: number) => (
+                                  <Tag
+                                    key={`${experience.company}-tech-${techIndex}`}
+                                    size="l"
+                                  >
+                                    {tech}
+                                  </Tag>
+                                ),
+                              )}
+                            </Row>
+                          )}
+                      </Column>
+                    );
+                  })}
+                </Column>
+              </>
+            )}
 
           {profile?.education && profile.education.length > 0 && (
             <>
-              <Heading as="h2" id="studies" variant="display-strong-s" marginBottom="m">
+              <Heading
+                as="h2"
+                id="studies"
+                variant="display-strong-s"
+                marginBottom="m"
+              >
                 {about.studies.title}
               </Heading>
               <Column fillWidth gap="l" marginBottom="40">
                 {profile.education.map((institution, index) => {
-                  const formatYear = (year: string | number | null | undefined) => year || "Present";
+                  const formatYear = (
+                    year: string | number | null | undefined,
+                  ) => year || "Present";
                   return (
-                    <Column key={`${institution.institution}-${institution.degree}-${index}`} fillWidth>
-                      <Row fillWidth horizontal="between" vertical="start" marginBottom="4" gap="12" wrap>
+                    <Column
+                      key={`${institution.institution}-${institution.degree}-${index}`}
+                      fillWidth
+                    >
+                      <Row
+                        fillWidth
+                        horizontal="between"
+                        vertical="start"
+                        marginBottom="4"
+                        gap="12"
+                        wrap
+                      >
                         <Column gap="4" flex={1}>
-                          <Text id={institution.institution} variant="heading-strong-l">{institution.institution}</Text>
-                          <Text variant="body-default-s" onBackground="brand-weak">
-                            {institution.degree}{institution.fieldOfStudy && ` in ${institution.fieldOfStudy}`}
+                          <Text
+                            id={institution.institution}
+                            variant="heading-strong-l"
+                          >
+                            {institution.institution}
+                          </Text>
+                          <Text
+                            variant="body-default-s"
+                            onBackground="brand-weak"
+                          >
+                            {institution.degree}
+                            {institution.fieldOfStudy &&
+                              ` in ${institution.fieldOfStudy}`}
                           </Text>
                         </Column>
-                        <Column gap="4" horizontal="end" style={{ minWidth: "fit-content" }}>
-                          <Text variant="heading-default-xs" onBackground="neutral-weak" style={{ whiteSpace: "nowrap" }}>
-                            {formatYear(institution.startYear)} - {formatYear(institution.endYear)}
+                        <Column
+                          gap="4"
+                          horizontal="end"
+                          style={{ minWidth: "fit-content" }}
+                        >
+                          <Text
+                            variant="heading-default-xs"
+                            onBackground="neutral-weak"
+                            style={{ whiteSpace: "nowrap" }}
+                          >
+                            {formatYear(institution.startYear)} -{" "}
+                            {formatYear(institution.endYear)}
                           </Text>
                           {institution.gradeValue && (
-                            <Text variant="body-default-xs" onBackground="neutral-weak" style={{ whiteSpace: "nowrap" }}>
+                            <Text
+                              variant="body-default-xs"
+                              onBackground="neutral-weak"
+                              style={{ whiteSpace: "nowrap" }}
+                            >
                               {(() => {
-                                const cat = institution.gradeCategory || "other";
+                                const cat =
+                                  institution.gradeCategory || "other";
                                 switch (cat) {
-                                  case "cgpa": return `CGPA: ${institution.gradeValue}`;
-                                  case "percentage": return `Percentage: ${institution.gradeValue}`;
-                                  case "grade": return `Grade: ${institution.gradeValue}`;
-                                  case "marks": return `Marks: ${institution.gradeValue}`;
-                                  default: return `Score: ${institution.gradeValue}`;
+                                  case "cgpa":
+                                    return `CGPA: ${institution.gradeValue}`;
+                                  case "percentage":
+                                    return `Percentage: ${institution.gradeValue}`;
+                                  case "grade":
+                                    return `Grade: ${institution.gradeValue}`;
+                                  case "marks":
+                                    return `Marks: ${institution.gradeValue}`;
+                                  default:
+                                    return `Score: ${institution.gradeValue}`;
                                 }
                               })()}
                             </Text>
@@ -262,7 +474,13 @@ export default function AboutClient({ profile }: AboutClientProps) {
                         </Column>
                       </Row>
                       {institution.description && (
-                        <Text variant="body-default-m" onBackground="neutral-weak" marginTop="8">{institution.description}</Text>
+                        <Text
+                          variant="body-default-m"
+                          onBackground="neutral-weak"
+                          marginTop="8"
+                        >
+                          {institution.description}
+                        </Text>
                       )}
                     </Column>
                   );
@@ -273,13 +491,20 @@ export default function AboutClient({ profile }: AboutClientProps) {
 
           {profile?.skills && profile.skills.length > 0 && (
             <>
-              <Heading as="h2" id="technical" variant="display-strong-s" marginBottom="m">
+              <Heading
+                as="h2"
+                id="technical"
+                variant="display-strong-s"
+                marginBottom="m"
+              >
                 {about.technical.title}
               </Heading>
               <Column fillWidth gap="l" marginBottom="40">
                 <Row wrap gap="8">
-                  {profile.skills.map((skill, index) => (
-                    <Tag key={`skill-${index}`} size="l">{skill}</Tag>
+                  {profile.skills.map((skill) => (
+                    <Tag key={skill} size="l">
+                      {skill}
+                    </Tag>
                   ))}
                 </Row>
               </Column>
@@ -288,43 +513,111 @@ export default function AboutClient({ profile }: AboutClientProps) {
 
           {profile?.projects && profile.projects.length > 0 && (
             <>
-              <Heading as="h2" id="projects" variant="display-strong-s" marginBottom="m">
+              <Heading
+                as="h2"
+                id="projects"
+                variant="display-strong-s"
+                marginBottom="m"
+              >
                 Projects
               </Heading>
               <Column fillWidth gap="xl" marginBottom="40">
                 {profile.projects.map((project, index) => {
-                  const formatDate = (dateString: string | null | undefined) => {
+                  const formatDate = (
+                    dateString: string | null | undefined,
+                  ) => {
                     if (!dateString) return "";
-                    return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short" });
+                    return new Date(dateString).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                    });
                   };
                   return (
                     <Column key={`${project.title}-${index}`} fillWidth gap="m">
                       {project.imageUrl && (
-                        <Row fillWidth border="neutral-medium" radius="l" style={{ overflow: "hidden", aspectRatio: "16/9" }}>
-                          <img src={project.imageUrl} alt={project.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <Row
+                          fillWidth
+                          border="neutral-medium"
+                          radius="l"
+                          style={{ overflow: "hidden", aspectRatio: "16/9" }}
+                        >
+                          <img
+                            src={project.imageUrl}
+                            alt={project.title}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
                         </Row>
                       )}
                       <Column fillWidth gap="12" paddingTop="12">
-                        <Row fillWidth horizontal="between" vertical="start" gap="12" wrap>
-                          <Heading as="h3" variant="heading-strong-l">{project.title}</Heading>
+                        <Row
+                          fillWidth
+                          horizontal="between"
+                          vertical="start"
+                          gap="12"
+                          wrap
+                        >
+                          <Heading as="h3" variant="heading-strong-l">
+                            {project.title}
+                          </Heading>
                           {(project.startDate || project.endDate) && (
-                            <Text variant="body-default-xs" onBackground="neutral-weak" style={{ whiteSpace: "nowrap" }}>
-                              {formatDate(project.startDate)} {project.endDate && `- ${formatDate(project.endDate)}`}
+                            <Text
+                              variant="body-default-xs"
+                              onBackground="neutral-weak"
+                              style={{ whiteSpace: "nowrap" }}
+                            >
+                              {formatDate(project.startDate)}{" "}
+                              {project.endDate &&
+                                `- ${formatDate(project.endDate)}`}
                             </Text>
                           )}
                         </Row>
-                        {project.description && <Text variant="body-default-m" onBackground="neutral-weak">{project.description}</Text>}
-                        {project.technologies && project.technologies.length > 0 && (
-                          <Row wrap gap="8" paddingTop="8">
-                            {project.technologies.map((tech: string, techIndex: number) => (
-                              <Tag key={`${project.title}-tech-${techIndex}`} size="l">{tech}</Tag>
-                            ))}
-                          </Row>
+                        {project.description && (
+                          <Text
+                            variant="body-default-m"
+                            onBackground="neutral-weak"
+                          >
+                            {project.description}
+                          </Text>
                         )}
+                        {project.technologies &&
+                          project.technologies.length > 0 && (
+                            <Row wrap gap="8" paddingTop="8">
+                              {project.technologies.map(
+                                (tech: string, techIndex: number) => (
+                                  <Tag
+                                    key={`${project.title}-tech-${techIndex}`}
+                                    size="l"
+                                  >
+                                    {tech}
+                                  </Tag>
+                                ),
+                              )}
+                            </Row>
+                          )}
                         {(project.githubUrl || project.liveUrl) && (
                           <Row gap="12" wrap paddingTop="8">
-                            {project.githubUrl && <Button href={project.githubUrl} prefixIcon="github" label="View Code" size="s" variant="secondary" />}
-                            {project.liveUrl && <Button href={project.liveUrl} suffixIcon="arrowUpRight" label="View Live" size="s" variant="secondary" />}
+                            {project.githubUrl && (
+                              <Button
+                                href={project.githubUrl}
+                                prefixIcon="github"
+                                label="View Code"
+                                size="s"
+                                variant="secondary"
+                              />
+                            )}
+                            {project.liveUrl && (
+                              <Button
+                                href={project.liveUrl}
+                                suffixIcon="arrowUpRight"
+                                label="View Live"
+                                size="s"
+                                variant="secondary"
+                              />
+                            )}
                           </Row>
                         )}
                       </Column>
