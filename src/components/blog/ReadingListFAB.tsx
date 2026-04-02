@@ -27,6 +27,7 @@ export default function ReadingListFAB() {
   }, []);
 
   return (
+    <div className="hidden md:block">
     <AnimatePresence>
       {visible && (
         <motion.div
@@ -93,5 +94,6 @@ export default function ReadingListFAB() {
         </motion.div>
       )}
     </AnimatePresence>
+    </div>
   );
 }

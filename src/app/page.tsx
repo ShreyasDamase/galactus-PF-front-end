@@ -30,6 +30,7 @@ export default async function Home() {
 
       {/* Work/Projects Section */}
       {routes["/work"] && (
+        <div className="hidden md:block w-full">
         <Column fillWidth gap="24" marginTop="xl" id="work-section">
           <RevealFx translateY="8" delay={0.6}>
             <Row fillWidth horizontal="center" marginY="l">
@@ -49,10 +50,12 @@ export default async function Home() {
             </Row>
           </RevealFx>
         </Column>
+        </div>
       )}
 
       {/* Blog Section */}
       {routes["/blog"] && (
+        <div className="hidden md:block w-full">
         <Column fillWidth gap="24" marginTop="xl" id="blog-section">
           <RevealFx translateY="8" delay={1.0}>
             <Row fillWidth horizontal="center" marginY="l">
@@ -72,6 +75,7 @@ export default async function Home() {
             </Row>
           </RevealFx>
         </Column>
+        </div>
       )}
     </Column>
   );

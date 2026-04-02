@@ -141,7 +141,7 @@ export const Header = () => {
                 </>
               )}
               {routes["/work"] && (
-                <>
+                <Row hide s={{ hide: false }}>
                   <Row s={{ hide: true }}>
                     <ToggleButton
                       prefixIcon="grid"
@@ -157,10 +157,10 @@ export const Header = () => {
                       selected={pathname.startsWith("/work")}
                     />
                   </Row>
-                </>
+                </Row>
               )}
               {routes["/blog"] && (
-                <>
+                <Row hide s={{ hide: false }}>
                   <Row s={{ hide: true }}>
                     <ToggleButton
                       prefixIcon="book"
@@ -176,7 +176,7 @@ export const Header = () => {
                       selected={pathname.startsWith("/blog")}
                     />
                   </Row>
-                </>
+                </Row>
               )}
               {routes["/gallery"] && (
                 <>
