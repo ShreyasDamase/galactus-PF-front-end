@@ -18,6 +18,7 @@ import {
   Heart,
   Bookmark,
   Share2,
+  MessageCircle,
   Download,
   Eye,
   Calendar,
@@ -46,6 +47,8 @@ import "@/styles/syntax-theme.css";
 import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
 import { useLikeProject, useUnlikeProject } from "@/lib/hooks/useProject";
+import { useComments } from "@/lib/hooks/useComments";
+import CommentsSheet from "@/components/blog/CommentsSheet";
 import { sanitizeHTML } from "@/lib/sanitize";
 import type { ProjectResponse } from "@/lib/types/project.type";
 
@@ -78,6 +81,13 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
   const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
   const [mermaidReady, setMermaidReady] = useState<boolean>(false);
   const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
+  const { data: commentsData } = useComments(project.id);
+  const totalComments = commentsData?.total || 0;
+
+  const openComments = useCallback(() => setIsCommentsOpen(true), []);
+  const closeComments = useCallback(() => setIsCommentsOpen(false), []);
 
   useEffect(() => {
     if (project) {
@@ -382,6 +392,17 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
               </motion.button>
               <div className={`w-full h-px ${theme.resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-200"}`} />
+              
+              <motion.button onClick={openComments} className={`p-2.5 rounded-xl relative flex items-center justify-center ${theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-600"}`} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                <MessageCircle className="w-5 h-5 relative z-10" />
+                {totalComments > 0 && (
+                  <span className="absolute bg-blue-500 text-white text-[9px] font-bold rounded-full w-[16px] h-[16px] flex items-center justify-center z-20 pointer-events-none -top-0 -right-0 translate-y-1/4 -translate-x-1/4">
+                    {totalComments > 99 ? '99+' : totalComments}
+                  </span>
+                )}
+              </motion.button>
+              <div className={`w-full h-px ${theme.resolvedTheme === "dark" ? "bg-gray-700" : "bg-gray-200"}`} />
+
               <motion.button onClick={handleBookmark} className={`p-2.5 rounded-xl ${isBookmarked ? "text-yellow-500" : theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-600"}`} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
               </motion.button>
@@ -449,6 +470,10 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
               <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isLiked ? "bg-red-100 text-red-600" : theme.resolvedTheme === "dark" ? "bg-gray-700 text-gray-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                 <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
                 <Text variant="label-default-s">{likeCount}</Text>
+              </button>
+              <button onClick={openComments} className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${theme.resolvedTheme === "dark" ? "bg-gray-700 text-gray-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                <MessageCircle className="w-5 h-5" />
+                <Text variant="label-default-s">{totalComments > 0 ? totalComments : 'Comment'}</Text>
               </button>
               <button onClick={handleBookmark} className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isBookmarked ? "bg-yellow-100 text-yellow-600" : theme.resolvedTheme === "dark" ? "bg-gray-700 text-gray-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
                 <Bookmark className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`} />
@@ -619,6 +644,7 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
           </Row>
         </div>
       </Column>
+      <CommentsSheet show={isCommentsOpen} onClose={closeComments} blogId={project.id} />
     </>
   );
 }

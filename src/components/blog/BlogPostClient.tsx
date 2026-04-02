@@ -31,6 +31,7 @@ import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
 import CommentsSheet from "@/components/blog/CommentsSheet";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { useComments } from "@/lib/hooks/useComments";
 import { sanitizeHTML } from "@/lib/sanitize";
 import type { BlogPost } from "@/lib/types";
 
@@ -43,6 +44,8 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
   const slug = post.slug;
   const contentRef = useRef<HTMLDivElement>(null);
   const { data: profiledata } = useProfile();
+  const { data: commentsData } = useComments(post.id);
+  const totalComments = commentsData?.total || 0;
 
   const likePostMutation = useLikePost();
   const unlikePostMutation = useUnlikePost();
@@ -683,7 +686,7 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
               {/* Comment Button */}
               <motion.button
                 onClick={openComments}
-                className={`p-2.5 rounded-[14px] relative overflow-hidden ${
+                className={`p-2.5 rounded-[14px] relative overflow-hidden flex items-center justify-center ${
                   theme.resolvedTheme === "dark" ? "text-gray-300" : "text-gray-700"
                 }`}
                 whileHover={{ scale: 1.08 }}
@@ -693,6 +696,11 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
                 aria-label="Scroll to comments"
               >
                 <MessageCircle className="w-5 h-5 relative z-10" />
+                {totalComments > 0 && (
+                  <span className="absolute bg-blue-500 text-white text-[9px] font-bold rounded-full w-[16px] h-[16px] flex items-center justify-center z-20 pointer-events-none -top-0 -right-0 translate-y-1/4 -translate-x-1/4">
+                    {totalComments > 99 ? '99+' : totalComments}
+                  </span>
+                )}
               </motion.button>
 
               {/* Bookmark Button */}
@@ -910,8 +918,8 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
                 className="flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 text-gray-500 hover:text-blue-500"
               >
                 <MessageCircle className="w-5 h-5" />
-                <Text variant="label-default-s" className="hidden sm:inline">
-                  Comment
+                <Text variant="label-default-s" className="font-medium">
+                  {totalComments}
                 </Text>
               </button>
             </Row>

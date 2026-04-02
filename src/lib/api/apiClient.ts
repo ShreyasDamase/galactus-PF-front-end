@@ -1,9 +1,10 @@
 // src/lib/api/client.ts
 "use client";
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
+import axios from "axios";
+import type { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : undefined;
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -47,13 +48,15 @@ class ApiClient {
           }
 
           throw new Error(apiError?.message || `HTTP ${error.response.status}`);
-        } else if (error.request) {
+        }
+        
+        if (error.request) {
           throw new Error(
             "No response from server. Please check your connection."
           );
-        } else {
-          throw new Error(error.message || "An unexpected error occurred");
         }
+        
+        throw new Error(error.message || "An unexpected error occurred");
       }
     );
   }

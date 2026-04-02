@@ -2,8 +2,8 @@
 // Shared server-side fetch utility — runs ONLY on the server (no "use client")
 // Used by all server components to fetch data with ISR caching
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
-const USER_ID = process.env.NEXT_PUBLIC_USER_TO_FETCH!;
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "";
+const USER_ID = process.env.NEXT_PUBLIC_USER_TO_FETCH || "";
 
 interface FetchOptions {
   revalidate?: number; // seconds for ISR — default 60s
@@ -120,7 +120,7 @@ export async function fetchProject(slug: string): Promise<ProjectResponse | null
 
 /** Fetch public user profile */
 export async function fetchProfile(): Promise<UserProfile | null> {
-  return serverPost<UserProfile>(`/user-auth/public-profile`, {}, {
+  return serverPost<UserProfile>("/user-auth/public-profile", {}, {
     revalidate: 300, // 5 mins — profile changes rarely
   });
 }
