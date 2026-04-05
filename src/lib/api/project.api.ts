@@ -97,6 +97,13 @@ export const projectsApi = {
   unlikeProject: (projectId: string) =>
     apiClient.patch<{ likes: number }>(`/projects/${projectId}/unlike`),
 
+  /**
+   * Record a single project view
+   * PUBLIC - No auth required
+   */
+  trackView: (projectId: string) =>
+    apiClient.post<{ id: string }>(`${BASE_PATH}/projects-pub/${projectId}/view`),
+
   // ============================================
   // DOWNLOAD ENDPOINTS (to be implemented later)
   // ============================================

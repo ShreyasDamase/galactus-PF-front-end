@@ -23,9 +23,13 @@ import type { UserProfile } from "@/lib/types";
 
 interface AboutClientProps {
   profile: UserProfile;
+  showTableOfContents?: boolean;
 }
 
-export default function AboutClient({ profile }: AboutClientProps) {
+export default function AboutClient({
+  profile,
+  showTableOfContents = true,
+}: AboutClientProps) {
   const structure = [
     {
       title: `About ${profile?.firstName}` || about.intro.title,
@@ -69,14 +73,14 @@ export default function AboutClient({ profile }: AboutClientProps) {
         }}
       />
 
-      {about.tableOfContent.display && (
+      {showTableOfContents && about.tableOfContent.display && (
         <Column
           left="0"
           style={{ top: "50%", transform: "translateY(-50%)" }}
           position="fixed"
           paddingLeft="24"
           gap="32"
-          s={{ hide: true }}
+          m={{ hide: true }}
         >
           <TableOfContents structure={structure} about={about} />
         </Column>

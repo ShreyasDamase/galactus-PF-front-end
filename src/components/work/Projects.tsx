@@ -9,9 +9,10 @@ interface ProjectsProps {
   projects: ProjectResponse[];
   range?: [number, number?];
   exclude?: string[];
+  compact?: boolean;
 }
 
-export function Projects({ projects, range, exclude }: ProjectsProps) {
+export function Projects({ projects, range, exclude, compact = false }: ProjectsProps) {
   let filteredProjects = projects;
 
   // Exclude projects by slug
@@ -27,11 +28,17 @@ export function Projects({ projects, range, exclude }: ProjectsProps) {
     : filteredProjects;
 
   return (
-    <Column fillWidth gap="xl" marginBottom="40" paddingX="l">
+    <Column
+      fillWidth
+      gap={compact ? "16" : "xl"}
+      marginBottom={compact ? "0" : "40"}
+      paddingX={compact ? "0" : "l"}
+    >
       {displayedProjects.map((project, index) => (
         <ProjectCard
           key={project.id}
           priority={index < 2}
+          compact={compact}
           href={`/work/${project.slug}`}
           images={project.screenshots.map(s => s.url)}
           coverImage={project.coverImage}

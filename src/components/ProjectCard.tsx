@@ -17,6 +17,7 @@ import {
 interface ProjectCardProps {
   href: string;
   priority?: boolean;
+  compact?: boolean;
   images: string[];
   coverImage?: string;
   title: string;
@@ -35,6 +36,7 @@ interface ProjectCardProps {
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   href,
   priority = false,
+  compact = false,
   images = [],
   coverImage,
   title,
@@ -56,12 +58,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     <Link href={href} style={{ textDecoration: "none", color: "inherit" }}>
       <Column
         fillWidth
-        gap="m"
+        gap={compact ? "12" : "m"}
         style={{
           cursor: "pointer",
           transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          borderRadius: "12px",
+          borderRadius: compact ? "18px" : "12px",
           overflow: "hidden",
+          minWidth: 0,
+          border: compact ? "1px solid rgba(128,128,128,0.16)" : undefined,
+          padding: compact ? "12px" : undefined,
+          backdropFilter: compact ? "blur(10px)" : undefined,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = "scale(1.01)";
@@ -76,7 +82,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {carouselImages.length > 0 && (
           <Carousel
             priority={priority}
-            sizes="(max-width: 960px) 100vw, 960px"
+            sizes={compact ? "(max-width: 768px) 100vw, 420px" : "(max-width: 960px) 100vw, 960px"}
             aspectRatio="16/9"
             items={carouselImages.map((image, idx) => ({
               slide: image,
@@ -90,14 +96,26 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         <Flex
           s={{ direction: "column" }}
           fillWidth
-          paddingX="s"
-          paddingTop="12"
-          paddingBottom="24"
-          gap="l"
+          paddingX={compact ? "0" : "s"}
+          paddingTop={compact ? "4" : "12"}
+          paddingBottom={compact ? "4" : "24"}
+          gap={compact ? "16" : "l"}
+          style={{ minWidth: 0 }}
         >
           {/* Title */}
-          <Flex flex={5} direction="column" gap="8">
-            <Heading as="h2" wrap="balance" variant="heading-strong-xl">
+          <Flex flex={5} direction="column" gap="8" style={{ minWidth: 0 }}>
+            <Heading
+              as="h2"
+              wrap="balance"
+              variant={compact ? "heading-strong-l" : "heading-strong-xl"}
+              style={{
+                minWidth: 0,
+                display: "-webkit-box",
+                WebkitLineClamp: compact ? 2 : 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
               {title}
             </Heading>
 
@@ -136,7 +154,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           </Flex>
 
           {/* Description & Details */}
-          <Column flex={7} gap="16">
+          <Column flex={7} gap={compact ? "12" : "16"} style={{ minWidth: 0 }}>
             {avatars.length > 0 && (
               <AvatarGroup avatars={avatars} size="m" reverse />
             )}
@@ -146,6 +164,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 wrap="balance"
                 variant="body-default-s"
                 onBackground="neutral-weak"
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: compact ? 3 : 4,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
               >
                 {summary}
               </Text>
@@ -153,13 +177,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
             {technologyStack.length > 0 && (
               <Flex gap="8" wrap>
-                {technologyStack.slice(0, 5).map((tech) => (
+                {technologyStack.slice(0, compact ? 4 : 5).map((tech) => (
                   <Tag key={tech} size="s" label={tech} variant="neutral" />
                 ))}
-                {technologyStack.length > 5 && (
+                {technologyStack.length > (compact ? 4 : 5) && (
                   <Tag
                     size="s"
-                    label={`+${technologyStack.length - 5}`}
+                    label={`+${technologyStack.length - (compact ? 4 : 5)}`}
                     variant="neutral"
                   />
                 )}
@@ -168,7 +192,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
             {tags.length > 0 && (
               <Flex gap="8" wrap>
-                {tags.slice(0, 3).map((tag) => (
+                {tags.slice(0, compact ? 2 : 3).map((tag) => (
                   <Tag key={tag} size="s" label={tag} variant="accent" />
                 ))}
               </Flex>

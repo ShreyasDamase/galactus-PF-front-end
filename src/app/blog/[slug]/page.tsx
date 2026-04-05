@@ -2,8 +2,15 @@
 // Fetches post on server → passes to BlogPostClient for interactions
 import { notFound } from "next/navigation";
 import { baseURL, blog, person } from "@/resources";
-import { fetchPost } from "@/lib/server/serverFetch";
+import { fetchPost, fetchPosts } from "@/lib/server/serverFetch";
 import BlogPostClient from "@/components/blog/BlogPostClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  buildBlogPostingStructuredData,
+  buildBreadcrumbStructuredData,
+} from "@/lib/seo";
+import { Column, Heading } from "@once-ui-system/core";
+import { Posts } from "@/components/blog/Posts";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,6 +28,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${post.title} | ${blog.title}`,
     description: post.description,
+    alternates: {
+      canonical: `${baseURL}/blog/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
@@ -46,11 +56,61 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // Fetch on server — content is in HTML before browser gets it ✅
   const post = await fetchPost(slug);
+  const { posts } = await fetchPosts(1);
 
   if (!post) {
     notFound();
   }
 
+  const relatedPosts = posts
+    .filter(
+      (item) =>
+        item.slug !== post.slug &&
+        (item.category === post.category ||
+          item.tags?.some((tag) => post.tags?.includes(tag)))
+    )
+    .slice(0, 3);
+
   // Pass fetched post to client component for all interactions
-  return <BlogPostClient initialPost={post} />;
+  return (
+    <Column
+      fillWidth
+      horizontal="center"
+      gap="0"
+      style={{ width: "100%" }}
+    >
+      <JsonLd
+        data={[
+          buildBlogPostingStructuredData(post),
+          buildBreadcrumbStructuredData([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: blog.path },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
+      <BlogPostClient initialPost={post} />
+      {relatedPosts.length > 0 && (
+        <Column
+          maxWidth="m"
+          fillWidth
+          paddingTop="8"
+          paddingBottom="32"
+          gap="12"
+          style={{ width: "100%" }}
+        >
+          <Heading as="h2" variant="heading-strong-l">
+            Continue reading
+          </Heading>
+          <Posts
+            posts={relatedPosts.slice(0, 2)}
+            columns="2"
+            thumbnail
+            direction="column"
+            compact
+          />
+        </Column>
+      )}
+    </Column>
+  );
 }

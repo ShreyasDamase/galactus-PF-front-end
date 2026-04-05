@@ -3,11 +3,19 @@ import { Column, Heading, Schema, Text } from "@once-ui-system/core";
 import { baseURL, about, person, work } from "@/resources";
 import { Projects } from "@/components/work/Projects";
 import { fetchProjects } from "@/lib/server/serverFetch";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  buildBreadcrumbStructuredData,
+  buildCollectionPageStructuredData,
+} from "@/lib/seo";
 
 export async function generateMetadata() {
   return {
     title: work.title,
     description: work.description,
+    alternates: {
+      canonical: `${baseURL}${work.path}`,
+    },
     openGraph: {
       title: work.title,
       description: work.description,
@@ -23,6 +31,23 @@ export default async function Work() {
 
   return (
     <Column maxWidth="m" paddingTop="24">
+      <JsonLd
+        data={[
+          buildCollectionPageStructuredData({
+            title: work.title,
+            description: work.description,
+            path: work.path,
+            items: projects.map((project) => ({
+              name: project.title,
+              path: `/work/${project.slug}`,
+            })),
+          }),
+          buildBreadcrumbStructuredData([
+            { name: "Home", path: "/" },
+            { name: "Work", path: work.path },
+          ]),
+        ]}
+      />
       <Schema
         as="webPage"
         baseURL={baseURL}

@@ -53,4 +53,10 @@ export const postsApi = {
    */
   unlikePost: (id: string) =>
     apiClient.patch<{ likes: number }>(`${BASE_PATH}/posts/${id}/unlike`),
+
+  /**
+   * Record a single post view
+   */
+  trackView: (id: string) =>
+    apiClient.post<{ id: string }>(`${BASE_PATH}/posts-pub/${id}/view`),
 };

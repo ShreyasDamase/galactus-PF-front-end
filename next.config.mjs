@@ -29,8 +29,8 @@ const securityHeaders = [
       // API calls: self + your backend
       `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}`,
 
-      // Frames: allow nothing (no embeds needed)
-      "frame-src 'none'",
+      // Frames: allow the resume PDF preview and future trusted document embeds
+      "frame-src 'self' https://storage.googleapis.com https://docs.google.com",
 
       // Media: self only
       "media-src 'self' blob: https:",
@@ -122,4 +122,3 @@ const nextConfig = {
 };
 
 export default withMDX(nextConfig);
-

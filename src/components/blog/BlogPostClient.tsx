@@ -32,6 +32,7 @@ import "@/styles/enhanced-image.css";
 import CommentsSheet from "@/components/blog/CommentsSheet";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { useComments } from "@/lib/hooks/useComments";
+import { postsApi } from "@/lib/api/posts.api";
 import { sanitizeHTML } from "@/lib/sanitize";
 import type { BlogPost } from "@/lib/types";
 
@@ -92,6 +93,25 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
       }
     }
   }, [post]);
+
+  useEffect(() => {
+    if (!post?._id) return;
+
+    const sessionKey = `viewed-post:${post._id}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    sessionStorage.setItem(sessionKey, "pending");
+
+    postsApi
+      .trackView(post._id)
+      .then(() => {
+        sessionStorage.setItem(sessionKey, "recorded");
+      })
+      .catch((error) => {
+        console.error("Failed to record post view:", error);
+        sessionStorage.removeItem(sessionKey);
+      });
+  }, [post?._id]);
 
   // Reading progress and floating actions
   useEffect(() => {

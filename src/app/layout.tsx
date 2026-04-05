@@ -16,8 +16,17 @@ import {
 import { Footer, Header, RouteGuard, Providers } from "@/components";
 import { baseURL, effects, fonts, style, dataStyle, home } from "@/resources";
 import Script from "next/script";
+import type { Metadata, Viewport } from "next";
 
-export async function generateMetadata() {
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#0d1117",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
   const userName =
     process.env.NEXT_PUBLIC_USER_NAME?.toLowerCase() || "default";
 
@@ -51,8 +60,10 @@ export async function generateMetadata() {
     },
 
     openGraph: {
-      title: baseMetadata.title,
-      description: baseMetadata.description,
+      title: baseMetadata.title ?? home.title,
+      description:
+        baseMetadata.description ??
+        "Portfolio website showcasing my work as a app developer",
       url: "https://shreyasdamase.info",
       siteName: "Shreyas Damase — Portfolio",
       locale: "en_IN",
@@ -69,8 +80,10 @@ export async function generateMetadata() {
 
     twitter: {
       card: "summary_large_image",
-      title: baseMetadata.title,
-      description: baseMetadata.description,
+      title: baseMetadata.title ?? home.title,
+      description:
+        baseMetadata.description ??
+        "Portfolio website showcasing my work as a app developer",
       creator: "@shreyasdamase", // optional
       images: ["/images/og/home.jpg"],
     },
@@ -81,9 +94,6 @@ export async function generateMetadata() {
       apple: selectedIcon,
     },
 
-    themeColor: "#0d1117", // dark background hint for browsers
-    viewport:
-      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
     robots: {
       index: true,
       follow: true,

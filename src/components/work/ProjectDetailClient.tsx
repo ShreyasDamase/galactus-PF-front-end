@@ -46,6 +46,7 @@ import "@/styles/blog-preview.css";
 import "@/styles/syntax-theme.css";
 import "@/styles/enhanced-tables.css";
 import "@/styles/enhanced-image.css";
+import { projectsApi } from "@/lib/api/project.api";
 import { useLikeProject, useUnlikeProject } from "@/lib/hooks/useProject";
 import { useComments } from "@/lib/hooks/useComments";
 import CommentsSheet from "@/components/blog/CommentsSheet";
@@ -75,6 +76,7 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [viewCount, setViewCount] = useState(0);
   const [showFloatingActions, setShowFloatingActions] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const [renderedContent, setRenderedContent] = useState<string>("");
@@ -92,6 +94,7 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
   useEffect(() => {
     if (project) {
       setLikeCount(project.likes || 0);
+      setViewCount(project.views || 0);
       if (project.id) {
         const savedLikedProjects = localStorage.getItem("liked_projects");
         if (savedLikedProjects) {
@@ -107,6 +110,26 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
       }
     }
   }, [project]);
+
+  useEffect(() => {
+    if (!project?.id) return;
+
+    const sessionKey = `viewed-project:${project.id}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+
+    sessionStorage.setItem(sessionKey, "pending");
+
+    projectsApi
+      .trackView(project.id)
+      .then(() => {
+        sessionStorage.setItem(sessionKey, "recorded");
+        setViewCount((current) => current + 1);
+      })
+      .catch((error) => {
+        console.error("Failed to record project view:", error);
+        sessionStorage.removeItem(sessionKey);
+      });
+  }, [project?.id]);
 
   // Load Mermaid
   useEffect(() => {
@@ -451,7 +474,7 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
               {project.category && <span className="px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">{project.category}</span>}
               <Row gap="4" vertical="center">
                 <Eye className={`w-4 h-4 ${theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"}`} />
-                <Text variant="body-default-xs" className={theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"}>{project.views.toLocaleString()} views</Text>
+                <Text variant="body-default-xs" className={theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"}>{viewCount.toLocaleString()} views</Text>
               </Row>
               <Row gap="4" vertical="center">
                 <Heart className={`w-4 h-4 ${theme.resolvedTheme === "dark" ? "text-gray-400" : "text-gray-500"}`} />

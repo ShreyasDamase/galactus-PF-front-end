@@ -4,15 +4,27 @@ import { Posts } from "@/components/blog/Posts";
 import { baseURL, blog, person } from "@/resources";
 import { fetchPosts } from "@/lib/server/serverFetch";
 import ReadingListFAB from "@/components/blog/ReadingListFAB";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  buildBreadcrumbStructuredData,
+  buildCollectionPageStructuredData,
+} from "@/lib/seo";
 
 export async function generateMetadata() {
-  return Meta.generate({
+  const meta = Meta.generate({
     title: blog.title,
     description: blog.description,
     baseURL: baseURL,
     image: `/api/og/generate?title=${encodeURIComponent(blog.title)}`,
     path: blog.path,
   });
+
+  return {
+    ...meta,
+    alternates: {
+      canonical: `${baseURL}${blog.path}`,
+    },
+  };
 }
 
 export default async function Blog() {
@@ -21,6 +33,23 @@ export default async function Blog() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          buildCollectionPageStructuredData({
+            title: blog.title,
+            description: blog.description,
+            path: blog.path,
+            items: posts.map((post) => ({
+              name: post.title,
+              path: `/blog/${post.slug}`,
+            })),
+          }),
+          buildBreadcrumbStructuredData([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: blog.path },
+          ]),
+        ]}
+      />
       <Schema
         as="webPage"
         baseURL={baseURL}

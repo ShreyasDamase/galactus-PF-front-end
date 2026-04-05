@@ -3,15 +3,27 @@ import GalleryView, {
   type GalleryImage,
 } from "@/components/gallery/GalleryView";
 import { baseURL, gallery, person } from "@/resources";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  buildBreadcrumbStructuredData,
+  buildCollectionPageStructuredData,
+} from "@/lib/seo";
 
 export async function generateMetadata() {
-  return Meta.generate({
+  const meta = Meta.generate({
     title: gallery.title,
     description: gallery.description,
     baseURL: baseURL,
     image: `/api/og/generate?title=${encodeURIComponent(gallery.title)}`,
     path: gallery.path,
   });
+
+  return {
+    ...meta,
+    alternates: {
+      canonical: `${baseURL}${gallery.path}`,
+    },
+  };
 }
 
 async function getGalleryImages(): Promise<GalleryImage[]> {
@@ -35,6 +47,23 @@ export default async function Gallery() {
 
   return (
     <Flex maxWidth="l">
+      <JsonLd
+        data={[
+          buildCollectionPageStructuredData({
+            title: gallery.title,
+            description: gallery.description,
+            path: gallery.path,
+            items: images.slice(0, 12).map((image) => ({
+              name: image.alt || image.title || "Gallery image",
+              path: gallery.path,
+            })),
+          }),
+          buildBreadcrumbStructuredData([
+            { name: "Home", path: "/" },
+            { name: "Gallery", path: gallery.path },
+          ]),
+        ]}
+      />
       <Schema
         as="webPage"
         baseURL={baseURL}
