@@ -1,4 +1,5 @@
 import mdx from "@next/mdx";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withMDX = mdx({
   extension: /\.mdx?$/,
@@ -26,8 +27,8 @@ const securityHeaders = [
       // Images: self + data URIs + all https (your portfolio shows remote images)
       "img-src 'self' data: blob: https:",
 
-      // API calls: self + your backend
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}`,
+      // API calls: self + your backend + Sentry
+      `connect-src 'self' https://*.sentry.io ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}`,
 
       // Frames: allow the resume PDF preview and future trusted document embeds
       "frame-src 'self' https://storage.googleapis.com https://docs.google.com",
@@ -121,4 +122,11 @@ const nextConfig = {
   },
 };
 
-export default withMDX(nextConfig);
+export default withSentryConfig(withMDX(nextConfig), {
+  // Silent in development to avoid spam
+  silent: !process.env.CI,
+  // We widen file upload so stack traces map securely to original source code
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  // The SDK will look for SENTRY_AUTH_TOKEN on Vercel automatically.
+});
