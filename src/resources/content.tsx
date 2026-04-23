@@ -7,6 +7,7 @@ import {
   Person,
   Social,
   Work,
+  Videos,
 } from "@/types";
 import { Line, Logo, Row, Text } from "@once-ui-system/core";
 
@@ -347,4 +348,14 @@ const gallery: Gallery = {
   ],
 };
 
-export { person, social, newsletter, home, about, blog, work, gallery };
+const videos: Videos = {
+  path: "/videos",
+  label: "Videos",
+  title: `Videos – ${person.name}`,
+  description: `Video collection by ${person.name}`,
+  youtubeIds: [
+    "dQw4w9WgXcQ", // Example video, will need actual video IDs later
+  ],
+};
+
+export { person, social, newsletter, home, about, blog, work, gallery, videos };

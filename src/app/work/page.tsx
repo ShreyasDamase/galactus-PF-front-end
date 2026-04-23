@@ -24,7 +24,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Work() {
+export default async function Work({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   // Runs on server — Google sees project cards fully rendered ✅
   const projectData = await fetchProjects(1, 10);
   const projects = projectData?.projects ?? [];
@@ -62,9 +62,11 @@ export default async function Work() {
         }}
       />
 
-      <Heading marginBottom="l" variant="heading-strong-xl" align="center">
-        My work
-      </Heading>
+      {!hideHeader && (
+        <Heading marginBottom="l" variant="heading-strong-xl" align="center">
+          My work
+        </Heading>
+      )}
 
       {projects.length === 0 && (
         <Column fillWidth align="center" paddingY="xl">

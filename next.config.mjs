@@ -30,8 +30,8 @@ const securityHeaders = [
       // API calls: self + your backend + Sentry
       `connect-src 'self' https://*.sentry.io ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}`,
 
-      // Frames: allow the resume PDF preview and future trusted document embeds
-      "frame-src 'self' https://storage.googleapis.com https://docs.google.com",
+      // Frames: allow the resume PDF preview, Google Docs, and YouTube embedded videos
+      "frame-src 'self' https://storage.googleapis.com https://docs.google.com https://www.youtube.com",
 
       // Media: self only
       "media-src 'self' blob: https:",
