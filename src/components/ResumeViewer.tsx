@@ -23,6 +23,14 @@ export const ResumeViewer = ({
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    // Detect mobile device to fallback to Google Docs Viewer
+    if (typeof window !== "undefined") {
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    }
+  }, []);
 
   const handleIframeLoad = () => setLoading(false);
   const handleIframeError = () => {
@@ -152,7 +160,11 @@ export const ResumeViewer = ({
             </Column>
           ) : (
             <iframe
-              src={`${resumeUrl}#zoom=50&view=FitH&toolbar=1`}
+              src={
+                isMobile 
+                  ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(resumeUrl)}`
+                  : `${resumeUrl}#view=FitV&toolbar=0&navpanes=0`
+              }
               title={resumeName}
               style={{
                 width: "100%",

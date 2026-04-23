@@ -23,6 +23,7 @@ const routes: RoutesConfig = {
   "/blog": true,
   "/gallery": true,
   "/reading-list": true,
+  "/videos": true,
 };
 
 

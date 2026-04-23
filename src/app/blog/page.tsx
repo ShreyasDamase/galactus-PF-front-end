@@ -27,7 +27,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Blog() {
+export default async function Blog({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   // Runs on server — Google sees fully rendered HTML ✅
   const { posts } = await fetchPosts(1);
 
@@ -64,9 +64,11 @@ export default async function Blog() {
         }}
       />
       <Column maxWidth="m" paddingTop="24">
-        <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
-          {blog.title}
-        </Heading>
+        {!hideHeader && (
+          <Heading marginBottom="l" variant="heading-strong-xl" marginLeft="24">
+            {blog.title}
+          </Heading>
+        )}
 
         <Column fillWidth flex={1} gap="40">
           {posts.length === 0 && (

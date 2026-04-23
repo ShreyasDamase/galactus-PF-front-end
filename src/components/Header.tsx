@@ -13,6 +13,7 @@ import {
   blog,
   work,
   gallery,
+  videos,
 } from "@/resources";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Header.module.scss";
@@ -193,6 +194,25 @@ export const Header = () => {
                       prefixIcon="gallery"
                       href="/gallery"
                       selected={pathname.startsWith("/gallery")}
+                    />
+                  </Row>
+                </>
+              )}
+              {routes["/videos"] && (
+                <>
+                  <Row s={{ hide: true }}>
+                    <ToggleButton
+                      prefixIcon="video"
+                      href="/videos"
+                      label={videos.label}
+                      selected={pathname.startsWith("/videos")}
+                    />
+                  </Row>
+                  <Row hide s={{ hide: false }}>
+                    <ToggleButton
+                      prefixIcon="video"
+                      href="/videos"
+                      selected={pathname.startsWith("/videos")}
                     />
                   </Row>
                 </>
