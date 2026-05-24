@@ -5,10 +5,21 @@
 // ====================
 type SocialLink = { name: string; icon: string; link: string };
 
+export interface FreelanceInfo {
+  isAvailable: boolean;
+  rate: number;
+  currency: string;
+  title: string;
+  description: string;
+  services: string[];
+  calendarLink: string;
+}
+
 export interface UserProfile {
   id: string;
   clerkId: string;
   email: string;
+  username?: string;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -23,6 +34,7 @@ export interface UserProfile {
   education: Education[];
   projects: Project[];
   preferences: UserPreferences;
+  freelance?: FreelanceInfo | null;
   profileCompleteness: number;
   createdAt: string;
   updatedAt: string;

@@ -24,6 +24,7 @@ const routes: RoutesConfig = {
   "/gallery": true,
   "/reading-list": true,
   "/videos": true,
+  "/freelance": true,
 };
 
 
