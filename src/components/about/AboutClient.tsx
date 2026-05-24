@@ -17,6 +17,7 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
+import Image from "next/image";
 import { ResumeViewer } from "@/components/ResumeViewer";
 import { ContactForm } from "@/components/Mailchimp";
 import type { UserProfile } from "@/lib/types";
@@ -294,15 +295,12 @@ export default function AboutClient({
                         >
                           <Row gap="12" vertical="center" flex={1}>
                             {experience.companyLogo && (
-                              <img
+                              <Image
                                 src={experience.companyLogo}
                                 alt={`${experience.company} logo`}
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                  objectFit: "contain",
-                                  borderRadius: "4px",
-                                }}
+                                width={40}
+                                height={40}
+                                className="object-contain rounded-[4px]"
                               />
                             )}
                             <Column gap="4">
@@ -543,16 +541,14 @@ export default function AboutClient({
                           fillWidth
                           border="neutral-medium"
                           radius="l"
-                          style={{ overflow: "hidden", aspectRatio: "16/9" }}
+                          style={{ overflow: "hidden", aspectRatio: "16/9", position: "relative" }}
                         >
-                          <img
+                          <Image
                             src={project.imageUrl}
                             alt={project.title}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         </Row>
                       )}

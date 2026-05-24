@@ -13,6 +13,7 @@ import {
   SmartLink,
   Carousel,
 } from "@once-ui-system/core";
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   Heart,
@@ -454,9 +455,16 @@ export default function ProjectDetailClient({ initialProject }: ProjectDetailCli
         </SmartLink>
 
         {/* Hero */}
-        <div className="rounded-2xl overflow-hidden mb-8 shadow-lg border border-white/10">
+        <div className="rounded-2xl overflow-hidden mb-8 shadow-lg border border-white/10 relative w-full h-64 md:h-80 lg:h-96">
           {project.coverImage && (
-            <img src={project.coverImage} alt={project.title} className="w-full h-64 md:h-80 lg:h-96 object-cover" />
+            <Image
+              src={project.coverImage}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              priority
+            />
           )}
           <div className="p-6 md:p-8">
             <Heading variant="display-strong-l" marginBottom="16">{project.title}</Heading>

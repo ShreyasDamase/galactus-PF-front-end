@@ -12,6 +12,7 @@ import {
   HoverCard,
   Tag,
 } from "@once-ui-system/core";
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   Heart,
@@ -797,12 +798,14 @@ export default function BlogPostClient({ initialPost }: BlogPostClientProps) {
 
         {/* Cover Image */}
         {post?.coverImage && (
-          <div className="mb-8 overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <img
+          <div className="mb-8 overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group relative w-full h-48 md:h-64 lg:h-80">
+            <Image
               src={post?.coverImage}
               alt={post?.title}
-              className="w-full h-48 md:h-64 lg:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="eager"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              priority
             />
           </div>
         )}

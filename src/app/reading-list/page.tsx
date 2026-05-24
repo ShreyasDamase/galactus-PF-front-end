@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Column, Heading, Text, Row } from "@once-ui-system/core";
 import { useTheme } from "@once-ui-system/core";
 import Link from "next/link";
+import Image from "next/image";
 import { Bookmark, BookOpen, Folder, Trash2, Clock, ArrowLeft } from "lucide-react";
 
 interface BookmarkedPost {
@@ -234,10 +235,12 @@ export default function ReadingListPage() {
             >
               {/* Thumbnail */}
               {post.coverImage ? (
-                <img
+                <Image
                   src={post.coverImage}
                   alt={post.title}
-                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                  width={56}
+                  height={56}
+                  className="rounded-xl object-cover flex-shrink-0"
                   style={{ border: cardBorder }}
                 />
               ) : (
@@ -343,10 +346,12 @@ export default function ReadingListPage() {
               }}
             >
               {project.coverImage ? (
-                <img
+                <Image
                   src={project.coverImage}
                   alt={project.title}
-                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                  width={56}
+                  height={56}
+                  className="rounded-xl object-cover flex-shrink-0"
                   style={{ border: cardBorder }}
                 />
               ) : (
