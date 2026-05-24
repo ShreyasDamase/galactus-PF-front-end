@@ -211,7 +211,7 @@ export default function Freelance() {
   }
 
   return (
-    <Column maxWidth="m" gap="xl" paddingY="12" horizontal="center" fillWidth style={{ position: "relative" }}>
+    <Column maxWidth="m" gap="xl" paddingY="12" horizontal="center" fillWidth style={{ position: "relative", paddingBottom: "128px" }}>
       <Background
         top="0"
         position="absolute"
@@ -256,7 +256,7 @@ export default function Freelance() {
                   backgroundColor: freelance.isAvailable ? "var(--success)" : "var(--neutral-alpha-medium)",
                   boxShadow: freelance.isAvailable ? "0 0 10px var(--success)" : "none"
                 }}></span>
-                <Text variant="body-default-s" onBackground="neutral-weak" weight="bold">
+                <Text variant="body-strong-s" onBackground="neutral-weak">
                   {freelance.isAvailable ? "Available for Hire" : "Fully Booked / Not Available"}
                 </Text>
               </Row>
@@ -264,7 +264,7 @@ export default function Freelance() {
             </Column>
             {freelance.rate > 0 && (
               <Column align="end" s={{ align: "start" }}>
-                <Text variant="body-default-xs" onBackground="neutral-weak" uppercase tracking="wider">
+                <Text variant="body-default-xs" onBackground="neutral-weak" className="uppercase tracking-wider">
                   Starting Rate
                 </Text>
                 <Heading variant="display-strong-xs" style={{ color: "var(--primary)" }}>
@@ -277,13 +277,13 @@ export default function Freelance() {
 
           <Line background="neutral-alpha-weak" />
 
-          <Text variant="body-default-l" onBackground="neutral-medium" style={{ lineHeight: 1.7 }}>
-            {freelance.description || "Looking to build a custom application? Send a proposal using the form below."}
+          <Text variant="body-default-l" onBackground="neutral-medium" style={{ lineHeight: 1.7, whiteSpace: "pre-wrap" }}>
+            {freelance.description?.trim() || "Looking to build a custom application? Send a proposal using the form below."}
           </Text>
 
           {freelance.services && freelance.services.length > 0 && (
             <Column gap="12">
-              <Text variant="body-default-s" onBackground="neutral-weak" weight="bold">
+              <Text variant="body-strong-s" onBackground="neutral-weak">
                 Services Provided:
               </Text>
               <Row gap="8" wrap fillWidth>
@@ -350,7 +350,7 @@ export default function Freelance() {
                 color: submitStatus === "success" ? "var(--success)" : "var(--danger)"
               }}
             >
-              <Text variant="body-default-m" weight="bold">
+              <Text variant="body-strong-m">
                 {statusMessage}
               </Text>
             </Column>
@@ -389,14 +389,16 @@ export default function Freelance() {
 
             <Row gap="16" fillWidth s={{ direction: "column" }}>
               {/* Company */}
-              <Input
-                id="hire-company"
-                name="company"
-                type="text"
-                placeholder="Company Name (Optional)"
-                value={form.company}
-                onChange={(e) => handleChange("company", e.target.value)}
-              />
+              <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+                <Input
+                  id="hire-company"
+                  name="company"
+                  type="text"
+                  placeholder="Company Name (Optional)"
+                  value={form.company}
+                  onChange={(e) => handleChange("company", e.target.value)}
+                />
+              </div>
 
               {/* Project Type */}
               <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
@@ -425,9 +427,9 @@ export default function Freelance() {
               </div>
             </Row>
 
-            <Row gap="16" fillWidth vertical="center">
+            <Row gap="16" fillWidth vertical="center" s={{ direction: "column", align: "stretch" }}>
               {/* Currency Dropdown */}
-              <div style={{ width: "100px", shrink: 0 }}>
+              <div style={{ width: "100%", flexShrink: 0 }} className="md:max-w-[100px]">
                 <select
                   style={{
                     width: "100%",
@@ -452,7 +454,7 @@ export default function Freelance() {
               </div>
 
               {/* Estimated Budget */}
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <Input
                   id="hire-budget"
                   name="budget"
