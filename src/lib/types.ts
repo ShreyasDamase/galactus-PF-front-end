@@ -111,6 +111,7 @@ export interface UserPreferences {
   emailNotifications: boolean;
   profileVisibility: "public" | "private";
   showEmail: boolean; // determines if email is shown on public profile
+  visibleTabs?: Record<string, boolean>;
 }
 
 // ====================

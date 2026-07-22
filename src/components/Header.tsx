@@ -58,8 +58,15 @@ export default TimeDisplay;
 export const Header = () => {
   const pathname = usePathname() ?? "";
   const { data: profile } = useProfile();
-  const showFreelanceTab =
-    routes["/freelance"] && profile?.freelance?.showPublicTab !== false;
+
+  const isTabVisible = (route: string) => {
+    if (!routes[route as keyof typeof routes]) return false;
+    const userTabs = profile?.preferences?.visibleTabs;
+    if (userTabs && userTabs[route] === false) return false;
+    if (route === "/freelance" && profile?.freelance?.showPublicTab === false)
+      return false;
+    return true;
+  };
 
   return (
     <>
@@ -67,8 +74,17 @@ export const Header = () => {
         s={{ hide: true }}
         fillWidth
         position="fixed"
-        height="80"
+        top="0"
+        left="0"
         zIndex={9}
+        height="80"
+        gradient={{
+          display: true,
+          opacity: 100,
+          tilt: 180,
+          height: 100,
+          width: 100,
+        }}
       />
       <Fade
         hide
@@ -76,57 +92,47 @@ export const Header = () => {
         fillWidth
         position="fixed"
         bottom="0"
-        to="top"
+        left="0"
+        zIndex={9}
         height="80"
-        zIndex={9}
-      />
-      <Row
-        fitHeight
-        className={styles.position}
-        position="sticky"
-        as="header"
-        zIndex={9}
-        fillWidth
-        padding="8"
-        horizontal="center"
-        data-border="rounded"
-        s={{
-          position: "fixed",
+        gradient={{
+          display: true,
+          opacity: 100,
+          tilt: 0,
+          height: 100,
+          width: 100,
         }}
-      >
-        <Row
-          paddingLeft="12"
-          fillWidth
-          vertical="center"
-          textVariant="body-default-s"
-        >
-          {/* {display.location && <Row s={{ hide: true }}>{person.location}</Row>} */}
-        </Row>
-        <Row fillWidth horizontal="center">
-          <Row
-            background="page"
-            border="neutral-alpha-weak"
-            radius="m-4"
-            shadow="l"
-            padding="4"
-            horizontal="center"
-            zIndex={1}
-          >
+      />
+      <HeaderPosition>
+        <Row fillWidth vertical="center" horizontal="space-between">
+          <Flex fillWidth horizontal="start" vertical="center" hide s={{ hide: false }}>
+            {person.avatar && (
+              <Row paddingLeft="12">
+                <Avatar
+                  size="m"
+                  src={person.avatar}
+                  value={person.name}
+                />
+              </Row>
+            )}
+          </Flex>
+          <Row fillWidth horizontal="center">
             <Row
-              gap="4"
+              background="surface"
+              border="neutral-alpha-medium"
+              radius="m border border-solid"
+              shadow="s"
+              padding="4"
               vertical="center"
-              textVariant="body-default-s"
-              suppressHydrationWarning
             >
-              {routes["/"] && (
+              {isTabVisible("/") && (
                 <ToggleButton
                   prefixIcon="home"
                   href="/"
                   selected={pathname === "/"}
                 />
               )}
-              <Line background="neutral-alpha-medium" vert maxHeight="24" />
-              {routes["/about"] && (
+              {isTabVisible("/about") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
@@ -145,7 +151,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {routes["/work"] && (
+              {isTabVisible("/work") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
@@ -164,7 +170,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {routes["/blog"] && (
+              {isTabVisible("/blog") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
@@ -183,7 +189,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {routes["/gallery"] && (
+              {isTabVisible("/gallery") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
@@ -202,7 +208,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {routes["/videos"] && (
+              {isTabVisible("/videos") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
@@ -221,7 +227,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {showFreelanceTab && (
+              {isTabVisible("/freelance") && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton
