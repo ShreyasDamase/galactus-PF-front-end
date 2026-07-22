@@ -15,6 +15,7 @@ import {
   gallery,
   videos,
 } from "@/resources";
+import { useProfile } from "@/lib/hooks/useProfile";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Header.module.scss";
 
@@ -56,6 +57,9 @@ export default TimeDisplay;
 
 export const Header = () => {
   const pathname = usePathname() ?? "";
+  const { data: profile } = useProfile();
+  const showFreelanceTab =
+    routes["/freelance"] && profile?.freelance?.showPublicTab !== false;
 
   return (
     <>
@@ -217,7 +221,7 @@ export const Header = () => {
                   </Row>
                 </>
               )}
-              {routes["/freelance"] && (
+              {showFreelanceTab && (
                 <>
                   <Row s={{ hide: true }}>
                     <ToggleButton

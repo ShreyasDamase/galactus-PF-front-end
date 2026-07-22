@@ -7,6 +7,7 @@ type SocialLink = { name: string; icon: string; link: string };
 
 export interface FreelanceInfo {
   isAvailable: boolean;
+  showPublicTab?: boolean;
   rate: number;
   currency: string;
   title: string;

@@ -197,13 +197,13 @@ export default function Freelance() {
     );
   }
 
-  if (profileError || !profile || !freelance) {
+  if (profileError || !profile || !freelance || freelance.showPublicTab === false) {
     return (
       <Column maxWidth="m" fillWidth gap="xl" paddingY="12" horizontal="center" align="center">
         <Column background="surface" border="neutral-alpha-weak" radius="xl" padding="xl" horizontal="center" gap="16">
-          <Heading variant="display-strong-xs">Freelance Info Unavailable</Heading>
+          <Heading variant="display-strong-xs">Freelance Services Unlisted</Heading>
           <Text align="center" onBackground="neutral-weak">
-            Freelance services are currently disabled or have not been configured yet.
+            Freelance services are currently unlisted by the profile owner.
           </Text>
         </Column>
       </Column>
