@@ -74,17 +74,8 @@ export const Header = () => {
         s={{ hide: true }}
         fillWidth
         position="fixed"
-        top="0"
-        left="0"
-        zIndex={9}
         height="80"
-        gradient={{
-          display: true,
-          opacity: 100,
-          tilt: 180,
-          height: 100,
-          width: 100,
-        }}
+        zIndex={9}
       />
       <Fade
         hide
@@ -92,38 +83,47 @@ export const Header = () => {
         fillWidth
         position="fixed"
         bottom="0"
-        left="0"
-        zIndex={9}
+        to="top"
         height="80"
-        gradient={{
-          display: true,
-          opacity: 100,
-          tilt: 0,
-          height: 100,
-          width: 100,
-        }}
+        zIndex={9}
       />
-      <HeaderPosition>
-        <Row fillWidth vertical="center" horizontal="space-between">
-          <Flex fillWidth horizontal="start" vertical="center" hide s={{ hide: false }}>
-            {person.avatar && (
-              <Row paddingLeft="12">
-                <Avatar
-                  size="m"
-                  src={person.avatar}
-                  value={person.name}
-                />
-              </Row>
-            )}
-          </Flex>
-          <Row fillWidth horizontal="center">
+      <Row
+        fitHeight
+        className={styles.position}
+        position="sticky"
+        as="header"
+        zIndex={9}
+        fillWidth
+        padding="8"
+        horizontal="center"
+        data-border="rounded"
+        s={{
+          position: "fixed",
+        }}
+      >
+        <Row
+          paddingLeft="12"
+          fillWidth
+          vertical="center"
+          textVariant="body-default-s"
+        >
+          {/* {display.location && <Row s={{ hide: true }}>{person.location}</Row>} */}
+        </Row>
+        <Row fillWidth horizontal="center">
+          <Row
+            background="page"
+            border="neutral-alpha-weak"
+            radius="m-4"
+            shadow="l"
+            padding="4"
+            horizontal="center"
+            zIndex={1}
+          >
             <Row
-              background="surface"
-              border="neutral-alpha-medium"
-              radius="m border border-solid"
-              shadow="s"
-              padding="4"
+              gap="4"
               vertical="center"
+              textVariant="body-default-s"
+              suppressHydrationWarning
             >
               {isTabVisible("/") && (
                 <ToggleButton
