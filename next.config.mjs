@@ -8,6 +8,8 @@ const withMDX = mdx({
 
 // ─── Security Headers ──────────────────────────────────────────────────────
 // Tailored to YOUR actual external domains (fonts, mermaid CDN, analytics)
+const isDev = process.env.NODE_ENV === "development";
+
 const securityHeaders = [
   // 1. Content Security Policy — prevents XSS
   {
@@ -16,7 +18,9 @@ const securityHeaders = [
       "default-src 'self'",
 
       // Scripts: self + Google Analytics + Mermaid (loaded via CDN in ProjectDetailClient)
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdn.jsdelivr.net",
+      // Dev: also allow 'unsafe-eval' — React requires eval() for callstack reconstruction
+      //      and Turbopack/HMR fast-refresh. Never used in production.
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://cdn.jsdelivr.net`,
 
       // Styles: self + inline (Once UI uses CSS-in-JS) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -28,7 +32,8 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
 
       // API calls: self + your backend + Sentry
-      `connect-src 'self' https://*.sentry.io ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}`,
+      // Dev: also allow localhost websocket for Next.js Turbopack HMR
+      `connect-src 'self' https://*.sentry.io ${process.env.NEXT_PUBLIC_API_URL || "https://shreyasdamase.info"}${isDev ? " ws://localhost:* http://localhost:*" : ""}`,
 
       // Frames: allow the resume PDF preview, Google Docs, and YouTube embedded videos
       "frame-src 'self' https://storage.googleapis.com https://docs.google.com https://www.youtube.com",
